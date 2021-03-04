@@ -68,7 +68,7 @@ MonoBehaviour:
       _PillarRepeat (\"Pillar Repeat\", Vector) = (100, 2, 100, 1)\n        _PillarASize
       (\"Pillar A Size\", Vector) = (1, 4, 1, 1)\n        _PillarAMove (\"Pillar
       A Move\", Vector) = (1, 1, 1, 1)"
-    folded: 1
+    folded: 0
   - key: DistanceFunction
     value: "        #define TAU 6.28318530718\n\n        float _Beat;\n        float
       _AudioSpectrumLevelLength;\n        float _AudioSpectrumLevels[32];\n\n       
@@ -104,7 +104,7 @@ MonoBehaviour:
       DistanceFunction(float3 p)\n        {\n            // \u5E8A\n            float
       d = dGear(p);\n\n            // \u67F1\n            d = min(d, dPillar(p));\n\n           
       return d;\n        }"
-    folded: 1
+    folded: 0
   - key: PostEffect
     value: "        half4 _EmissionColor;\n        float _EmissionY;\n\n        inline
       void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)\n        {\n           
@@ -121,10 +121,10 @@ MonoBehaviour:
       {\n                o.Smoothness = 0.95;\n                o.Metallic = 1;\n               
       o.Occlusion = 0;\n                o.Albedo = half3(1, 1, 1);\n            }\n       
       }"
-    folded: 1
+    folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
-  basicFolded: 1
-  conditionsFolded: 1
-  variablesFolded: 1
+  basicFolded: 0
+  conditionsFolded: 0
+  variablesFolded: 0
   materialsFolded: 0
   constantsFolded: 0
