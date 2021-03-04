@@ -1,0 +1,130 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3acd6fe57257048db802c1c4c2b75248, type: 3}
+  m_Name: CyberRoomGenerator
+  m_EditorClassIdentifier: 
+  shaderName: CyberRoom
+  shaderReference: {fileID: 4800000, guid: 401b94e76a2bbce479efca7a18c81b5d, type: 3}
+  shaderTemplate: uRaymarching/Deferred/Standard
+  variables:
+  - key: Name
+    value: CyberRoom
+  - key: ObjectShape
+    value: NONE
+  - key: RaymarchingShaderDirectory
+    value: Assets\uRaymarching\Shaders\Include\Legacy
+  - key: RenderType
+    value: Opaque
+  - key: RenderQueue
+    value: Geometry
+  conditions:
+  - key: ShadowCaster
+    value: 0
+  - key: FullScreen
+    value: 1
+  - key: WorldSpace
+    value: 1
+  - key: FollowObjectScale
+    value: 0
+  - key: CameraInsideObject
+    value: 1
+  - key: UseRaymarchingDepth
+    value: 1
+  - key: FallbackToDiffuse
+    value: 0
+  - key: Blend
+    value: 0
+  - key: UseCameraDepthTexture
+    value: 0
+  - key: DisableViewCulling
+    value: 0
+  - key: SphericalHarmonicsPerPixel
+    value: 1
+  - key: UseGrabPass
+    value: 0
+  - key: ForwardAdd
+    value: 0
+  - key: FallbackToStandardShader
+    value: 0
+  blocks:
+  - key: Properties
+    value: "        [Header(World)]\n        _FoldRotate (\"Fold Rotate\", Range(1,
+      20)) = 6\n        [HDR] _EmissionColor (\"Emission Color\", Color) = (1, 1,
+      1, 1)\n        _EmissionY (\"Emission Y\", Float) = 0\n\n        [Header(Gear)]\n       
+      _GearRepeat (\"Gear Repeat\", Vector) = (10, 10, 10, 1)\n        _BoxASize
+      (\"Box A Size\", Vector) = (1, 4, 1, 1)\n        _BoxAMove (\"Box A Move\",
+      Vector) = (1, 1, 1, 1)\n        _BoxBRepeat (\"Box B Repeat\", Range(0, 2))
+      = 0.2\n        _BoxBSize (\"Box B Size\", Vector) = (1, 4, 1, 1)\n        _BoxBMove
+      (\"Box B Move\", Vector) = (1, 1, 1, 1)\n\n        [Header(Pillar)]\n       
+      _PillarRepeat (\"Pillar Repeat\", Vector) = (100, 2, 100, 1)\n        _PillarASize
+      (\"Pillar A Size\", Vector) = (1, 4, 1, 1)\n        _PillarAMove (\"Pillar
+      A Move\", Vector) = (1, 1, 1, 1)"
+    folded: 1
+  - key: DistanceFunction
+    value: "        #define TAU 6.28318530718\n\n        float _Beat;\n        float
+      _AudioSpectrumLevelLength;\n        float _AudioSpectrumLevels[32];\n\n       
+      float sdBox(float3 p, float3 b)\n        {\n            float3 q = abs(p) -
+      b;\n            return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);\n       
+      }\n\n        /*\n        float opSubtraction( float d1, float d2 ) { return
+      max(-d1, d2); }\n\n        float sdCylinder( float3 p, float3 c )\n       
+      {\n            return length(p.xz-c.xy)-c.z;\n        }\n        */\n\n       
+      float2x2 rotate(in float a)\n        {\n            float s = sin(a), c = cos(a);\n           
+      return float2x2(c, s, -s, c);\n        }\n\n        // https://www.shadertoy.com/view/Mlf3Wj\n       
+      float2 foldRotate(in float2 p, in float s)\n        {\n            float a
+      = PI / s - atan2(p.x, p.y);\n            float n = TAU / s;\n            a
+      = floor(a / n) * n;\n            p = mul(rotate(a), p);\n            return
+      p;\n        }\n\n        float opRepLim(float p, float c, float l)\n       
+      {\n            return p - c * clamp(round(p / c), -l, l);\n        }\n\n       
+      float _FoldRotate;\n        float3 _GearRepeat;\n\n        float3 _BoxASize;\n       
+      float3 _BoxAMove;\n\n        float _BoxBRepeat;\n        float3 _BoxBSize;\n       
+      float3 _BoxBMove;\n\n        float3 _PillarRepeat;\n        float3 _PillarASize;\n       
+      float3 _PillarAMove;\n\n        float dGearA(float3 p)\n        {\n           
+      p = Repeat(p, _GearRepeat);\n            p.xz = foldRotate(p.xz, _FoldRotate);\n           
+      p = abs(p);\n            p -= _BoxAMove;\n\n            return sdBox(p, _BoxASize);\n       
+      }\n\n        float dGearB(float3 p)\n        {\n            p = Repeat(p, _GearRepeat);\n           
+      p.xz = foldRotate(p.xz, _FoldRotate);\n            p = abs(p);\n           
+      p -= _BoxAMove;\n            p.y = opRepLim(p.y, _BoxBRepeat, 5);\n           
+      p -= _BoxBMove;\n            \n            return sdBox(p, _BoxBSize);\n       
+      }\n\n        float dGear(float3 p)\n        {\n            float d = dGearA(p);\n           
+      d = min(d, dGearB(p));\n            \n            return d;\n        }\n\n       
+      float dPillar(float3 p)\n        {\n            float z = floor(p.z / _PillarRepeat.z)
+      % 4;\n\n            p = Repeat(p, _PillarRepeat);\n            p.xz = foldRotate(p.xz,
+      _FoldRotate / 2);\n            p = abs(p);\n            p -= _PillarAMove;\n\n           
+      float3 size = _PillarASize;\n            size.xz *= _AudioSpectrumLevels[0]
+      * 20;\n\n            return sdBox(p, size);\n        }\n\n        inline float
+      DistanceFunction(float3 p)\n        {\n            // \u5E8A\n            float
+      d = dGear(p);\n\n            // \u67F1\n            d = min(d, dPillar(p));\n\n           
+      return d;\n        }"
+    folded: 1
+  - key: PostEffect
+    value: "        half4 _EmissionColor;\n        float _EmissionY;\n\n        inline
+      void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)\n        {\n           
+      if (dGearA(ray.endPos) < ray.minDistance)\n            {\n                if((Mod(ray.endPos.y,
+      _GearRepeat.y) - _EmissionY) < 0.2)\n                {\n                   
+      // o.Emission = _EmissionColor * saturate(cos(TAU * _Beat));\n                   
+      o.Emission = _EmissionColor * _AudioSpectrumLevels[0] * 20;\n               
+      }\n            }\n\n            if (dGearB(ray.endPos) < ray.minDistance &&
+      abs(o.Normal.y) < 0.1)\n            {\n                if((Mod(ray.endPos.y,
+      _GearRepeat.y) - frac(_Beat) * _GearRepeat.y) < 0)\n                    //
+      if ((Mod(ray.endPos.y, _GearRepeat.y) - frac(_AudioSpectrumLevels[0] * 5) *
+      _GearRepeat.y) < 0)\n                {\n                    o.Emission = _EmissionColor;\n               
+      }\n            }\n\n            if (dPillar(ray.endPos) < ray.minDistance)\n           
+      {\n                o.Smoothness = 0.95;\n                o.Metallic = 1;\n               
+      o.Occlusion = 0;\n                o.Albedo = half3(1, 1, 1);\n            }\n       
+      }"
+    folded: 1
+  constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
+  basicFolded: 1
+  conditionsFolded: 1
+  variablesFolded: 1
+  materialsFolded: 0
+  constantsFolded: 0
