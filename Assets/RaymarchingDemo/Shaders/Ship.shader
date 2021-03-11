@@ -47,9 +47,18 @@ Shader "Raymarching/Ship"
         #include "Assets\uRaymarching\Shaders\Include\Legacy/Common.cginc"
 
         // @block DistanceFunction
+        #include "Common.cginc"
+
+        float dEngine(float3 p)
+        {
+            p.xz = foldRotate(p.xz, 12);
+            p.z -= 0.4;
+            return sdBox(p, float3(0.1, 1, 0.1));
+        }
+
         inline float DistanceFunction(float3 pos)
         {
-            return Sphere(pos, 0.5);
+            return dEngine(pos);
         }
         // @endblock
 
