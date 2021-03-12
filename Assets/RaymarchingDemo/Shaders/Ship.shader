@@ -36,6 +36,8 @@ Shader "Raymarching/Ship"
 
         #define OBJECT_SHAPE_CUBE
 
+        #define CAMERA_INSIDE_OBJECT
+
         #define USE_RAYMARCHING_DEPTH
 
         #define SPHERICAL_HARMONICS_PER_PIXEL
@@ -51,9 +53,14 @@ Shader "Raymarching/Ship"
 
         float dEngine(float3 p)
         {
+            float3 o = p;
+
             p.xz = foldRotate(p.xz, 12);
-            p.z -= 0.4;
-            return sdBox(p, float3(0.1, 1, 0.1));
+            p.y = opRepLim(p.y, 0.12, 7);
+            //p.zy = mul(rotate(o.y * 0.2), p.zy);
+            //p.xy = mul(rotate(0.1), p.xy);
+            p.z -= cos(abs(o.y * 1.0)) * 0.3 + 0.1;
+            return sdBox(p, float3(0.1, 0.05, 0.02));
         }
 
         inline float DistanceFunction(float3 pos)

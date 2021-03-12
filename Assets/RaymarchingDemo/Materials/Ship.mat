@@ -20,15 +20,18 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _Cull: 2
+    - _Cull: 0
     - _DistanceMultiplier: 1
-    - _Loop: 30
+    - _Glossiness: 0.5
+    - _Loop: 56.9
+    - _Metallic: 0.5
     - _MinDistance: 0.01
     - _NormalDelta: 0.0001
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
     - _ShadowMinDistance: 0.01
     m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Diffuse: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _Specular: {r: 0, g: 0, b: 0, a: 0}

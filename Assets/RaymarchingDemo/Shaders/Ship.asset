@@ -32,7 +32,7 @@ MonoBehaviour:
   - key: FollowObjectScale
     value: 0
   - key: CameraInsideObject
-    value: 0
+    value: 1
   - key: UseRaymarchingDepth
     value: 1
   - key: FallbackToDiffuse
@@ -43,22 +43,24 @@ MonoBehaviour:
     value: 1
   blocks:
   - key: Properties
-    value: // _Color2("Color2", Color) = (1.0, 1.0, 1.0, 1.0)
+    value: '        // _Color2 ("Color2", Color) = (1.0, 1.0, 1.0, 1.0)'
     folded: 0
   - key: DistanceFunction
-    value: "inline float DistanceFunction(float3 pos)\n{\n    return Sphere(pos,
-      0.5);\n}"
+    value: "        #include \"Common.cginc\"\n\n        float dEngine(float3 p)\n       
+      {\n            float3 o = p;\n\n            p.xz = foldRotate(p.xz, 12);\n           
+      p.y = opRepLim(p.y, 0.12, 7);\n            //p.zy = mul(rotate(o.y * 0.2),
+      p.zy);\n            //p.xy = mul(rotate(0.1), p.xy);\n            p.z -= cos(abs(o.y
+      * 1.0)) * 0.3 + 0.1;\n            return sdBox(p, float3(0.1, 0.05, 0.02));\n       
+      }\n\n        inline float DistanceFunction(float3 pos)\n        {\n           
+      return dEngine(pos);\n        }"
     folded: 0
   - key: PostEffect
-    value: 'inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
-
-      {
-
-      }'
+    value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
+      o)\n        {\n            \n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
   basicFolded: 1
   conditionsFolded: 1
-  variablesFolded: 0
+  variablesFolded: 1
   materialsFolded: 0
   constantsFolded: 0
