@@ -48,11 +48,13 @@ MonoBehaviour:
   - key: DistanceFunction
     value: "        #include \"Common.cginc\"\n\n        float dEngine(float3 p)\n       
       {\n            float3 o = p;\n\n            p.xz = foldRotate(p.xz, 12);\n           
-      p.y = opRepLim(p.y, 0.12, 7);\n            //p.zy = mul(rotate(o.y * 0.2),
+      p.y = opRepRange(p.y, 0.12, 0.7);\n            //p.zy = mul(rotate(o.y * 0.2),
       p.zy);\n            //p.xy = mul(rotate(0.1), p.xy);\n            p.z -= cos(abs(o.y
-      * 1.0)) * 0.3 + 0.1;\n            return sdBox(p, float3(0.1, 0.05, 0.02));\n       
-      }\n\n        inline float DistanceFunction(float3 pos)\n        {\n           
-      return dEngine(pos);\n        }"
+      * 1.0)) * 0.3 + 0.1;\n            float d = sdBox(p, float3(0.1, 0.05, 0.02));\n           
+      p.y -= 0.01;\n            // p.z -= 0.02;\n            d = min(d, sdBox(p,
+      float3(0.03, 0.04, 0.05)));\n            return d;\n        }\n\n        inline
+      float DistanceFunction(float3 pos)\n        {\n            return dEngine(pos);\n       
+      }"
     folded: 0
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput

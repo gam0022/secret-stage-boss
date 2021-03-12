@@ -61,9 +61,9 @@ Shader "Raymarching/Ship"
             //p.xy = mul(rotate(0.1), p.xy);
             p.z -= cos(abs(o.y * 1.0)) * 0.3 + 0.1;
             float d = sdBox(p, float3(0.1, 0.05, 0.02));
-            p = abs(p) - float3(0.05, 0.02, 0);
-            p.z -= 0.05;
-            d = min(d, sdBox(p, float3(0.02, 0.005, 0.00)));
+            p.y -= 0.01;
+            // p.z -= 0.02;
+            d = min(d, sdBox(p, float3(0.03, 0.04, 0.05)));
             return d;
         }
 

@@ -23,13 +23,13 @@ Material:
     - _Cull: 0
     - _DistanceMultiplier: 1
     - _Glossiness: 0.5
-    - _Loop: 56.9
+    - _Loop: 36.9
     - _Metallic: 0.5
-    - _MinDistance: 0.01
+    - _MinDistance: 0.001
     - _NormalDelta: 0.0001
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
-    - _ShadowMinDistance: 0.01
+    - _ShadowMinDistance: 0.005
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Diffuse: {r: 1, g: 1, b: 1, a: 1}
