@@ -36,3 +36,8 @@ float opRepLim(float p, float c, float l)
 {
     return p - c * clamp(round(p / c), -l, l);
 }
+
+float opRepRange(float p, float c, float l)
+{
+    return p - c * clamp(round(p / c), -l / c, l / c);
+}

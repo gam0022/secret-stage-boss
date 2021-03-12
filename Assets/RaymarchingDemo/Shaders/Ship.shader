@@ -56,7 +56,7 @@ Shader "Raymarching/Ship"
             float3 o = p;
 
             p.xz = foldRotate(p.xz, 12);
-            p.y = opRepLim(p.y, 0.12, 7);
+            p.y = opRepRange(p.y, 0.12, 1);
             //p.zy = mul(rotate(o.y * 0.2), p.zy);
             //p.xy = mul(rotate(0.1), p.xy);
             p.z -= cos(abs(o.y * 1.0)) * 0.3 + 0.1;
