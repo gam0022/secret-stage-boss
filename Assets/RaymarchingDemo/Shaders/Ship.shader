@@ -55,15 +55,30 @@ Shader "Raymarching/Ship"
         {
             float3 o = p;
 
-            p.xz = foldRotate(p.xz, 12);
+            p.xz = foldRotate(o.xz, 12);
             p.y = opRepRange(p.y, 0.12, 0.7);
-            //p.zy = mul(rotate(o.y * 0.2), p.zy);
-            //p.xy = mul(rotate(0.1), p.xy);
             p.z -= cos(abs(o.y * 1.0)) * 0.3 + 0.1;
+
+            // 周り
             float d = sdBox(p, float3(0.1, 0.05, 0.02));
+
+            // ディテール用
             p.y -= 0.01;
-            // p.z -= 0.02;
             d = min(d, sdBox(p, float3(0.03, 0.04, 0.05)));
+
+            // 芯線みたいの
+            d = min(d, sdCappedCylinder(o, cos(abs(o.y * 1.9)) * 0.2, 0.9));
+
+            p = o;
+            p.y -= 0.65;
+            p.xz = foldRotate(p.xz, 12 * 2);
+            p.z -= 0.18;
+            p.xy = mul(rotate(0.4), p.xy);
+            // d = min(d, sdBox(p, float3(0.03, 0.04, 0.05)));
+            float dFan = sdBox(p, float3(0.02, 0.005, 0.1));
+            d = min(d, dFan);
+            // d = dFan;
+
             return d;
         }
 

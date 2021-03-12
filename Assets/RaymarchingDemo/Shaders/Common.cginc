@@ -6,6 +6,12 @@ float sdBox(float3 p, float3 b)
     return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
 }
 
+float sdCappedCylinder(float3 p, float h, float r)
+{
+    float2 d = abs(float2(length(p.xz), p.y)) - float2(h, r);
+    return min(max(d.x, d.y), 0.0) + length(max(d, 0.0));
+}
+
 float opSubtraction(float d1, float d2)
 {
     return max(-d1, d2);
