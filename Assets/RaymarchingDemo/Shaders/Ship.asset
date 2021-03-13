@@ -66,10 +66,11 @@ MonoBehaviour:
       inline float DistanceFunction(float3 pos)\n        {\n            float3 p
       = pos;\n\n            p.yz = mul(rotate(0.25 * TAU), p.yz);\n            p.xz
       = foldRotate(p.xz, 3);\n\n            float3 p1 = p;\n            p1.z -= 0.9;\n           
-      float d = dEngine(p1);\n\n            float dJoint = sdBox(p, float3(0.1, 0.1,
-      0.6));\n            d = min(d, dJoint);\n\n            // \u30B3\u30AF\u30D4\u30C3\u30C8\n           
-      p.y -= -1.1;\n            float w = clamp(0.2 + p.y * 0.1, 0.0, 0.4);\n           
-      float dBody = sdBox(p, float3(w, 1.7, w));\n            d = min(d, dBody);\n\n           
+      p1.y -= 1.1;\n            float d = dEngine(p1);\n\n            float3 p2 =
+      p;\n            p2.y -= 1.1;\n            float dJoint = sdBox(p2, float3(0.1,
+      0.1, 0.6));\n            d = min(d, dJoint);\n\n            // \u30B3\u30AF\u30D4\u30C3\u30C8\n           
+      float3 p3 = p;\n            float w = clamp(0.2 + p.y * 0.1, 0.0, 0.4);\n           
+      float dBody = sdBox(p3, float3(w, 1.7, w));\n            d = min(d, dBody);\n\n           
       return d;\n        }"
     folded: 0
   - key: PostEffect

@@ -100,15 +100,18 @@ Shader "Raymarching/Ship"
 
             float3 p1 = p;
             p1.z -= 0.9;
+            p1.y -= 1.1;
             float d = dEngine(p1);
 
-            float dJoint = sdBox(p, float3(0.1, 0.1, 0.6));
+            float3 p2 = p;
+            p2.y -= 1.1;
+            float dJoint = sdBox(p2, float3(0.1, 0.1, 0.6));
             d = min(d, dJoint);
 
             // コクピット
-            p.y -= -1.1;
+            float3 p3 = p;
             float w = clamp(0.2 + p.y * 0.1, 0.0, 0.4);
-            float dBody = sdBox(p, float3(w, 1.7, w));
+            float dBody = sdBox(p3, float3(w, 1.7, w));
             d = min(d, dBody);
 
             return d;
