@@ -55,20 +55,24 @@ Shader "Raymarching/Ship"
         {
             float3 o = p;
 
+            // 細かい枠
             p.xz = foldRotate(o.xz, 12);
-            p.y = opRepRange(p.y, 0.12, 0.7);
+            p.y -= 0.3 * abs(p.x);
+            p.y = opRepRange(p.y, 0.03, 0.7);
             p.z -= cos(abs(o.y * 1.0)) * 0.3 + 0.1;
+            float d = sdBox(p, float3(0.1, 0.01, 0.02));
 
-            // 周り
-            float d = sdBox(p, float3(0.1, 0.05, 0.02));
+            // 太い枠
+            p = o;
+            p.xz = foldRotate(o.xz, 6);
+            //p.y = opRepRange(p.y, 0.7, 0.5);
+            p.z -= cos(abs(o.y * 1.0)) * 0.3 + 0.1;
+            d = min(d, sdBox(p, float3(0.08 - 0.03 * abs(p.y), 0.75, 0.05)));
 
-            // ディテール用
-            p.y -= 0.01;
-            d = min(d, sdBox(p, float3(0.03, 0.04, 0.05)));
-
-            // 芯線みたいの
+            // 芯線
             d = min(d, sdCappedCylinder(o, cos(abs(1.9 * o.y)) * 0.2, 0.9));
 
+            // Fan
             p = o;
             p.y -= 0.65;
             p.xz = mul(rotate(_Beat), p.xz);
@@ -77,7 +81,6 @@ Shader "Raymarching/Ship"
             p.xy = mul(rotate(0.3 + 2 * p.z), p.xy);
             float dFan = sdBox(p, float3(0.02, 0.002, 0.1)) * 0.7;
             d = min(d, dFan);
-            // d = dFan;
 
             return d;
         }
