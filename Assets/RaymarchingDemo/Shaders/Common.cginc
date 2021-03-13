@@ -1,4 +1,5 @@
 #define TAU 6.28318530718
+float _Beat;
 
 float sdBox(float3 p, float3 b)
 {

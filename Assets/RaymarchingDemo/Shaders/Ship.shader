@@ -67,15 +67,15 @@ Shader "Raymarching/Ship"
             d = min(d, sdBox(p, float3(0.03, 0.04, 0.05)));
 
             // 芯線みたいの
-            d = min(d, sdCappedCylinder(o, cos(abs(o.y * 1.9)) * 0.2, 0.9));
+            d = min(d, sdCappedCylinder(o, cos(abs(1.9 * o.y)) * 0.2, 0.9));
 
             p = o;
             p.y -= 0.65;
+            p.xz = mul(rotate(_Beat), p.xz);
             p.xz = foldRotate(p.xz, 12 * 2);
             p.z -= 0.18;
-            p.xy = mul(rotate(0.4), p.xy);
-            // d = min(d, sdBox(p, float3(0.03, 0.04, 0.05)));
-            float dFan = sdBox(p, float3(0.02, 0.005, 0.1));
+            p.xy = mul(rotate(0.3 + 2 * p.z), p.xy);
+            float dFan = sdBox(p, float3(0.02, 0.002, 0.1)) * 0.7;
             d = min(d, dFan);
             // d = dFan;
 

@@ -47,14 +47,19 @@ MonoBehaviour:
     folded: 0
   - key: DistanceFunction
     value: "        #include \"Common.cginc\"\n\n        float dEngine(float3 p)\n       
-      {\n            float3 o = p;\n\n            p.xz = foldRotate(p.xz, 12);\n           
-      p.y = opRepRange(p.y, 0.12, 0.7);\n            //p.zy = mul(rotate(o.y * 0.2),
-      p.zy);\n            //p.xy = mul(rotate(0.1), p.xy);\n            p.z -= cos(abs(o.y
-      * 1.0)) * 0.3 + 0.1;\n            float d = sdBox(p, float3(0.1, 0.05, 0.02));\n           
-      p.y -= 0.01;\n            // p.z -= 0.02;\n            d = min(d, sdBox(p,
-      float3(0.03, 0.04, 0.05)));\n            return d;\n        }\n\n        inline
-      float DistanceFunction(float3 pos)\n        {\n            return dEngine(pos);\n       
-      }"
+      {\n            float3 o = p;\n\n            p.xz = foldRotate(o.xz, 12);\n           
+      p.y = opRepRange(p.y, 0.12, 0.7);\n            p.z -= cos(abs(o.y * 1.0)) *
+      0.3 + 0.1;\n\n            // \u5468\u308A\n            float d = sdBox(p, float3(0.1,
+      0.05, 0.02));\n\n            // \u30C7\u30A3\u30C6\u30FC\u30EB\u7528\n           
+      p.y -= 0.01;\n            d = min(d, sdBox(p, float3(0.03, 0.04, 0.05)));\n\n           
+      // \u82AF\u7DDA\u307F\u305F\u3044\u306E\n            d = min(d, sdCappedCylinder(o,
+      cos(abs(1.9 * o.y)) * 0.2, 0.9));\n\n            p = o;\n            p.y -=
+      0.65;\n            p.xz = foldRotate(p.xz, 12 * 2);\n            p.z -= 0.18;\n           
+      p.xy = mul(rotate(0.3 + 2 * p.z), p.xy);\n            // d = min(d, sdBox(p,
+      float3(0.03, 0.04, 0.05)));\n            float dFan = sdBox(p, float3(0.05
+      * cos(5 * abs(p.z + 0.2)), 0.002, 0.1)) * 0.7;\n            d = min(d, dFan);\n           
+      // d = dFan;\n\n            return d;\n        }\n\n        inline float DistanceFunction(float3
+      pos)\n        {\n            return dEngine(pos);\n        }"
     folded: 0
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
