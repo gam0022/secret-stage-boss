@@ -93,7 +93,25 @@ Shader "Raymarching/Ship"
 
         inline float DistanceFunction(float3 pos)
         {
-            return dEngine(pos);
+            float3 p = pos;
+
+            p.yz = mul(rotate(0.25 * TAU), p.yz);
+            p.xz = foldRotate(p.xz, 3);
+
+            float3 p1 = p;
+            p1.z -= 0.9;
+            float d = dEngine(p1);
+
+            float dJoint = sdBox(p, float3(0.1, 0.1, 0.6));
+            d = min(d, dJoint);
+
+            // コクピット
+            p.y -= -1.1;
+            float w = clamp(0.2 + p.y * 0.1, 0.0, 0.4);
+            float dBody = sdBox(p, float3(w, 1.7, w));
+            d = min(d, dBody);
+
+            return d;
         }
         // @endblock
 
