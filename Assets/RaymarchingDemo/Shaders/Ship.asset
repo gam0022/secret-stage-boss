@@ -49,19 +49,22 @@ MonoBehaviour:
     value: "        #include \"Common.cginc\"\n\n        float dEngine(float3 p)\n       
       {\n            float3 o = p;\n\n            // \u7D30\u304B\u3044\u67A0\n           
       p.xz = foldRotate(o.xz, 12);\n            p.y -= 0.3 * abs(p.x);\n           
-      p.y = opRepRange(p.y, 0.03, 0.7);\n            p.z -= cos(abs(o.y * 1.0)) *
-      0.3 + 0.1;\n            float d = sdBox(p, float3(0.1, 0.01, 0.02));\n\n           
-      // \u592A\u3044\u67A0\n            p = o;\n            p.xz = foldRotate(o.xz,
-      6);\n            //p.y = opRepRange(p.y, 0.7, 0.5);\n            p.z -= cos(abs(o.y
-      * 1.0)) * 0.3 + 0.1;\n            d = min(d, sdBox(p, float3(0.08 - 0.03 *
-      abs(p.y), 0.75, 0.05)));\n\n            // \u82AF\u7DDA\n            d = min(d,
-      sdCappedCylinder(o, cos(abs(1.9 * o.y)) * 0.2, 0.9));\n\n            // Fan\n           
-      p = o;\n            p.y -= 0.65;\n            p.xz = mul(rotate(_Beat), p.xz);\n           
-      p.xz = foldRotate(p.xz, 12 * 2);\n            p.z -= 0.18;\n            p.xy
-      = mul(rotate(0.3 + 2 * p.z), p.xy);\n            float dFan = sdBox(p, float3(0.02,
-      0.002, 0.1)) * 0.7;\n            d = min(d, dFan);\n\n            return d;\n       
-      }\n\n        inline float DistanceFunction(float3 pos)\n        {\n           
-      return dEngine(pos);\n        }"
+      p.y = opRepRange(p.y, 0.03, 0.7);\n            p.z -= cos((o.y - 0.8) * 1.0)
+      * 0.3 + 0.1;\n            float d = sdBox(p, float3(0.1, 0.01, 0.02));\n\n           
+      // \u592A\u3044\u67A0\u30FB\u7E26\n            p = o;\n            p.xz = foldRotate(o.xz,
+      6);\n            p.z -= cos((o.y - 0.8) * 1.0) * 0.3 + 0.1;\n            d
+      = min(d, sdBox(p, float3(0.1 + 0.04 * (p.y - 1.0), 0.75, 0.05)));\n\n           
+      // \u592A\u3044\u67A0\u30FB\u6A2A\n            p = o;\n            p.xz = foldRotate(o.xz,
+      6);\n            p.y = opRepRange(p.y, 0.24, 0.7);\n            p.z -= cos((o.y
+      - 0.8) * 1.0) * 0.3 + 0.15;\n            d = min(d, sdBox(p, float3(0.3, 0.03,
+      0.02)));\n\n            // \u82AF\u7DDA\n            d = min(d, sdCappedCylinder(o,
+      cos(abs(1.9 * o.y)) * 0.2, 0.9));\n\n            // Fan\n            p = o;\n           
+      p.y -= 0.65;\n            p.xz = mul(rotate(_Beat), p.xz);\n            p.xz
+      = foldRotate(p.xz, 12 * 2);\n            p.z -= 0.18;\n            p.xy = mul(rotate(0.3
+      + 2 * p.z), p.xy);\n            float dFan = sdBox(p, float3(0.02, 0.002, 0.1))
+      * 0.7;\n            d = min(d, dFan);\n\n            return d;\n        }\n\n       
+      inline float DistanceFunction(float3 pos)\n        {\n            return dEngine(pos);\n       
+      }"
     folded: 0
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
