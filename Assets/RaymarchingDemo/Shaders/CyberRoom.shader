@@ -79,15 +79,6 @@ Shader "Raymarching/CyberRoom"
             return length(max(q, 0.0)) + min(max(q.x, max(q.y, q.z)), 0.0);
         }
 
-        /*
-        float opSubtraction( float d1, float d2 ) { return max(-d1, d2); }
-
-        float sdCylinder( float3 p, float3 c )
-        {
-            return length(p.xz-c.xy)-c.z;
-        }
-        */
-
         float2x2 rotate(in float a)
         {
             float s = sin(a), c = cos(a);
@@ -188,7 +179,7 @@ Shader "Raymarching/CyberRoom"
         {
             if (dGearA(ray.endPos) < ray.minDistance)
             {
-                if((Mod(ray.endPos.y, _GearRepeat.y) - _EmissionY) < 0.2)
+                if ((Mod(ray.endPos.y, _GearRepeat.y) - _EmissionY) < 0.2)
                 {
                     // o.Emission = _EmissionColor * saturate(cos(TAU * _Beat));
                     o.Emission = _EmissionColor * _AudioSpectrumLevels[0] * 20;
@@ -197,7 +188,7 @@ Shader "Raymarching/CyberRoom"
 
             if (dGearB(ray.endPos) < ray.minDistance && abs(o.Normal.y) < 0.1)
             {
-                if((Mod(ray.endPos.y, _GearRepeat.y) - frac(_Beat) * _GearRepeat.y) < 0)
+                if ((Mod(ray.endPos.y, _GearRepeat.y) - frac(_Beat) * _GearRepeat.y) < 0)
                     // if ((Mod(ray.endPos.y, _GearRepeat.y) - frac(_AudioSpectrumLevels[0] * 5) * _GearRepeat.y) < 0)
                 {
                     o.Emission = _EmissionColor;

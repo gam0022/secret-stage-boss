@@ -1,12 +1,12 @@
-﻿using UnityEditor;
-using UnityEngine;
-using System;
+﻿using System;
 using System.IO;
+using UnityEditor;
+using UnityEngine;
 
 public static class RaymarchingQuadMeshCreator
 {
     static readonly string outputPath = "Assets/Demoscene/Resources/Meshes/RaymarchingQuad.mesh";
-    const int expandBounds = 10000;
+    const int expandBounds = 100000;
 
     [MenuItem("Tools/CreateRaymarchingQuadMesh")]
     static void CreateRaymarchingQuadMesh()
@@ -42,6 +42,7 @@ public static class RaymarchingQuadMeshCreator
         if (oldAsset)
         {
             // Update Asset
+            oldAsset.Clear();// Meshアセット更新の直前に Clear() が必要です
             EditorUtility.CopySerialized(mesh, oldAsset);
             AssetDatabase.SaveAssets();
         }
