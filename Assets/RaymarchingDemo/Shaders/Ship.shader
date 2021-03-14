@@ -13,15 +13,15 @@ Shader "Raymarching/Ship"
 
         [Header(Raymarching)]
         _Loop ("Loop", Range(1, 100)) = 30
-        _MinDistance ("Minimum Distance", Range(0.001, 0.1)) = 0.01
+        _MinDistance ("Minimum Distance", Range(0.001, 0.1)) = 0.001
         _DistanceMultiplier ("Distance Multiplier", Range(0.001, 2.0)) = 1.0
         _ShadowLoop ("Shadow Loop", Range(1, 100)) = 10
-        _ShadowMinDistance ("Shadow Minimum Distance", Range(0.001, 0.1)) = 0.01
+        _ShadowMinDistance ("Shadow Minimum Distance", Range(0.001, 0.1)) = 0.005
         _ShadowExtraBias ("Shadow Extra Bias", Range(0.0, 0.1)) = 0.01
         [PowerSlider(10.0)] _NormalDelta ("NormalDelta", Range(0.00001, 0.1)) = 0.0001
 
         // @block Properties
-        // _Color2 ("Color2", Color) = (1.0, 1.0, 1.0, 1.0)
+        [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
         // @endblock
     }
 
@@ -50,6 +50,8 @@ Shader "Raymarching/Ship"
 
         // @block DistanceFunction
         #include "Common.cginc"
+
+        float4 _EmissionColor;
 
         float dEngine(float3 pos)
         {
@@ -81,7 +83,6 @@ Shader "Raymarching/Ship"
 
             // コンプレッサー・タービン
             p = pos;
-            // p.y -= 0.65;
             p.y = opRepRange(p.y, 0.15, 0.7);
             p.xz = mul(rotate(_Beat), p.xz);
             p.xz = foldRotate(p.xz, 12 * 2);
@@ -93,6 +94,14 @@ Shader "Raymarching/Ship"
             return d;
         }
 
+        float dEngines(float3 pos)
+        {
+            float3 p1 = pos;
+            p1.z -= 0.9;
+            p1.y -= -1.1;
+            return dEngine(p1);
+        }
+
         inline float DistanceFunction(float3 pos)
         {
             float3 p = pos;
@@ -100,10 +109,7 @@ Shader "Raymarching/Ship"
             p.xz = foldRotate(p.xz, 3);
 
             // エンジン
-            float3 p1 = p;
-            p1.z -= 0.9;
-            p1.y -= -1.1;
-            float d = dEngine(p1);
+            float d = dEngines(p);
 
             // ジョイント
             float3 p2 = p;
@@ -125,7 +131,21 @@ Shader "Raymarching/Ship"
         // @block PostEffect
         inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
         {
+            float3 p = ToLocal(ray.endPos) * GetScale();
+
+            p.xz = foldRotate(p.xz, 3);
             
+            if (dEngines(p) < 0.1)
+            {
+                o.Emission = _EmissionColor;
+            }
+            else
+            {
+                //o.Smoothness = 0.95;
+                //o.Metallic = 1;
+                //o.Occlusion = 0;
+                //o.Albedo = half3(1, 1, 1);
+            }
         }
         // @endblock
         
