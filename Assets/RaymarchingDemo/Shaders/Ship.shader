@@ -51,37 +51,38 @@ Shader "Raymarching/Ship"
         // @block DistanceFunction
         #include "Common.cginc"
 
-        float dEngine(float3 p)
+        float dEngine(float3 pos)
         {
-            float3 o = p;
-            float r = cos((o.y + 0.3) * 1.0) * 0.3;
+            float3 p = pos;
+            float r = cos((pos.y + 0.3) * 1.0) * 0.3;
 
             // 細かい枠
-            p.xz = foldRotate(o.xz, 12);
+            p.xz = foldRotate(pos.xz, 12);
             p.y -= 0.3 * abs(p.x);
             p.y = opRepRange(p.y, 0.03, 0.7);
             p.z -= r + 0.1;
             float d = sdBox(p, float3(0.1, 0.01, 0.02));
 
             // 太い枠・縦
-            p = o;
-            p.xz = foldRotate(o.xz, 6);
+            p = pos;
+            p.xz = foldRotate(pos.xz, 6);
             p.z -= r + 0.1;
             d = min(d, sdBox(p, float3(0.1 + 0.04 * (p.y - 1.0), 0.75, 0.05)));
 
             // 太い枠・横
-            p = o;
-            p.xz = foldRotate(o.xz, 6);
+            p = pos;
+            p.xz = foldRotate(pos.xz, 6);
             p.y = opRepRange(p.y, 0.24, 0.7);
             p.z -= r + 0.15;
             d = min(d, sdBox(p, float3(0.3, 0.03, 0.02)));
 
             // 芯線
-            d = min(d, sdCappedCylinder(o, cos(abs(1.9 * o.y)) * 0.2, 0.9));
+            d = min(d, sdCappedCylinder(pos, cos(abs(1.9 * pos.y)) * 0.2, 0.9));
 
-            // Fan
-            p = o;
-            p.y -= 0.65;
+            // コンプレッサー・タービン
+            p = pos;
+            // p.y -= 0.65;
+            p.y = opRepRange(p.y, 0.15, 0.7);
             p.xz = mul(rotate(_Beat), p.xz);
             p.xz = foldRotate(p.xz, 12 * 2);
             p.z -= 0.18;
