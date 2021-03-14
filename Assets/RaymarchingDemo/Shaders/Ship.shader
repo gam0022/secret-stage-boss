@@ -98,11 +98,13 @@ Shader "Raymarching/Ship"
 
             p.xz = foldRotate(p.xz, 3);
 
+            // エンジン
             float3 p1 = p;
             p1.z -= 0.9;
             p1.y -= -1.1;
             float d = dEngine(p1);
 
+            // ジョイント
             float3 p2 = p;
             p2.y -= -1.4;
             float dJoint = sdBox(p2, float3(0.1, 0.1, 0.6));
