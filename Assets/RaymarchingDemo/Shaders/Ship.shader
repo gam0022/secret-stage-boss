@@ -54,7 +54,7 @@ Shader "Raymarching/Ship"
         float dEngine(float3 p)
         {
             float3 o = p;
-            float r = cos((o.y - 0.3) * 1.0) * 0.3;
+            float r = cos((o.y + 0.3) * 1.0) * 0.3;
 
             // 細かい枠
             p.xz = foldRotate(o.xz, 12);
@@ -96,23 +96,23 @@ Shader "Raymarching/Ship"
         {
             float3 p = pos;
 
-            // p.yz = mul(rotate(0.25 * TAU), p.yz);
             p.xz = foldRotate(p.xz, 3);
 
             float3 p1 = p;
             p1.z -= 0.9;
-            p1.y -= 1.1;
+            p1.y -= -1.1;
             float d = dEngine(p1);
 
             float3 p2 = p;
-            p2.y -= 1.4;
+            p2.y -= -1.4;
             float dJoint = sdBox(p2, float3(0.1, 0.1, 0.6));
             d = min(d, dJoint);
 
             // コクピット
             float3 p3 = p;
-            float w = clamp(0.2 + p.y * 0.1, 0.0, 0.4);
-            float dBody = sdBox(p3, float3(w, 1.7, w));
+            float bodyLength = 1.7;
+            float bodyWidth = 0.3 * abs(cos((p.y + bodyLength) * TAU / bodyLength / 8));
+            float dBody = sdBox(p3, float3(bodyWidth, bodyLength, bodyWidth));
             d = min(d, dBody);
 
             return d;
