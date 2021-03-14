@@ -54,25 +54,26 @@ Shader "Raymarching/Ship"
         float dEngine(float3 p)
         {
             float3 o = p;
+            float r = cos((o.y - 0.3) * 1.0) * 0.3;
 
             // 細かい枠
             p.xz = foldRotate(o.xz, 12);
             p.y -= 0.3 * abs(p.x);
             p.y = opRepRange(p.y, 0.03, 0.7);
-            p.z -= cos((o.y - 0.8) * 1.0) * 0.3 + 0.1;
+            p.z -= r + 0.1;
             float d = sdBox(p, float3(0.1, 0.01, 0.02));
 
             // 太い枠・縦
             p = o;
             p.xz = foldRotate(o.xz, 6);
-            p.z -= cos((o.y - 0.8) * 1.0) * 0.3 + 0.1;
+            p.z -= r + 0.1;
             d = min(d, sdBox(p, float3(0.1 + 0.04 * (p.y - 1.0), 0.75, 0.05)));
 
             // 太い枠・横
             p = o;
             p.xz = foldRotate(o.xz, 6);
             p.y = opRepRange(p.y, 0.24, 0.7);
-            p.z -= cos((o.y - 0.8) * 1.0) * 0.3 + 0.15;
+            p.z -= r + 0.15;
             d = min(d, sdBox(p, float3(0.3, 0.03, 0.02)));
 
             // 芯線
@@ -95,7 +96,7 @@ Shader "Raymarching/Ship"
         {
             float3 p = pos;
 
-            p.yz = mul(rotate(0.25 * TAU), p.yz);
+            // p.yz = mul(rotate(0.25 * TAU), p.yz);
             p.xz = foldRotate(p.xz, 3);
 
             float3 p1 = p;
@@ -104,7 +105,7 @@ Shader "Raymarching/Ship"
             float d = dEngine(p1);
 
             float3 p2 = p;
-            p2.y -= 1.1;
+            p2.y -= 1.4;
             float dJoint = sdBox(p2, float3(0.1, 0.1, 0.6));
             d = min(d, dJoint);
 
