@@ -22,9 +22,9 @@ Material:
     m_Floats:
     - _Cull: 0
     - _DistanceMultiplier: 1
-    - _Glossiness: 0.5
+    - _Glossiness: 0.363
     - _Loop: 100
-    - _Metallic: 0.5
+    - _Metallic: 1
     - _MinDistance: 0.001
     - _NormalDelta: 0.0001
     - _ShadowExtraBias: 0.01
@@ -34,6 +34,7 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Diffuse: {r: 1, g: 1, b: 1, a: 1}
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 7.3772106, g: 0, b: 1.6412735, a: 1}
+    - _EmissionColor: {r: 0.2973102, g: 1.7207954, b: 0, a: 1}
+    - _EmissionColorB: {r: 0, g: 1.1721917, b: 6.498019, a: 1}
     - _Specular: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

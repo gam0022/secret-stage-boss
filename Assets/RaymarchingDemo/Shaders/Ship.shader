@@ -22,6 +22,7 @@ Shader "Raymarching/Ship"
 
         // @block Properties
         [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
+        [HDR] _EmissionColorB ("Emission Color B", Color) = (1, 1, 1, 1)
         // @endblock
     }
 
@@ -52,8 +53,18 @@ Shader "Raymarching/Ship"
         #include "Common.cginc"
 
         float4 _EmissionColor;
+        float4 _EmissionColorB;
 
-        float dEngine(float3 pos)
+        #define MAT_ENGINE_BODY_A   1
+        #define MAT_ENGINE_DETAIL_A 2
+        #define MAT_ENGINE_DETAIL_B 3
+        #define MAT_ENGINE_CORE     4
+        #define MAT_ENGINE_FAN      5
+
+        #define MAT_BODY_A          6
+        #define MAT_JOINT_A         7
+
+        float2 dEngine(float3 pos)
         {
             float3 p = pos;
             float r = cos((pos.y + 0.3) * 1.0) * 0.3;
@@ -63,23 +74,23 @@ Shader "Raymarching/Ship"
             p.y -= 0.3 * abs(p.x);
             p.y = opRepRange(p.y, 0.03, 0.7);
             p.z -= r + 0.1;
-            float d = sdBox(p, float3(0.1, 0.01, 0.02));
+            float2 res = float2(sdBox(p, float3(0.1, 0.01, 0.02)), MAT_ENGINE_BODY_A);
 
             // 太い枠・縦
             p = pos;
             p.xz = foldRotate(pos.xz, 6);
             p.z -= r + 0.1;
-            d = min(d, sdBox(p, float3(0.1 + 0.04 * (p.y - 1.0), 0.75, 0.05)));
+            res = opU(res, float2(sdBox(p, float3(0.1 + 0.04 * (p.y - 1.0), 0.75, 0.05)), MAT_ENGINE_DETAIL_A));
 
             // 太い枠・横
             p = pos;
             p.xz = foldRotate(pos.xz, 6);
             p.y = opRepRange(p.y, 0.24, 0.7);
             p.z -= r + 0.15;
-            d = min(d, sdBox(p, float3(0.3, 0.03, 0.02)));
+            res = opU(res, float2(sdBox(p, float3(0.3, 0.03, 0.02)), MAT_ENGINE_DETAIL_B));
 
             // 芯線
-            d = min(d, sdCappedCylinder(pos, cos(abs(1.9 * pos.y)) * 0.2, 0.9));
+            res = opU(res, float2(sdCappedCylinder(pos, cos(abs(1.9 * pos.y)) * 0.2, 0.9), MAT_ENGINE_CORE));
 
             // コンプレッサー・タービン
             p = pos;
@@ -89,42 +100,65 @@ Shader "Raymarching/Ship"
             p.z -= 0.18;
             p.xy = mul(rotate(0.3 + 2 * p.z), p.xy);
             float dFan = sdBox(p, float3(0.02, 0.002, 0.1)) * 0.7;
-            d = min(d, dFan);
+            res = opU(res, float2(dFan, MAT_ENGINE_FAN));
 
-            return d;
+            return res;
         }
 
-        float dEngines(float3 pos)
+        float2 dBody(float3 pos)
         {
-            float3 p1 = pos;
-            p1.z -= 0.9;
-            p1.y -= -1.1;
-            return dEngine(p1);
+            float3 p = pos;
+
+            float bodyLength = 1.7;
+            float bodyWidth = 0.3 * abs(cos((p.y + bodyLength) * TAU / bodyLength / 8));
+            float dBody = sdBox(p, float3(bodyWidth * 0.1, bodyLength, bodyWidth * 0.1));
+            float2 res = float2(dBody, MAT_BODY_A);
+
+            p.y -= 0.5 * abs(p.x);
+            p.z -= bodyWidth + 0.01;
+            p.y = opRepRange(p.y, 0.3, bodyLength);
+
+            for (int i = 0; i < 5; i++)
+            {
+                p.xy = abs(p.xy);
+                p.xy = mul(rotate(0.3), p.xy);
+                p.xz = mul(rotate(-0.1), p.xz);
+                p *= 0.9;
+            }
+
+            res = opU(res, float2(sdBox(p, float3(bodyWidth + 0.06, 0.006, 0.006)), MAT_ENGINE_DETAIL_A));
+
+            return res;
         }
 
-        inline float DistanceFunction(float3 pos)
+        float2 map(float3 pos)
         {
             float3 p = pos;
 
             p.xz = foldRotate(p.xz, 3);
 
             // エンジン
-            float d = dEngines(p);
+            float3 p1 = p;
+            p1.z -= 0.9;
+            p1.y -= -1.1;
+            float2 res = dEngine(p1);
 
             // ジョイント
             float3 p2 = p;
             p2.y -= -1.4;
             float dJoint = sdBox(p2, float3(0.1, 0.1, 0.6));
-            d = min(d, dJoint);
+            res = opU(res, float2(dJoint, MAT_JOINT_A));
 
-            // コクピット
-            float3 p3 = p;
-            float bodyLength = 1.7;
-            float bodyWidth = 0.3 * abs(cos((p.y + bodyLength) * TAU / bodyLength / 8));
-            float dBody = sdBox(p3, float3(bodyWidth, bodyLength, bodyWidth));
-            d = min(d, dBody);
+            // Body
+            res = opU(res, dBody(p));
 
-            return d;
+            return res;
+        }
+
+        inline float DistanceFunction(float3 pos)
+        {
+            float2 res = map(pos);
+            return res.x;
         }
         // @endblock
 
@@ -132,19 +166,35 @@ Shader "Raymarching/Ship"
         inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
         {
             float3 p = ToLocal(ray.endPos) * GetScale();
+            float2 res = map(p);
 
-            p.xz = foldRotate(p.xz, 3);
-            
-            if (dEngines(p) < 0.1)
+            if (res.y >= MAT_ENGINE_BODY_A && res.y <= MAT_ENGINE_FAN)
             {
-                o.Emission = _EmissionColor;
+                // 中身だけ光らせる
+                float3 p1 = p;
+                p1.xz = foldRotate(p.xz, 3);
+                p1.z -= 0.9;
+                p1.y -= -1.1;
+                float l = length(p1.xz);
+                float r = cos((p1.y + 0.3) * 1.0) * 0.3;
+
+                if (l < r + 0.1)
+                {
+                    o.Emission = _EmissionColor * (0.2 + 30 * _AudioSpectrumLevels[1]);
+                }
+
+                // 一部だけ光らせる
+                if (res.y == MAT_ENGINE_DETAIL_A)
+                {
+                    o.Emission = _EmissionColorB * 20 * _AudioSpectrumLevels[0];
+                }
             }
             else
             {
-                //o.Smoothness = 0.95;
-                //o.Metallic = 1;
-                //o.Occlusion = 0;
-                //o.Albedo = half3(1, 1, 1);
+                o.Smoothness = 0.95;
+                o.Metallic = 1;
+                o.Occlusion = 0;
+                o.Albedo = half3(1, 1, 1);
             }
         }
         // @endblock

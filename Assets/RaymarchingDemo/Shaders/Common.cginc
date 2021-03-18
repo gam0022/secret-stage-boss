@@ -1,5 +1,13 @@
 #define TAU 6.28318530718
+
 float _Beat;
+float _AudioSpectrumLevelLength;
+float _AudioSpectrumLevels[32];
+
+float2 opU(float2 d1, float2 d2)
+{
+    return(d1.x < d2.x) ? d1: d2;
+}
 
 float sdBox(float3 p, float3 b)
 {
