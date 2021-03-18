@@ -22,7 +22,7 @@ Material:
     m_Floats:
     - _Cull: 0
     - _DistanceMultiplier: 1
-    - _Glossiness: 0.363
+    - _Glossiness: 0.262
     - _Loop: 100
     - _Metallic: 1
     - _MinDistance: 0.001
