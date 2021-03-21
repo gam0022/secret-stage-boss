@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e6292b2c06870d4495f009f912b9600, type: 3}
-  m_Name: CM A1-1-1 Profile
+  m_Name: CM A1-Fan-1 Profile
   m_EditorClassIdentifier: 
   settings:
   - {fileID: 7437726910801432155}
@@ -32,13 +32,13 @@ MonoBehaviour:
     value: 1
   focusDistance:
     overrideState: 1
-    value: 1.6
+    value: 1.03
   aperture:
     overrideState: 1
-    value: 7
+    value: 2
   focalLength:
     overrideState: 1
-    value: 50
+    value: 49
   kernelSize:
     overrideState: 1
     value: 1
