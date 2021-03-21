@@ -24,12 +24,12 @@ Material:
     - _Cull: 2
     - _DistanceMultiplier: 1
     - _EmissionY: 0
-    - _EvilScale: 1.018
+    - _EvilScale: 0.974
     - _FoldRotate: 6.34
-    - _Glossiness: 0.925
+    - _Glossiness: 0.801
     - _IfsLoop: 4
     - _Loop: 100
-    - _Metallic: 0.925
+    - _Metallic: 1
     - _MinDistance: 0.001
     - _NormalDelta: 0.0001
     - _RotateXY1: 0.88
@@ -40,8 +40,8 @@ Material:
     - _BoxASize: {r: 1, g: 4, b: 1, a: 1}
     - _BoxBMove: {r: 1, g: 1, b: 1, a: 1}
     - _BoxBSize: {r: 1, g: 4, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0.5707547, g: 0.8963095, b: 1, a: 1}
+    - _Color: {r: 0.31163225, g: 0.4433962, b: 0.44134197, a: 1}
+    - _EmissionColor: {r: 11.447212, g: 0.98760265, b: 0.80803853, a: 1}
     - _EvilBoxSize: {r: 7.24, g: 0.14, b: 0.38, a: 1}
     - _EvilOffset: {r: 1.08, g: 4.51, b: 0.16, a: 1}
     - _EvilRepeat: {r: 30, g: 40, b: 40, a: 1}

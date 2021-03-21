@@ -70,20 +70,42 @@ MonoBehaviour:
     value: "        #include \"Common.cginc\"\n\n        float3 _EvilRepeat;\n       
       float _IfsLoop;\n        float4 _EvilOffset;\n        float _RotateXY1;\n       
       float _RotateXZ1;\n        float _RotateYZ1;\n        float3 _EvilBoxSize;\n       
-      float _EvilScale;\n\n        inline float DistanceFunction(float3 pos)\n       
-      {\n            float4 p = float4(pos, 1);\n            p.xyz = Repeat(p.xyz,
-      _EvilRepeat);\n            \n            for (int i = 0; i < _IfsLoop; i++)\n           
-      {\n                // p -= _EvilOffset;\n                p.xyz = abs(p.xyz);\n               
-      p.xyz -= _EvilOffset;\n                p.xy = mul(rotate(_RotateXY1), p.xy);\n               
-      p.xz = mul(rotate(_RotateXZ1), p.xz);\n                p.yz = mul(rotate(_RotateYZ1),
-      p.yz);\n                p *= _EvilScale;\n            }\n\n            float3
-      size = _EvilBoxSize;\n            // size.x += _AudioSpectrumLevels[0] * 50;\n           
-      float d = sdBox(p.xyz, size) / abs(p.w);\n\n            return d;\n       
-      }"
+      float _EvilScale;\n        float4 _EmissionColor;\n\n        inline float DistanceFunction(float3
+      pos)\n        {\n            float4 p = float4(pos, 1);\n            p.xyz
+      = Repeat(p.xyz, _EvilRepeat);\n\n            for (int i = 0; i < _IfsLoop;
+      i++)\n            {\n                // p -= _EvilOffset;\n               
+      p.xyz = abs(p.xyz);\n                p.xyz -= _EvilOffset;\n               
+      p.xy = mul(rotate(_RotateXY1), p.xy);\n                p.xz = mul(rotate(_RotateXZ1),
+      p.xz);\n                p.yz = mul(rotate(_RotateYZ1), p.yz);\n               
+      p *= _EvilScale;\n            }\n\n            float3 size = _EvilBoxSize;\n           
+      // size.x += _AudioSpectrumLevels[0] * 50;\n            float d = sdBox(p.xyz,
+      size) / abs(p.w);\n\n            return d;\n        }"
     folded: 0
   - key: PostEffect
-    value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
-      o)\n        {\n            \n        }"
+    value: "        #define map DistanceFunction\n\n        // https://www.shadertoy.com/view/lttGDn\n       
+      float calcEdge(float3 p)\n        {\n            float edge = 0.0;\n           
+      float2 e = float2(.1, 0);\n\n            // Take some distance function measurements
+      from either side of the hit point on all three axes.\n            float d1
+      = map(p + e.xyy), d2 = map(p - e.xyy);\n            float d3 = map(p + e.yxy),
+      d4 = map(p - e.yxy);\n            float d5 = map(p + e.yyx), d6 = map(p - e.yyx);\n           
+      float d = map(p) * 2.;\t// The hit point itself - Doubled to cut down on calculations.
+      See below.\n\n            // Edges - Take a geometry measurement from either
+      side of the hit point. Average them, then see how\n            // much the
+      value differs from the hit point itself. Do this for X, Y and Z directions.
+      Here, the sum\n            // is used for the overall difference, but there
+      are other ways. Note that it's mainly sharp surface\n            // curves
+      that register a discernible difference.\n            edge = abs(d1 + d2 - d)
+      + abs(d3 + d4 - d) + abs(d5 + d6 - d);\n            //edge = max(max(abs(d1
+      + d2 - d), abs(d3 + d4 - d)), abs(d5 + d6 - d)); // Etc.\n\n            //
+      Once you have an edge value, it needs to normalized, and smoothed if possible.
+      How you\n            // do that is up to you. This is what I came up with for
+      now, but I might tweak it later.\n            edge = smoothstep(0., 1., sqrt(edge
+      / e.x * 2.));\n\n            // Return the normal.\n            // Standard,
+      normalized gradient mearsurement.\n            return edge;\n        }\n\n       
+      inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)\n       
+      {\n            float edge = calcEdge(ray.endPos) * saturate(cos(_Beat * TAU
+      - Mod(0.1 * ray.endPos.z, TAU)));\n\n            o.Emission = _EmissionColor
+      * edge;\n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
   basicFolded: 1
