@@ -57,15 +57,28 @@ MonoBehaviour:
     value: 0
   blocks:
   - key: Properties
-    value: "        [Header(World)]\n        _FoldRotate (\"Fold Rotate\", Range(1,
-      20)) = 6\n        [HDR] _EmissionColor (\"Emission Color\", Color) = (1, 1,
-      1, 1)\n        _EmissionY (\"Emission Y\", Float) = 0"
+    value: "        [Header(World)]\n        _EvilRepeat (\"Evil Repeat\", Vector)
+      = (20, 20, 20, 1)\n        _IfsLoop (\"Ifs Loop\", Range(1, 10)) = 5\n       
+      _EvilOffset (\"Evil Offset\", Vector) = (0, 0, 0, 1)\n        _RotateXY1 (\"_RotateXY1\",
+      Range(-4, 4)) = 0.3\n        _RotateXZ1 (\"_RotateXZ1\", Range(-4, 4)) = -0.1\n       
+      _RotateYZ1 (\"_RotateYZ1\", Range(-4, 4)) = -0.1\n        _FoldRotate (\"Fold
+      Rotate\", Range(1, 20)) = 6\n        _EvilBoxSize (\"Evil Box Size\", Vector)
+      = (5, 0.5, 0.5, 1)\n        [HDR] _EmissionColor (\"Emission Color\", Color)
+      = (1, 1, 1, 1)"
     folded: 0
   - key: DistanceFunction
-    value: "        #include \"Common.cginc\"\n\n        inline float DistanceFunction(float3
-      p)\n        {\n            // \u5E8A\n            p = Repeat(p, float3(10,
-      10, 10));\n\n            float d = sdBox(p, float3(1, 1, 1));\n\n           
-      return d;\n        }"
+    value: "        #include \"Common.cginc\"\n\n        float3 _EvilRepeat;\n       
+      float _IfsLoop;\n        float4 _EvilOffset;\n        float _RotateXY1;\n       
+      float _RotateXZ1;\n        float _RotateYZ1;\n        float3 _EvilBoxSize;\n\n       
+      inline float DistanceFunction(float3 p)\n        {\n            // \u5E8A\n           
+      p = Repeat(p, _EvilRepeat);\n\n            for (int i = 0; i < _IfsLoop; i++)\n           
+      {\n                // p -= _EvilOffset;\n                p.xy = abs(p.xy);\n               
+      p -= _EvilOffset;\n                p.xy = mul(rotate(_RotateXY1), p.xy);\n               
+      p.xz = mul(rotate(_RotateXZ1), p.xz);\n                p.yz = mul(rotate(_RotateYZ1),
+      p.yz);\n                \n                // p *= 1.1;\n            }\n\n           
+      float3 size = _EvilBoxSize;\n            size.x += _AudioSpectrumLevels[0]
+      * 50;\n            float d = sdBox(p, size);\n\n            return d;\n       
+      }"
     folded: 0
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput

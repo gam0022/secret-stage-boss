@@ -20,9 +20,15 @@ Shader "Raymarching/WorldEvil"
 
         // @block Properties
         [Header(World)]
+        _EvilRepeat ("Evil Repeat", Vector) = (20, 20, 20, 1)
+        _IfsLoop ("Ifs Loop", Range(1, 10)) = 5
+        _EvilOffset ("Evil Offset", Vector) = (0, 0, 0, 1)
+        _RotateXY1 ("_RotateXY1", Range(-4, 4)) = 0.3
+        _RotateXZ1 ("_RotateXZ1", Range(-4, 4)) = -0.1
+        _RotateYZ1 ("_RotateYZ1", Range(-4, 4)) = -0.1
         _FoldRotate ("Fold Rotate", Range(1, 20)) = 6
+        _EvilBoxSize ("Evil Box Size", Vector) = (5, 0.5, 0.5, 1)
         [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
-        _EmissionY ("Emission Y", Float) = 0
         // @endblock
     }
 
@@ -56,12 +62,34 @@ Shader "Raymarching/WorldEvil"
         // @block DistanceFunction
         #include "Common.cginc"
 
+        float3 _EvilRepeat;
+        float _IfsLoop;
+        float4 _EvilOffset;
+        float _RotateXY1;
+        float _RotateXZ1;
+        float _RotateYZ1;
+        float3 _EvilBoxSize;
+
         inline float DistanceFunction(float3 p)
         {
             // 床
-            p = Repeat(p, float3(10, 10, 10));
+            p = Repeat(p, _EvilRepeat);
 
-            float d = sdBox(p, float3(1, 1, 1));
+            for (int i = 0; i < _IfsLoop; i++)
+            {
+                // p -= _EvilOffset;
+                p.xy = abs(p.xy);
+                p -= _EvilOffset;
+                p.xy = mul(rotate(_RotateXY1), p.xy);
+                p.xz = mul(rotate(_RotateXZ1), p.xz);
+                p.yz = mul(rotate(_RotateYZ1), p.yz);
+                
+                // p *= 1.1;
+            }
+
+            float3 size = _EvilBoxSize;
+            size.x += _AudioSpectrumLevels[0] * 50;
+            float d = sdBox(p, size);
 
             return d;
         }
