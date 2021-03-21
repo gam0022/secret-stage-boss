@@ -28,6 +28,7 @@ Shader "Raymarching/WorldEvil"
         _RotateYZ1 ("_RotateYZ1", Range(-4, 4)) = -0.1
         _FoldRotate ("Fold Rotate", Range(1, 20)) = 6
         _EvilBoxSize ("Evil Box Size", Vector) = (5, 0.5, 0.5, 1)
+        _EvilScale ("Evil Scale", Range(0, 2)) = 1.1
         [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
         // @endblock
     }
@@ -69,27 +70,27 @@ Shader "Raymarching/WorldEvil"
         float _RotateXZ1;
         float _RotateYZ1;
         float3 _EvilBoxSize;
+        float _EvilScale;
 
-        inline float DistanceFunction(float3 p)
+        inline float DistanceFunction(float3 pos)
         {
-            // 床
-            p = Repeat(p, _EvilRepeat);
+            float4 p = float4(pos, 1);
+            p.xyz = Repeat(p.xyz, _EvilRepeat);
 
             for (int i = 0; i < _IfsLoop; i++)
             {
                 // p -= _EvilOffset;
-                p.xy = abs(p.xy);
-                p -= _EvilOffset;
+                p.xyz = abs(p.xyz);
+                p.xyz -= _EvilOffset;
                 p.xy = mul(rotate(_RotateXY1), p.xy);
                 p.xz = mul(rotate(_RotateXZ1), p.xz);
                 p.yz = mul(rotate(_RotateYZ1), p.yz);
-                
-                // p *= 1.1;
+                p *= _EvilScale;
             }
 
             float3 size = _EvilBoxSize;
-            size.x += _AudioSpectrumLevels[0] * 50;
-            float d = sdBox(p, size);
+            // size.x += _AudioSpectrumLevels[0] * 50;
+            float d = sdBox(p.xyz, size) / abs(p.w);
 
             return d;
         }
