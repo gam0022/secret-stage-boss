@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: CyberRoom
+  m_Name: WorldGears
   m_Shader: {fileID: 4800000, guid: 401b94e76a2bbce479efca7a18c81b5d, type: 3}
   m_ShaderKeywords: _ZWRITE_ON
   m_LightmapFlags: 4

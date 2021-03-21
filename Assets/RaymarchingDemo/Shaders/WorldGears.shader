@@ -1,4 +1,4 @@
-Shader "Raymarching/CyberRoom"
+Shader "Raymarching/WorldGears"
 {
 
     Properties

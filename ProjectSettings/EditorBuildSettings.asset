@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/RaymarchingDemo/CyberRoom.unity
+    path: Assets/RaymarchingDemo/Revision2021.unity
     guid: dcafabc0ad229c44fa9df35c26ab78e3
   m_configObjects: {}
