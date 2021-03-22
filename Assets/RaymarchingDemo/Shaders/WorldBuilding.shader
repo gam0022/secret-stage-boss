@@ -147,7 +147,7 @@ Shader "Raymarching/WorldBuilding"
         {
             float2 i = floor(uv);
             float2 f = frac(uv);
-            float2 res = float2(8.0, 8);
+            float2 res = float2(8, 8);
 
             for (int x = -1; x <= 1; x++)
             {
@@ -172,7 +172,7 @@ Shader "Raymarching/WorldBuilding"
 
             float c = res.y - res.x;
             c = sqrt(c);
-            c = smoothstep(0.4, 0.0, c);
+            c = smoothstep(0.3, 0.0, c);
             return c;
         }
 
@@ -180,7 +180,8 @@ Shader "Raymarching/WorldBuilding"
         {
             // float edge = calcEdge(ray.endPos) * saturate(cos(_Beat * TAU - Mod(0.1 * ray.endPos.z, TAU)));
 
-            o.Emission = _EmissionColor * voronoi(ray.endPos.xz) * saturate(cos(_Beat * TAU - Mod(0.1 * ray.endPos.z, TAU)));
+            float edge = voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0);
+            o.Emission = _EmissionColor * edge;
         }
         // @endblock
         
