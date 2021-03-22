@@ -108,7 +108,7 @@ MonoBehaviour:
       * edge;\n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
-  basicFolded: 0
+  basicFolded: 1
   conditionsFolded: 0
   variablesFolded: 0
   materialsFolded: 0

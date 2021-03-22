@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: WorldEvil
-  m_Shader: {fileID: 4800000, guid: 2ef7d3d32af0c0f4787595286b578650, type: 3}
+  m_Shader: {fileID: 4800000, guid: 91a22245c3eb75d44bb0024ac28bf9df, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -40,6 +40,9 @@ Material:
     - _BoxASize: {r: 1, g: 4, b: 1, a: 1}
     - _BoxBMove: {r: 1, g: 1, b: 1, a: 1}
     - _BoxBSize: {r: 1, g: 4, b: 1, a: 1}
+    - _BuildingBoxSize: {r: 5, g: 0.5, b: 0.5, a: 1}
+    - _BuildingOffset: {r: 0, g: 0, b: 0, a: 1}
+    - _BuildingRepeat: {r: 20, g: 20, b: 20, a: 1}
     - _Color: {r: 0.31163225, g: 0.4433962, b: 0.44134197, a: 1}
     - _EmissionColor: {r: 11.447212, g: 0.98760265, b: 0.80803853, a: 1}
     - _EvilBoxSize: {r: 7.24, g: 0.14, b: 0.38, a: 1}
