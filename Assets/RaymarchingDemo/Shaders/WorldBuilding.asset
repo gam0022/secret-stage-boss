@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3acd6fe57257048db802c1c4c2b75248, type: 3}
-  m_Name: WorldEvil
+  m_Name: WorldBuilding
   m_EditorClassIdentifier: 
-  shaderName: WorldEvil
+  shaderName: WorldBuilding
   shaderReference: {fileID: 4800000, guid: 2ef7d3d32af0c0f4787595286b578650, type: 3}
   shaderTemplate: uRaymarching/Deferred/Standard
   variables:
   - key: Name
-    value: WorldEvil
+    value: WorldBuilding
   - key: ObjectShape
     value: NONE
   - key: RaymarchingShaderDirectory
