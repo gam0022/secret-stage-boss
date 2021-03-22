@@ -34,6 +34,9 @@ Material:
     - _RotateXZ1: -0.1
     - _RotateYZ1: -0.1
     m_Colors:
+    - _BuildingBoxSize: {r: 9, g: 0.5, b: 9, a: 1}
+    - _BuildingOffset: {r: 0, g: 0, b: 0, a: 1}
+    - _BuildingRepeat: {r: 20, g: 30, b: 20, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _EvilBoxSize: {r: 5, g: 0.5, b: 0.5, a: 1}
