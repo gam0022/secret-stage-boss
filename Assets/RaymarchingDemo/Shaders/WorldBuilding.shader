@@ -142,11 +142,7 @@ Shader "Raymarching/WorldBuilding"
             return lerp(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
         }
 
-        float maxabs(float2 p)
-        {
-            return max(abs(p.x), abs(p.y));
-        }
-
+        // マンハッタン距離によるボロノイ
         float voronoi(float2 uv)
         {
             float2 i = floor(uv);
@@ -161,7 +157,7 @@ Shader "Raymarching/WorldBuilding"
                     float2 np = float2(random(i + n), random(i + n + float2(12.56, 64.66)));
                     float2 p = n + np - f;
                     float d = abs(p.x) + abs(p.y);
-                    
+
                     if (d < res.x)
                     {
                         res.y = res.x;
@@ -184,7 +180,7 @@ Shader "Raymarching/WorldBuilding"
         {
             // float edge = calcEdge(ray.endPos) * saturate(cos(_Beat * TAU - Mod(0.1 * ray.endPos.z, TAU)));
 
-            o.Emission = _EmissionColor * voronoi(ray.endPos.xz);
+            o.Emission = _EmissionColor * voronoi(ray.endPos.xz) * saturate(cos(_Beat * TAU - Mod(0.1 * ray.endPos.z, TAU)));
         }
         // @endblock
         
