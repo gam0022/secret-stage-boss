@@ -22,11 +22,11 @@ Material:
     m_Floats:
     - _Cull: 2
     - _DistanceMultiplier: 1
-    - _EvilScale: 1.1
+    - _EvilScale: 1.21
     - _FoldRotate: 6
     - _Glossiness: 0.5
     - _IfsLoop: 5
-    - _Loop: 30
+    - _Loop: 100
     - _Metallic: 0.5
     - _MinDistance: 0.001
     - _NormalDelta: 0.0001
@@ -37,8 +37,8 @@ Material:
     - _BuildingBoxSize: {r: 9, g: 0.5, b: 9, a: 1}
     - _BuildingOffset: {r: 0, g: 0, b: 0, a: 1}
     - _BuildingRepeat: {r: 20, g: 30, b: 20, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.33962262, g: 0.29316482, b: 0.29316482, a: 1}
+    - _EmissionColor: {r: 0, g: 2.4307137, b: 5.2164755, a: 1}
     - _EvilBoxSize: {r: 5, g: 0.5, b: 0.5, a: 1}
     - _EvilOffset: {r: 0, g: 0, b: 0, a: 1}
     - _EvilRepeat: {r: 20, g: 20, b: 20, a: 1}
