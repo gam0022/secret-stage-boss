@@ -20,15 +20,8 @@ Shader "Raymarching/WorldBuilding"
 
         // @block Properties
         [Header(World)]
-        _BuildingRepeat ("Building Repeat", Vector) = (20, 20, 20, 1)
-        _IfsLoop ("Ifs Loop", Range(1, 10)) = 5
-        _BuildingOffset ("Building Offset", Vector) = (0, 0, 0, 1)
-        _RotateXY1 ("_RotateXY1", Range(-4, 4)) = 0.3
-        _RotateXZ1 ("_RotateXZ1", Range(-4, 4)) = -0.1
-        _RotateYZ1 ("_RotateYZ1", Range(-4, 4)) = -0.1
-        _FoldRotate ("Fold Rotate", Range(1, 20)) = 6
-        _BuildingBoxSize ("Building Box Size", Vector) = (5, 0.5, 0.5, 1)
-        _EvilScale ("Evil Scale", Range(0, 2)) = 1.1
+        _HexagonRadians ("Hexagon Radians", Range(0, 5)) = 1
+        _HexagonPadding ("Hexagon Padding", Range(0, 1)) = 0.1
         [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
         // @endblock
     }
@@ -63,24 +56,29 @@ Shader "Raymarching/WorldBuilding"
         // @block DistanceFunction
         #include "Common.cginc"
 
-        float3 _BuildingRepeat;
-        float _IfsLoop;
-        float4 _BuildingOffset;
-        float _RotateXY1;
-        float _RotateXZ1;
-        float _RotateYZ1;
-        float3 _BuildingBoxSize;
-        float _EvilScale;
+        float _HexagonRadians;
+        float _HexagonPadding;
         float4 _EmissionColor;
+
+        float dHexagon(float3 p)
+        {
+            p.xz = foldRotate(p.xz, 6);
+            return sdBox(p, float3(_HexagonRadians, 1, _HexagonRadians));
+        }
 
         inline float DistanceFunction(float3 pos)
         {
             float3 p = pos;
 
-            p = Repeat(p, _BuildingRepeat);
+            float pitch = _HexagonRadians * 2 + _HexagonPadding;
+            float3 offset = float3(pitch * 0.866, 0, pitch * 0.5);
+            float3 loop = float3(offset.x * 2, 10, offset.z * 2);
+            
+            float3 p1 = Repeat(p, loop);
+            float3 p2 = Repeat(p + offset, loop);
 
-            float3 size = _BuildingBoxSize;
-            float d = sdBox(p, size);
+            float d = dHexagon(p1);
+            d = min(d, dHexagon(p2));
 
             return d;
         }
@@ -93,7 +91,7 @@ Shader "Raymarching/WorldBuilding"
         float calcEdge(float3 p)
         {
             float edge = 0.0;
-            float2 e = float2(.1, 0);
+            float2 e = float2(.01, 0);
 
             // Take some distance function measurements from either side of the hit point on all three axes.
             float d1 = map(p + e.xyy), d2 = map(p - e.xyy);
@@ -178,9 +176,11 @@ Shader "Raymarching/WorldBuilding"
 
         inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
         {
-            // float edge = calcEdge(ray.endPos) * saturate(cos(_Beat * TAU - Mod(0.1 * ray.endPos.z, TAU)));
+            // FIXME: Common定義
+            float edge = calcEdge(ray.endPos);// * saturate(cos(_Beat * TAU - Mod(0.1 * ray.endPos.z, TAU)));
 
-            float edge = voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0);
+            edge += 0.1 * (voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0));
+
             o.Emission = _EmissionColor * edge;
         }
         // @endblock
