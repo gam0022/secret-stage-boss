@@ -75,8 +75,19 @@ Shader "Raymarching/WorldBuilding"
             float3 offset = float3(pitch * sqrt3_div_2, 0, pitch * 0.5);
             float3 loop = float3(offset.x * 2, 10, offset.z * 2);
             
-            float3 p1 = Repeat(p, loop);
-            float3 p2 = Repeat(p + offset, loop);
+            float3 p1 = p;
+            float3 p2 = p + offset;
+
+            // calculate indices
+            float2 pi1 = floor(p1 / loop).xz;
+            float2 pi2 = floor(p2 / loop).xz;
+            pi1.y = pi1.y * 2;
+            pi2.y = pi2.y * 2 + 1;
+
+            p1.y += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);
+            p2.y += 0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);
+            p1 = Repeat(p1, loop);
+            p2 = Repeat(p2, loop);
 
             float d = dHexagon(p1);
             d = min(d, dHexagon(p2));
