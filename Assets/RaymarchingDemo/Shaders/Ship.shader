@@ -131,7 +131,7 @@ Shader "Raymarching/Ship"
             return res;
         }
 
-        float2 map(float3 pos)
+        float2 dShip(float3 pos)
         {
             float3 p = pos;
 
@@ -157,7 +157,7 @@ Shader "Raymarching/Ship"
 
         inline float DistanceFunction(float3 pos)
         {
-            float2 res = map(pos);
+            float2 res = dShip(pos);
             return res.x;
         }
         // @endblock
@@ -166,7 +166,7 @@ Shader "Raymarching/Ship"
         inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
         {
             float3 p = ToLocal(ray.endPos) * GetScale();
-            float2 res = map(p);
+            float2 res = dShip(p);
 
             if (res.y >= MAT_ENGINE_BODY_A && res.y <= MAT_ENGINE_FAN)
             {

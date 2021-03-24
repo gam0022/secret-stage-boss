@@ -56,3 +56,35 @@ float opRepRange(float p, float c, float l)
 {
     return p - c * clamp(round(p / c), -l / c, l / c);
 }
+
+inline float DistanceFunction(float3 pos);
+
+#define map DistanceFunction
+
+// https://www.shadertoy.com/view/lttGDn
+float calcEdge(float3 p, float width)
+{
+    float edge = 0.0;
+    float2 e = float2(width, 0);
+
+    // Take some distance function measurements from either side of the hit point on all three axes.
+    float d1 = map(p + e.xyy), d2 = map(p - e.xyy);
+    float d3 = map(p + e.yxy), d4 = map(p - e.yxy);
+    float d5 = map(p + e.yyx), d6 = map(p - e.yyx);
+    float d = map(p) * 2.;	// The hit point itself - Doubled to cut down on calculations. See below.
+
+    // Edges - Take a geometry measurement from either side of the hit point. Average them, then see how
+    // much the value differs from the hit point itself. Do this for X, Y and Z directions. Here, the sum
+    // is used for the overall difference, but there are other ways. Note that it's mainly sharp surface
+    // curves that register a discernible difference.
+    edge = abs(d1 + d2 - d) + abs(d3 + d4 - d) + abs(d5 + d6 - d);
+    //edge = max(max(abs(d1 + d2 - d), abs(d3 + d4 - d)), abs(d5 + d6 - d)); // Etc.
+
+    // Once you have an edge value, it needs to normalized, and smoothed if possible. How you
+    // do that is up to you. This is what I came up with for now, but I might tweak it later.
+    edge = smoothstep(0., 1., sqrt(edge / e.x * 2.));
+
+    // Return the normal.
+    // Standard, normalized gradient mearsurement.
+    return edge;
+}
