@@ -94,6 +94,12 @@ float random(float2 st)
     return frac(sin(dot(st.xy, float2(12.9898, 78.233))) * 43758.5453123);
 }
 
+float lpnorm(float2 p, float n)
+{
+    float2 t = pow(abs(p), float2(n, n));
+    return pow(t.x + t.y, 1. / n);
+}
+
 // マンハッタン距離によるボロノイ
 // https://qiita.com/7CIT/items/4126d23ffb1b28b80f27
 // https://neort.io/art/br0fmis3p9f48fkiuk50
@@ -113,6 +119,8 @@ float voronoi(float2 uv)
 
             // マンハッタン距離
             float d = abs(p.x) + abs(p.y);
+            // float d = length(p);
+            // float d = lpnorm(p, sin(_Beat) * 3);
 
             if (d < res.x)
             {
