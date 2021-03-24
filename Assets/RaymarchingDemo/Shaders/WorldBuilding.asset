@@ -57,29 +57,33 @@ MonoBehaviour:
     value: 0
   blocks:
   - key: Properties
-    value: "        [Header(World)]\n        _BuildingRepeat (\"Building Repeat\",
-      Vector) = (20, 20, 20, 1)\n        _IfsLoop (\"Ifs Loop\", Range(1, 10)) =
-      5\n        _BuildingOffset (\"Building Offset\", Vector) = (0, 0, 0, 1)\n       
-      _RotateXY1 (\"_RotateXY1\", Range(-4, 4)) = 0.3\n        _RotateXZ1 (\"_RotateXZ1\",
-      Range(-4, 4)) = -0.1\n        _RotateYZ1 (\"_RotateYZ1\", Range(-4, 4)) = -0.1\n       
-      _FoldRotate (\"Fold Rotate\", Range(1, 20)) = 6\n        _BuildingBoxSize (\"Building
-      Box Size\", Vector) = (5, 0.5, 0.5, 1)\n        _EvilScale (\"Evil Scale\",
-      Range(0, 2)) = 1.1\n        [HDR] _EmissionColor (\"Emission Color\", Color)
-      = (1, 1, 1, 1)"
+    value: "        [Header(World)]\n        _HexagonRadians (\"Hexagon Radians\",
+      Range(0, 5)) = 1\n        _HexagonPadding (\"Hexagon Padding\", Range(0, 1))
+      = 0.1\n        [HDR] _EmissionColor (\"Emission Color\", Color) = (1, 1, 1,
+      1)"
     folded: 0
   - key: DistanceFunction
-    value: "        #include \"Common.cginc\"\n\n        float3 _BuildingRepeat;\n       
-      float _IfsLoop;\n        float4 _BuildingOffset;\n        float _RotateXY1;\n       
-      float _RotateXZ1;\n        float _RotateYZ1;\n        float3 _BuildingBoxSize;\n       
-      float _EvilScale;\n        float4 _EmissionColor;\n\n        inline float DistanceFunction(float3
-      pos)\n        {\n            float3 p = pos;\n\n            p = Repeat(p, _BuildingRepeat);\n\n           
-      float3 size = _BuildingBoxSize;\n            float d = sdBox(p, size);\n\n           
-      return d;\n        }"
+    value: "        #include \"Common.cginc\"\n\n        float _HexagonRadians;\n       
+      float _HexagonPadding;\n        float4 _EmissionColor;\n\n        float dHexagon(float3
+      p)\n        {\n            p.xz = foldRotate(p.xz, 6);\n            return
+      sdBox(p, float3(_HexagonRadians, 1, _HexagonRadians));\n        }\n\n       
+      inline float DistanceFunction(float3 pos)\n        {\n            float3 p
+      = pos;\n\n            float pitch = _HexagonRadians * 2 + _HexagonPadding;\n           
+      float sqrt3_div_2 = 0.8660254037844386467637231707529361834714026269051903140279034897;\n           
+      float3 offset = float3(pitch * sqrt3_div_2, 0, pitch * 0.5);\n            float3
+      loop = float3(offset.x * 2, 10, offset.z * 2);\n            \n            float3
+      p1 = p;\n            float3 p2 = p + offset;\n\n            // calculate indices\n           
+      float2 pi1 = floor(p1 / loop).xz;\n            float2 pi2 = floor(p2 / loop).xz;\n           
+      pi1.y = pi1.y * 2;\n            pi2.y = pi2.y * 2 + 1;\n\n            p1.y
+      += 0.3 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);\n            p2.y += 0.3
+      * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);\n            p1 = Repeat(p1, loop);\n           
+      p2 = Repeat(p2, loop);\n\n            float d = dHexagon(p1);\n           
+      d = min(d, dHexagon(p2));\n\n            return d;\n        }"
     folded: 0
   - key: PostEffect
     value: "        #define map DistanceFunction\n\n        // https://www.shadertoy.com/view/lttGDn\n       
       float calcEdge(float3 p)\n        {\n            float edge = 0.0;\n           
-      float2 e = float2(.1, 0);\n\n            // Take some distance function measurements
+      float2 e = float2(.01, 0);\n\n            // Take some distance function measurements
       from either side of the hit point on all three axes.\n            float d1
       = map(p + e.xyy), d2 = map(p - e.xyy);\n            float d3 = map(p + e.yxy),
       d4 = map(p - e.yxy);\n            float d5 = map(p + e.yyx), d6 = map(p - e.yyx);\n           
@@ -97,34 +101,34 @@ MonoBehaviour:
       now, but I might tweak it later.\n            edge = smoothstep(0., 1., sqrt(edge
       / e.x * 2.));\n\n            // Return the normal.\n            // Standard,
       normalized gradient mearsurement.\n            return edge;\n        }\n\n       
-      float random(float2 st)\n        {\n            return frac(sin(dot(st.xy,\n           
-      float2(12.9898, 78.233))) *\n            43758.5453123);\n        }\n\n       
-      float noise(in float2 st)\n        {\n            float2 i = floor(st);\n           
-      float2 f = frac(st);\n            // Four corners in 2D of a tile\n           
+      float random(float2 st)\n        {\n            return frac(sin(dot(st.xy,
+      float2(12.9898, 78.233))) * 43758.5453123);\n        }\n\n        float noise(in
+      float2 st)\n        {\n            float2 i = floor(st);\n            float2
+      f = frac(st);\n            \n            // Four corners in 2D of a tile\n           
       float a = random(i);\n            float b = random(i + float2(1.0, 0.0));\n           
       float c = random(i + float2(0.0, 1.0));\n            float d = random(i + float2(1.0,
-      1.0));\n            // Smooth Interpolation\n            // Cubic Hermine Curve. 
-      Same as SmoothStep()\n            float2 u = f * f * (3.0 - 2.0 * f);\n           
-      // u = smoothstep(0.,1.,f);\n            // lerp 4 coorners percentages\n           
-      return lerp(a, b, u.x) +\n            (c - a) * u.y * (1.0 - u.x) +\n           
-      (d - b) * u.x * u.y;\n        }\n\n        float maxabs(float2 p)\n       
-      {\n            return max(abs(p.x), abs(p.y));\n        }\n\n        float
-      voronoi(float2 uv)\n        {\n            float2 i = floor(uv);\n           
-      float2 f = frac(uv);\n            float2 res = float2(8.0, 8);\n\n           
+      1.0));\n            \n            // Smooth Interpolation\n            // Cubic
+      Hermine Curve.  Same as SmoothStep()\n            float2 u = f * f * (3.0 -
+      2.0 * f);\n            \n            // u = smoothstep(0.,1.,f);\n           
+      // lerp 4 coorners percentages\n            return lerp(a, b, u.x) + (c - a)
+      * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;\n        }\n\n        // \u30DE\u30F3\u30CF\u30C3\u30BF\u30F3\u8DDD\u96E2\u306B\u3088\u308B\u30DC\u30ED\u30CE\u30A4\n       
+      float voronoi(float2 uv)\n        {\n            float2 i = floor(uv);\n           
+      float2 f = frac(uv);\n            float2 res = float2(8, 8);\n\n           
       for (int x = -1; x <= 1; x++)\n            {\n                for (int y =
       -1; y <= 1; y++)\n                {\n                    float2 n = float2(x,
       y);\n                    float2 np = float2(random(i + n), random(i + n + float2(12.56,
       64.66)));\n                    float2 p = n + np - f;\n                   
-      float d = abs(p.x) + abs(p.y);\n                    if (d < res.x)\n                   
+      float d = abs(p.x) + abs(p.y);\n\n                    if (d < res.x)\n                   
       {\n                        res.y = res.x;\n                        res.x =
       d;\n                    }\n                    else if (d < res.y)\n                   
       {\n                        res.y = d;\n                    }\n               
       }\n            }\n\n            float c = res.y - res.x;\n            c = sqrt(c);\n           
-      c = smoothstep(0.4, 0.0, c);\n            return c;\n        }\n\n        inline
+      c = smoothstep(0.3, 0.0, c);\n            return c;\n        }\n\n        inline
       void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)\n        {\n           
-      // float edge = calcEdge(ray.endPos) * saturate(cos(_Beat * TAU - Mod(0.1 *
-      ray.endPos.z, TAU)));\n\n            o.Emission = _EmissionColor * voronoi(ray.endPos.xz);\n       
-      }"
+      // FIXME: Common\u5B9A\u7FA9\n            float edge = calcEdge(ray.endPos);//
+      * saturate(cos(_Beat * TAU - Mod(0.1 * ray.endPos.z, TAU)));\n\n           
+      edge += 0.1 * (voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0));\n\n           
+      o.Emission = _EmissionColor * edge;\n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
   basicFolded: 1
