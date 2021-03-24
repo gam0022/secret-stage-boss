@@ -88,3 +88,46 @@ float calcEdge(float3 p, float width)
     // Standard, normalized gradient mearsurement.
     return edge;
 }
+
+float random(float2 st)
+{
+    return frac(sin(dot(st.xy, float2(12.9898, 78.233))) * 43758.5453123);
+}
+
+// マンハッタン距離によるボロノイ
+// https://qiita.com/7CIT/items/4126d23ffb1b28b80f27
+// https://neort.io/art/br0fmis3p9f48fkiuk50
+float voronoi(float2 uv)
+{
+    float2 i = floor(uv);
+    float2 f = frac(uv);
+    float2 res = float2(8, 8);
+
+    for (int x = -1; x <= 1; x++)
+    {
+        for (int y = -1; y <= 1; y++)
+        {
+            float2 n = float2(x, y);
+            float2 np = float2(random(i + n), random(i + n + float2(12.56, 64.66)));
+            float2 p = n + np - f;
+
+            // マンハッタン距離
+            float d = abs(p.x) + abs(p.y);
+
+            if (d < res.x)
+            {
+                res.y = res.x;
+                res.x = d;
+            }
+            else if (d < res.y)
+            {
+                res.y = d;
+            }
+        }
+    }
+
+    float c = res.y - res.x;
+    c = sqrt(c);
+    c = smoothstep(0.3, 0.0, c);
+    return c;
+}

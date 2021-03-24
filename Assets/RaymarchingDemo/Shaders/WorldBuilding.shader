@@ -97,65 +97,6 @@ Shader "Raymarching/WorldBuilding"
         // @endblock
 
         // @block PostEffect
-        float random(float2 st)
-        {
-            return frac(sin(dot(st.xy, float2(12.9898, 78.233))) * 43758.5453123);
-        }
-
-        float noise(in float2 st)
-        {
-            float2 i = floor(st);
-            float2 f = frac(st);
-            
-            // Four corners in 2D of a tile
-            float a = random(i);
-            float b = random(i + float2(1.0, 0.0));
-            float c = random(i + float2(0.0, 1.0));
-            float d = random(i + float2(1.0, 1.0));
-            
-            // Smooth Interpolation
-            // Cubic Hermine Curve.  Same as SmoothStep()
-            float2 u = f * f * (3.0 - 2.0 * f);
-            
-            // u = smoothstep(0.,1.,f);
-            // lerp 4 coorners percentages
-            return lerp(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
-        }
-
-        // マンハッタン距離によるボロノイ
-        float voronoi(float2 uv)
-        {
-            float2 i = floor(uv);
-            float2 f = frac(uv);
-            float2 res = float2(8, 8);
-
-            for (int x = -1; x <= 1; x++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    float2 n = float2(x, y);
-                    float2 np = float2(random(i + n), random(i + n + float2(12.56, 64.66)));
-                    float2 p = n + np - f;
-                    float d = abs(p.x) + abs(p.y);
-
-                    if (d < res.x)
-                    {
-                        res.y = res.x;
-                        res.x = d;
-                    }
-                    else if (d < res.y)
-                    {
-                        res.y = d;
-                    }
-                }
-            }
-
-            float c = res.y - res.x;
-            c = sqrt(c);
-            c = smoothstep(0.3, 0.0, c);
-            return c;
-        }
-
         inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
         {
             // FIXME: Common定義
