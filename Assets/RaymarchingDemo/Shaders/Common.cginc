@@ -118,9 +118,9 @@ float voronoi(float2 uv)
             float2 p = n + np - f;
 
             // マンハッタン距離
-            float d = abs(p.x) + abs(p.y);
+            // float d = abs(p.x) + abs(p.y);
             // float d = length(p);
-            // float d = lpnorm(p, sin(_Beat) * 3);
+            float d = lpnorm(p, -3);
 
             if (d < res.x)
             {
