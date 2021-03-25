@@ -23,6 +23,7 @@ Shader "Raymarching/Ship"
         // @block Properties
         [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorB ("Emission Color B", Color) = (1, 1, 1, 1)
+        _Gantz ("Gantz", Range(0, 1)) = 0
         // @endblock
     }
 
@@ -54,6 +55,7 @@ Shader "Raymarching/Ship"
 
         float4 _EmissionColor;
         float4 _EmissionColorB;
+        float _Gantz;
 
         #define MAT_ENGINE_BODY_A   1
         #define MAT_ENGINE_DETAIL_A 2
@@ -152,6 +154,11 @@ Shader "Raymarching/Ship"
             // Body
             res = opU(res, dBody(p));
 
+            // Gantz
+            float3 size = GetScale() * 0.5;
+            size.xz *= 1.1;
+            res = opS(float2(sdBox(p - float3(0, 2 * size.y * _Gantz, 0), size), res.y), res);
+
             return res;
         }
 
@@ -165,7 +172,8 @@ Shader "Raymarching/Ship"
         // @block PostEffect
         inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
         {
-            float3 p = ToLocal(ray.endPos) * GetScale();
+            float3 scale = GetScale();
+            float3 p = ToLocal(ray.endPos) * scale;
             float2 res = dShip(p);
 
             if (res.y >= MAT_ENGINE_BODY_A && res.y <= MAT_ENGINE_FAN)
@@ -195,6 +203,13 @@ Shader "Raymarching/Ship"
                 o.Metallic = 1;
                 o.Occlusion = 0;
                 o.Albedo = half3(1, 1, 1);
+            }
+
+            float gantzEmissiveY = (_Gantz - 0.5) * scale.y;
+            float _GantzWidth = 0.01;
+            if (p.y >= gantzEmissiveY - _GantzWidth && p.y <= gantzEmissiveY + _GantzWidth)
+            {
+                o.Emission = _EmissionColorB;
             }
         }
         // @endblock
