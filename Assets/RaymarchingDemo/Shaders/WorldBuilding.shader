@@ -66,7 +66,7 @@ Shader "Raymarching/WorldBuilding"
             return sdBox(p, float3(_HexagonRadians, 1, _HexagonRadians));
         }
 
-        inline float DistanceFunction(float3 pos)
+        float2 dHexagons(float3 pos)
         {
             float3 p = pos;
 
@@ -89,10 +89,16 @@ Shader "Raymarching/WorldBuilding"
             p1 = Repeat(p1, loop);
             p2 = Repeat(p2, loop);
 
-            float d = dHexagon(p1);
-            d = min(d, dHexagon(p2));
+            float2 res = float2(dHexagon(p1), pi1.y);
+            res = opU(res, float2(dHexagon(p2), pi2.y));
 
-            return d;
+            return res;
+        }
+
+        inline float DistanceFunction(float3 pos)
+        {
+            float2 res = dHexagons(pos);
+            return res.x;
         }
         // @endblock
 
