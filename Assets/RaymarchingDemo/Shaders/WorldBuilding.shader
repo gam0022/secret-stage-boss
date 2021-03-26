@@ -110,7 +110,9 @@ Shader "Raymarching/WorldBuilding"
 
             edge += 0.1 * (voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0));
 
-            o.Emission = _EmissionColor * edge;
+            float3 p = ToLocal(ray.endPos) * GetScale();
+            float2 res = dHexagons(p);
+            o.Emission = hsvToRgb(float3(res.y * 0.1, 1, 1)) * edge * 5;
         }
         // @endblock
         
