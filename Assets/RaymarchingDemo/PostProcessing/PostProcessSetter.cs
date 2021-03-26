@@ -9,6 +9,8 @@ public class PostProcessSetter : MonoBehaviour
     [SerializeField] float flashIntensity = 0;
     [SerializeField] Color blendColor = Color.clear;
 
+    [SerializeField] Color fogColor = Color.black;
+
     bool isInitialized = false;
 
     PostProcessVolume volume;
@@ -39,6 +41,8 @@ public class PostProcessSetter : MonoBehaviour
         glitch.flashColor.value = flashColor;
         glitch.flashIntensity.value = flashIntensity;
         glitch.blendColor.value = blendColor;
+
+        RenderSettings.fogColor = fogColor;
     }
 
     void OnDestroy()
