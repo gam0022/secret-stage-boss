@@ -20,6 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
+    - _ChangeThresholdZ: 2478
     - _Cull: 2
     - _DistanceMultiplier: 1
     - _EvilScale: 1.21
