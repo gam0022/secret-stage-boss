@@ -59,14 +59,17 @@ MonoBehaviour:
   - key: Properties
     value: "        [Header(World)]\n        _HexagonRadians (\"Hexagon Radians\",
       Range(0, 5)) = 1\n        _HexagonPadding (\"Hexagon Padding\", Range(0, 1))
-      = 0.1\n        [HDR] _EmissionColor (\"Emission Color\", Color) = (1, 1, 1,
-      1)\n        _ChangeThresholdZ (\"_ChangeThresholdZ\", Float) = 1000"
+      = 0.1\n        [HDR] _EmissionColorEdge (\"Emission Color Edge\", Color) =
+      (1, 1, 1, 1)\n        [HDR] _EmissionColorVoronoi (\"Emission Color Voronoi\",
+      Color) = (1, 1, 1, 1)\n        _ChangeThresholdZ (\"_ChangeThresholdZ\", Float)
+      = 1000"
     folded: 0
   - key: DistanceFunction
     value: "        #include \"Common.cginc\"\n\n        float _HexagonRadians;\n       
-      float _HexagonPadding;\n        float4 _EmissionColor;\n        float _ChangeThresholdZ;\n\n       
-      float dHexagon(float3 p)\n        {\n            p.xz = foldRotate(p.xz, 6);\n           
-      return sdBox(p, float3(_HexagonRadians, 1, _HexagonRadians));\n        }\n\n       
+      float _HexagonPadding;\n        float4 _EmissionColorEdge;\n        float4
+      _EmissionColorVoronoi;\n        float _ChangeThresholdZ;\n\n        float dHexagon(float3
+      p)\n        {\n            p.xz = foldRotate(p.xz, 6);\n            return
+      sdBox(p, float3(_HexagonRadians, 1, _HexagonRadians));\n        }\n\n       
       float2 dHexagons(float3 pos)\n        {\n            float3 p = pos;\n\n           
       float pitch = _HexagonRadians * 2 + _HexagonPadding;\n            float sqrt3_div_2
       = 0.8660254037844386467637231707529361834714026269051903140279034897;\n           
@@ -84,14 +87,14 @@ MonoBehaviour:
     folded: 0
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
-      o)\n        {\n            // FIXME: Common\u5B9A\u7FA9\n            float
-      edge = calcEdge(ray.endPos, 0.01);// * saturate(cos(_Beat * TAU - Mod(0.1 *
-      ray.endPos.z, TAU)));\n\n            edge += 0.1 * (voronoi(ray.endPos.xz)
-      + 0.5 * voronoi(ray.endPos.xz * 2.0));\n\n            float3 emissionColor
-      = _EmissionColor;\n            float3 p = ray.endPos;\n            float2 res
-      = dHexagons(p);\n\n            if (res.y > floor(_ChangeThresholdZ))\n           
-      {\n                emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));\n           
-      }\n\n            o.Emission = emissionColor * edge;\n        }"
+      o)\n        {\n            float3 p = ray.endPos;\n            float2 res =
+      dHexagons(p);\n\n            float edge = calcEdge(ray.endPos, 0.01);\n           
+      o.Emission += _EmissionColorEdge * edge * _AudioSpectrumLevels[0];\n\n           
+      float voro = voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0);\n           
+      o.Emission += _EmissionColorVoronoi * voro * saturate(cos(_Beat * TAU - Mod(0.1
+      * p.z, TAU)));\n\n            if (res.y < floor(_ChangeThresholdZ))\n           
+      {\n                // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));\n               
+      o.Albedo = fixed3(1, 1, 1);\n            }\n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
   basicFolded: 1

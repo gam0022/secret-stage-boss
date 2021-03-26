@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _ChangeThresholdZ: 2478
+    - _ChangeThresholdZ: 2461
     - _Cull: 2
     - _DistanceMultiplier: 1
     - _EvilScale: 1.21
@@ -40,8 +40,10 @@ Material:
     - _BuildingBoxSize: {r: 0.71, g: 0.67, b: 0.71, a: 1}
     - _BuildingOffset: {r: 0, g: 0, b: 0, a: 1}
     - _BuildingRepeat: {r: 4, g: 20, b: 2.1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.23584908, g: 0.09233714, b: 0.104380384, a: 1}
     - _EmissionColor: {r: 0, g: 2.4307137, b: 5.2164755, a: 1}
+    - _EmissionColorEdge: {r: 0, g: 107.637764, b: 155.74858, a: 1}
+    - _EmissionColorVoronoi: {r: 0, g: 4, b: 3.4352942, a: 1}
     - _EvilBoxSize: {r: 5, g: 0.5, b: 0.5, a: 1}
     - _EvilOffset: {r: 0, g: 0, b: 0, a: 1}
     - _EvilRepeat: {r: 20, g: 20, b: 20, a: 1}

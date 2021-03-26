@@ -22,7 +22,8 @@ Shader "Raymarching/WorldBuilding"
         [Header(World)]
         _HexagonRadians ("Hexagon Radians", Range(0, 5)) = 1
         _HexagonPadding ("Hexagon Padding", Range(0, 1)) = 0.1
-        [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
+        [HDR] _EmissionColorEdge ("Emission Color Edge", Color) = (1, 1, 1, 1)
+        [HDR] _EmissionColorVoronoi ("Emission Color Voronoi", Color) = (1, 1, 1, 1)
         _ChangeThresholdZ ("_ChangeThresholdZ", Float) = 1000
         // @endblock
     }
@@ -59,7 +60,8 @@ Shader "Raymarching/WorldBuilding"
 
         float _HexagonRadians;
         float _HexagonPadding;
-        float4 _EmissionColor;
+        float4 _EmissionColorEdge;
+        float4 _EmissionColorVoronoi;
         float _ChangeThresholdZ;
 
         float dHexagon(float3 p)
@@ -107,21 +109,20 @@ Shader "Raymarching/WorldBuilding"
         // @block PostEffect
         inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
         {
-            // FIXME: Common定義
-            float edge = calcEdge(ray.endPos, 0.01);// * saturate(cos(_Beat * TAU - Mod(0.1 * ray.endPos.z, TAU)));
-
-            edge += 0.1 * (voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0));
-
-            float3 emissionColor = _EmissionColor;
             float3 p = ray.endPos;
             float2 res = dHexagons(p);
 
-            if (res.y > floor(_ChangeThresholdZ))
-            {
-                emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
-            }
+            float edge = calcEdge(ray.endPos, 0.01);
+            o.Emission += _EmissionColorEdge * edge * _AudioSpectrumLevels[0];
 
-            o.Emission = emissionColor * edge;
+            float voro = voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0);
+            o.Emission += _EmissionColorVoronoi * voro * saturate(cos(_Beat * TAU - Mod(0.1 * p.z, TAU)));
+
+            if (res.y < floor(_ChangeThresholdZ))
+            {
+                // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
+                o.Albedo = fixed3(1, 1, 1);
+            }
         }
         // @endblock
         
