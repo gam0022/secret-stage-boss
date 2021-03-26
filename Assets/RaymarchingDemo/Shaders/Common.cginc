@@ -89,11 +89,6 @@ float calcEdge(float3 p, float width)
     return edge;
 }
 
-float random(float2 st)
-{
-    return frac(sin(dot(st.xy, float2(12.9898, 78.233))) * 43758.5453123);
-}
-
 float remap(float s, float a1, float a2, float b1, float b2)
 {
     return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
@@ -244,13 +239,13 @@ float voronoi(float2 uv)
         for (int y = -1; y <= 1; y++)
         {
             float2 n = float2(x, y);
-            float2 np = float2(random(i + n), random(i + n + float2(12.56, 64.66)));
+            float2 np = hash22(i + n);
             float2 p = n + np - f;
 
             // マンハッタン距離
-            // float d = abs(p.x) + abs(p.y);
+            float d = abs(p.x) + abs(p.y);
             // float d = length(p);
-            float d = lpnorm(p, -3);
+            // float d = lpnorm(p, -3);
 
             if (d < res.x)
             {
