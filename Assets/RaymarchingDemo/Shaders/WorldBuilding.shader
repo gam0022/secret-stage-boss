@@ -24,7 +24,7 @@ Shader "Raymarching/WorldBuilding"
         _HexagonPadding ("Hexagon Padding", Range(0, 1)) = 0.1
         [HDR] _EmissionColorEdge ("Emission Color Edge", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorVoronoi ("Emission Color Voronoi", Color) = (1, 1, 1, 1)
-        _ChangeThresholdZ ("_ChangeThresholdZ", Float) = 1000
+        _ChangeThresholdZ ("_ChangeThresholdZ", Float) = 0
         // @endblock
     }
 
@@ -118,7 +118,7 @@ Shader "Raymarching/WorldBuilding"
             float voro = voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0);
             o.Emission += _EmissionColorVoronoi * voro * saturate(cos(_Beat * TAU - Mod(0.1 * p.z, TAU)));
 
-            if (res.y < floor(_ChangeThresholdZ))
+            if (res.y < floor(_ChangeThresholdZ + _ShipPosition.z))
             {
                 // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
                 o.Albedo = fixed3(1, 1, 1);

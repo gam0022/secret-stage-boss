@@ -14,7 +14,6 @@ public class TimelineTimeControl : MonoBehaviour, ITimeControl
     readonly int audioSpectrumPeakLevelsID = Shader.PropertyToID("_AudioSpectrumPeakLevels");
     readonly int audioSpectrumMeanLevelsID = Shader.PropertyToID("_AudioSpectrumMeanLevels");
 
-
     bool isInitialized = false;
 
     public void SetTime(double time)
