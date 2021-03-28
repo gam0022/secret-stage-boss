@@ -61,15 +61,27 @@ MonoBehaviour:
       Range(0, 5)) = 1\n        _HexagonPadding (\"Hexagon Padding\", Range(0, 1))
       = 0.1\n        [HDR] _EmissionColorEdge (\"Emission Color Edge\", Color) =
       (1, 1, 1, 1)\n        [HDR] _EmissionColorVoronoi (\"Emission Color Voronoi\",
-      Color) = (1, 1, 1, 1)\n        _ChangeThresholdZ (\"_ChangeThresholdZ\", Float)
-      = 0"
+      Color) = (1, 1, 1, 1)\n        _ChangeThresholdZ (\"Change Threshold Z\", Float)
+      = 0\n        _ChangeRate (\"Change Rate\", Range(0, 1)) = 0\n        _WingSize
+      (\"Wing Size\", Vector) = (0.1, 0.1, 0.1, 0.1)\n        _WingRot (\"Wing Rot\",
+      Range(-4, 4)) = 0.3"
     folded: 0
   - key: DistanceFunction
     value: "        #include \"Common.cginc\"\n\n        float _HexagonRadians;\n       
       float _HexagonPadding;\n        float4 _EmissionColorEdge;\n        float4
-      _EmissionColorVoronoi;\n        float _ChangeThresholdZ;\n\n        float dHexagon(float3
-      p)\n        {\n            p.xz = foldRotate(p.xz, 6);\n            return
-      sdBox(p, float3(_HexagonRadians, 1, _HexagonRadians));\n        }\n\n       
+      _EmissionColorVoronoi;\n        float _ChangeThresholdZ;\n        float _ChangeRate;\n       
+      float4 _WingSize;\n        float _WingRot;\n\n        float dHexagon(float3
+      pos)\n        {\n            float3 p1 = pos;\n\n            p1.xz = foldRotate(p1.xz,
+      6);\n            float d = sdBox(p1, float3(_HexagonRadians, 1, _HexagonRadians));\n\n           
+      float3 p2 = p1;\n            p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);\n           
+      p2.y += p1.z * 0.2 * _ChangeRate;\n            d = min(d, sdBox(p2, float3(_HexagonRadians
+      * 0.2, 1, 0.02)));\n\n            float3 p3 = p1;\n            p3.y += _ChangeRate;\n           
+      d = min(d, sdBox(p3, float3(0.1, 1 * _ChangeRate, 0.1)));\n\n            float3
+      p4 = p1;\n\n            p4.y += _WingSize.w;\n            \n            /*for
+      (int i = 0; i < 3; i++)\n            {\n                p4.xy = abs(p4.xy);\n               
+      p4.xy = mul(rotate(0.3), p4.xy);\n                p4.xz = mul(rotate(-0.1),
+      p4.xz);\n            }*/\n\n            rot(p4.yz, _WingRot);\n\n           
+      d = min(d, sdBox(p4, _WingSize.xyz));\n\n            return d;\n        }\n\n       
       float2 dHexagons(float3 pos)\n        {\n            float3 p = pos;\n\n           
       float pitch = _HexagonRadians * 2 + _HexagonPadding;\n            float sqrt3_div_2
       = 0.8660254037844386467637231707529361834714026269051903140279034897;\n           

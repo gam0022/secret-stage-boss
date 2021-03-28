@@ -39,6 +39,11 @@ float2x2 rotate(in float a)
     return float2x2(c, s, -s, c);
 }
 
+void rot(inout float2 p, float a)
+{
+    p = mul(rotate(a), p);
+}
+
 // https://www.shadertoy.com/view/Mlf3Wj
 float2 foldRotate(in float2 p, in float s)
 {

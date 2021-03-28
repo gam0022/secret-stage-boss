@@ -20,6 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
+    - _ChangeRate: 1
     - _ChangeThresholdZ: 0
     - _Cull: 2
     - _DistanceMultiplier: 0.7
@@ -36,6 +37,7 @@ Material:
     - _RotateXY1: 0.3
     - _RotateXZ1: -0.1
     - _RotateYZ1: -0.1
+    - _WingRot: 0.63
     m_Colors:
     - _BuildingBoxSize: {r: 0.71, g: 0.67, b: 0.71, a: 1}
     - _BuildingOffset: {r: 0, g: 0, b: 0, a: 1}
@@ -47,4 +49,5 @@ Material:
     - _EvilBoxSize: {r: 5, g: 0.5, b: 0.5, a: 1}
     - _EvilOffset: {r: 0, g: 0, b: 0, a: 1}
     - _EvilRepeat: {r: 20, g: 20, b: 20, a: 1}
+    - _WingSize: {r: 0.1, g: 0.02, b: 1, a: 1.42}
   m_BuildTextureStacks: []

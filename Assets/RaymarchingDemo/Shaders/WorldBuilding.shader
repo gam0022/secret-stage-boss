@@ -24,7 +24,10 @@ Shader "Raymarching/WorldBuilding"
         _HexagonPadding ("Hexagon Padding", Range(0, 1)) = 0.1
         [HDR] _EmissionColorEdge ("Emission Color Edge", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorVoronoi ("Emission Color Voronoi", Color) = (1, 1, 1, 1)
-        _ChangeThresholdZ ("_ChangeThresholdZ", Float) = 0
+        _ChangeThresholdZ ("Change Threshold Z", Float) = 0
+        _ChangeRate ("Change Rate", Range(0, 1)) = 0
+        _WingSize ("Wing Size", Vector) = (0.1, 0.1, 0.1, 0.1)
+        _WingRot ("Wing Rot", Range(-4, 4)) = 0.3
         // @endblock
     }
 
@@ -63,6 +66,9 @@ Shader "Raymarching/WorldBuilding"
         float4 _EmissionColorEdge;
         float4 _EmissionColorVoronoi;
         float _ChangeThresholdZ;
+        float _ChangeRate;
+        float4 _WingSize;
+        float _WingRot;
 
         float dHexagon(float3 pos)
         {
@@ -73,8 +79,20 @@ Shader "Raymarching/WorldBuilding"
 
             float3 p2 = p1;
             p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);
-            p2.y += p1.z * 0.2;
+            p2.y += p1.z * 0.2 * _ChangeRate;
             d = min(d, sdBox(p2, float3(_HexagonRadians * 0.2, 1, 0.02)));
+
+            float3 p3 = p1;
+            p3.y += _ChangeRate;
+            d = min(d, sdBox(p3, float3(0.1, 1 * _ChangeRate, 0.1)));
+
+            float3 p4 = p1;
+
+            p4.y += _WingSize.w;
+
+            rot(p4.yz, _WingRot);
+
+            d = min(d, sdBox(p4, _WingSize.xyz));
 
             return d;
         }
