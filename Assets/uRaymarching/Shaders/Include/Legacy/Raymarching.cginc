@@ -127,6 +127,7 @@ inline bool _Raymarch(inout RaymarchInfo ray)
     multiplier *= length(mul(unity_ObjectToWorld, localRayDir));
 #endif
 
+    [loop]
     for (ray.loop = 0; ray.loop < ray.maxLoop; ++ray.loop) {
         ray.lastDistance = _DistanceFunction(ray.endPos) * multiplier;
         ray.totalLength += ray.lastDistance;
