@@ -25,6 +25,7 @@ Shader "Raymarching/WorldBuilding"
         [HDR] _EmissionColorEdge ("Emission Color Edge", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorVoronoi ("Emission Color Voronoi", Color) = (1, 1, 1, 1)
         _ChangeThresholdZ ("Change Threshold Z", Float) = 0
+        _BloomingThresholdZ ("Blooming Threshold Z", Float) = 0
         _ChangeRate ("Change Rate", Range(0, 1)) = 0
         _WingASize ("Wing A Size", Vector) = (0.1, 0.1, 0.1, 0.1)
         _WingARot ("Wing A Rot", Range(-4, 4)) = 0.3
@@ -67,6 +68,7 @@ Shader "Raymarching/WorldBuilding"
         float4 _EmissionColorEdge;
         float4 _EmissionColorVoronoi;
         float _ChangeThresholdZ;
+        float _BloomingThresholdZ;
         float _ChangeRate;
         float4 _WingASize;
         float _WingARot;
@@ -78,9 +80,12 @@ Shader "Raymarching/WorldBuilding"
         #define MAT_WING_A 3
         #define MAT_WING_B 4
 
-        float2 dHexagon(float3 pos)
+        float2 dHexagon(float3 pos, float blooming)
         {
             float3 p1 = pos;
+
+            // float rate = _ChangeRate;
+            float rate = saturate(blooming);
 
             // 土台
             p1.xz = foldRotate(p1.xz, 6);
@@ -90,20 +95,20 @@ Shader "Raymarching/WorldBuilding"
             float3 p2 = p1;
             p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);
             p2.z -= 0.2 * abs(p2.x);
-            p2.y += p1.z * 0.1 * _ChangeRate;
+            p2.y += p1.z * 0.1 * rate;
             res = opU(res, float2(sdBox(p2, float3(_HexagonRadians * 0.2, 1, 0.02)), MAT_BASE_B));
 
             // 支柱
             float3 p3 = p1;
-            p3.y += _ChangeRate;
-            res = opU(res, float2(sdBox(p3, float3(0.02, remapS(_ChangeRate, 0.0, 0.2, 0, 1), 0.1)), MAT_BASE_C));
+            p3.y += rate;
+            res = opU(res, float2(sdBox(p3, float3(0.02, remapS(rate, 0.0, 0.2, 0, 1), 0.1)), MAT_BASE_C));
 
             float3 p4 = p1;
             
             // 羽
             p4.y += _WingASize.w;
-            rot(p4.yz, remapS(_ChangeRate, 0.5, 1, TAU / 4, _WingARot));
-            res = opU(res, float2(sdBox(p4, _WingASize.xyz * remapS(_ChangeRate, 0.3, 0.6, 0, 1)), MAT_WING_A));
+            rot(p4.yz, remapS(rate, 0.5, 1, TAU / 4, _WingARot));
+            res = opU(res, float2(sdBox(p4, _WingASize.xyz * remapS(rate, 0.3, 0.6, 0, 1)), MAT_WING_A));
 
             // 羽のギザギザ
             p4.y += _WingBSize.w;
@@ -112,6 +117,13 @@ Shader "Raymarching/WorldBuilding"
             res = opU(res, float2(sdBox(p4, _WingBSize.xyz), MAT_WING_B));
 
             return res;
+        }
+
+        float calcBlooming(float z)
+        {
+            float pitch = _HexagonRadians + _HexagonPadding * 0.5;
+            float thresholdZ = _ShipPosition.z / pitch + _BloomingThresholdZ;
+            return saturate((thresholdZ - z) / 40);
         }
 
         float3 dHexagons(float3 pos)
@@ -137,8 +149,8 @@ Shader "Raymarching/WorldBuilding"
             p1 = Repeat(p1, loop);
             p2 = Repeat(p2, loop);
 
-            float3 res = float3(dHexagon(p1), pi1.y);
-            res = opU(res, float3(dHexagon(p2), pi2.y));
+            float3 res = float3(dHexagon(p1, calcBlooming(pi1.y)), pi1.y);
+            res = opU(res, float3(dHexagon(p2, calcBlooming(pi2.y)), pi2.y));
 
             return res;
         }
@@ -165,12 +177,13 @@ Shader "Raymarching/WorldBuilding"
             if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z))
             {
                 // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
-                o.Albedo = fixed3(1, 1, 1);
+                o.Albedo = fixed3(1, 1, 1) * 0.7;
             }
 
             if (res.y == MAT_WING_B)
             {
-                o.Emission = float3(2, 0, 0);
+                // o.Emission = float3(3, 0, 0);
+                o.Albedo = fixed3(1, 0.2, 0.2);
             }
         }
         // @endblock
