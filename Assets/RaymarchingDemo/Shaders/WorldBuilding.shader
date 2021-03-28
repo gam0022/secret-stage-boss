@@ -64,10 +64,19 @@ Shader "Raymarching/WorldBuilding"
         float4 _EmissionColorVoronoi;
         float _ChangeThresholdZ;
 
-        float dHexagon(float3 p)
+        float dHexagon(float3 pos)
         {
-            p.xz = foldRotate(p.xz, 6);
-            return sdBox(p, float3(_HexagonRadians, 1, _HexagonRadians));
+            float3 p1 = pos;
+
+            p1.xz = foldRotate(p1.xz, 6);
+            float d = sdBox(p1, float3(_HexagonRadians, 1, _HexagonRadians));
+
+            float3 p2 = p1;
+            p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);
+            p2.y += p1.z * 0.2;
+            d = min(d, sdBox(p2, float3(_HexagonRadians * 0.2, 1, 0.02)));
+
+            return d;
         }
 
         float2 dHexagons(float3 pos)

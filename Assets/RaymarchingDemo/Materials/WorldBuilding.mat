@@ -22,7 +22,7 @@ Material:
     m_Floats:
     - _ChangeThresholdZ: 0
     - _Cull: 2
-    - _DistanceMultiplier: 1
+    - _DistanceMultiplier: 0.7
     - _EvilScale: 1.21
     - _FoldRotate: 6
     - _Glossiness: 0.5
