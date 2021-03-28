@@ -82,24 +82,30 @@ Shader "Raymarching/WorldBuilding"
         {
             float3 p1 = pos;
 
+            // 土台
             p1.xz = foldRotate(p1.xz, 6);
             float2 res = float2(sdBox(p1, float3(_HexagonRadians, 1, _HexagonRadians)), MAT_BASE_A);
 
+            // 土台のギザギザ
             float3 p2 = p1;
             p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);
-            p2.y += p1.z * 0.2 * _ChangeRate;
+            p2.z -= 0.2 * abs(p2.x);
+            p2.y += p1.z * 0.1 * _ChangeRate;
             res = opU(res, float2(sdBox(p2, float3(_HexagonRadians * 0.2, 1, 0.02)), MAT_BASE_B));
 
+            // 支柱
             float3 p3 = p1;
             p3.y += _ChangeRate;
-            res = opU(res, float2(sdBox(p3, float3(0.1, 1 * _ChangeRate, 0.1)), MAT_BASE_C));
+            res = opU(res, float2(sdBox(p3, float3(0.02, remapS(_ChangeRate, 0.0, 0.2, 0, 1), 0.1)), MAT_BASE_C));
 
             float3 p4 = p1;
-
+            
+            // 羽
             p4.y += _WingASize.w;
-            rot(p4.yz, _WingARot);
-            res = opU(res, float2(sdBox(p4, _WingASize.xyz), MAT_WING_A));
+            rot(p4.yz, remapS(_ChangeRate, 0.5, 1, TAU / 4, _WingARot));
+            res = opU(res, float2(sdBox(p4, _WingASize.xyz * remapS(_ChangeRate, 0.3, 0.6, 0, 1)), MAT_WING_A));
 
+            // 羽のギザギザ
             p4.y += _WingBSize.w;
             p4.z -= 0.4 * abs(p4.x);
             p4.z = opRepRange(p4.z, _WingBSize.z * 3, _WingASize.z);

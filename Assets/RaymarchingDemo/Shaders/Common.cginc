@@ -79,6 +79,12 @@ float remap(float s, float a1, float a2, float b1, float b2)
     return b1 + (s - a1) * (b2 - b1) / (a2 - a1);
 }
 
+// remap saturate
+float remapS(float s, float a1, float a2, float b1, float b2)
+{
+    return b1 + saturate((s - a1) / (a2 - a1)) * (b2 - b1);
+}
+
 float remap(float s, float a1, float a2)
 {
     return(s - a1) / (a2 - a1);
