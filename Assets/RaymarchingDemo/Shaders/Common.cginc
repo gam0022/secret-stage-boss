@@ -16,6 +16,16 @@ float2 opS(float2 d1, float2 d2)
     return - d1.x > d2.x ? float2(-d1.x, d1.y): d2;
 }
 
+float3 opU(float3 d1, float3 d2)
+{
+    return d1.x < d2.x ? d1: d2;
+}
+
+float3 opS(float3 d1, float3 d2)
+{
+    return - d1.x > d2.x ? float3(-d1.x, d1.yz): d2;
+}
+
 float sdBox(float3 p, float3 b)
 {
     float3 q = abs(p) - b;

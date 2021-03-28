@@ -72,37 +72,43 @@ Shader "Raymarching/WorldBuilding"
         float _WingARot;
         float4 _WingBSize;
 
-        float dHexagon(float3 pos)
+        #define MAT_BASE_A 0
+        #define MAT_BASE_B 1
+        #define MAT_BASE_C 2
+        #define MAT_WING_A 3
+        #define MAT_WING_B 4
+
+        float2 dHexagon(float3 pos)
         {
             float3 p1 = pos;
 
             p1.xz = foldRotate(p1.xz, 6);
-            float d = sdBox(p1, float3(_HexagonRadians, 1, _HexagonRadians));
+            float2 res = float2(sdBox(p1, float3(_HexagonRadians, 1, _HexagonRadians)), MAT_BASE_A);
 
             float3 p2 = p1;
             p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);
             p2.y += p1.z * 0.2 * _ChangeRate;
-            d = min(d, sdBox(p2, float3(_HexagonRadians * 0.2, 1, 0.02)));
+            res = opU(res, float2(sdBox(p2, float3(_HexagonRadians * 0.2, 1, 0.02)), MAT_BASE_B));
 
             float3 p3 = p1;
             p3.y += _ChangeRate;
-            d = min(d, sdBox(p3, float3(0.1, 1 * _ChangeRate, 0.1)));
+            res = opU(res, float2(sdBox(p3, float3(0.1, 1 * _ChangeRate, 0.1)), MAT_BASE_C));
 
             float3 p4 = p1;
 
             p4.y += _WingASize.w;
             rot(p4.yz, _WingARot);
-            d = min(d, sdBox(p4, _WingASize.xyz));
+            res = opU(res, float2(sdBox(p4, _WingASize.xyz), MAT_WING_A));
 
             p4.y += _WingBSize.w;
             p4.z -= 0.4 * abs(p4.x);
             p4.z = opRepRange(p4.z, _WingBSize.z * 3, _WingASize.z);
-            d = min(d, sdBox(p4, _WingBSize.xyz));
+            res = opU(res, float2(sdBox(p4, _WingBSize.xyz), MAT_WING_B));
 
-            return d;
+            return res;
         }
 
-        float2 dHexagons(float3 pos)
+        float3 dHexagons(float3 pos)
         {
             float3 p = pos;
 
@@ -125,8 +131,8 @@ Shader "Raymarching/WorldBuilding"
             p1 = Repeat(p1, loop);
             p2 = Repeat(p2, loop);
 
-            float2 res = float2(dHexagon(p1), pi1.y);
-            res = opU(res, float2(dHexagon(p2), pi2.y));
+            float3 res = float3(dHexagon(p1), pi1.y);
+            res = opU(res, float3(dHexagon(p2), pi2.y));
 
             return res;
         }
@@ -142,7 +148,7 @@ Shader "Raymarching/WorldBuilding"
         inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
         {
             float3 p = ray.endPos;
-            float2 res = dHexagons(p);
+            float3 res = dHexagons(p);
 
             float edge = calcEdge(ray.endPos, 0.01);
             o.Emission += _EmissionColorEdge * edge * _AudioSpectrumLevels[0];
@@ -150,10 +156,15 @@ Shader "Raymarching/WorldBuilding"
             float voro = voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0);
             o.Emission += _EmissionColorVoronoi * voro * saturate(cos(_Beat * TAU - Mod(0.1 * p.z, TAU)));
 
-            if (res.y < floor(_ChangeThresholdZ + _ShipPosition.z))
+            if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z))
             {
                 // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
                 o.Albedo = fixed3(1, 1, 1);
+            }
+
+            if (res.y == MAT_WING_B)
+            {
+                o.Emission = float3(2, 0, 0);
             }
         }
         // @endblock
