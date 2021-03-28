@@ -168,11 +168,34 @@ Shader "Raymarching/WorldBuilding"
             float3 p = ray.endPos;
             float3 res = dHexagons(p);
 
-            float edge = calcEdge(ray.endPos, 0.01);
-            o.Emission += _EmissionColorEdge * edge * _AudioSpectrumLevels[0];
+            float waveAxis = p.z;
+            float beat = fmod(_Beat, 4);
+            
+            if (_TimelineTime < 84 || _TimelineTime > 90 || beat < 1)
+            {
+                waveAxis = p.z;
+            }
+            else if (beat < 2)
+            {
+                waveAxis = p.x;
+            }
+            else if (beat < 3)
+            {
+                waveAxis = -p.z;
+            }
+            else
+            {
+                waveAxis = p.x + p.z;
+            }
 
-            float voro = voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0);
-            o.Emission += _EmissionColorVoronoi * voro * saturate(cos(_Beat * TAU - Mod(0.1 * p.z, TAU)));
+            float wave = saturate(cos(_Beat * TAU - Mod(0.1 * waveAxis, TAU)));
+            wave += _AudioSpectrumLevels[0] * 0.1;
+
+            float edge = calcEdge(ray.endPos, 0.03);
+            o.Emission += _EmissionColorEdge * edge * wave;
+
+            float voro = voronoi(ray.endPos.xz) + voronoi(ray.endPos.xz * 2.0);
+            o.Emission += _EmissionColorVoronoi * voro * wave;
 
             if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z))
             {
@@ -182,8 +205,8 @@ Shader "Raymarching/WorldBuilding"
 
             if (res.y == MAT_WING_B)
             {
-                // o.Emission = float3(3, 0, 0);
-                o.Albedo = fixed3(1, 0.2, 0.2);
+                o.Emission = float3(3, 0.2, 0.2);
+                // o.Albedo = fixed3(1, 0.2, 0.2);
             }
         }
         // @endblock

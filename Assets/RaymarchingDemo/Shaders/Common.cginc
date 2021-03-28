@@ -3,6 +3,7 @@
 float _Beat;
 float _AudioSpectrumLevelLength;
 float _AudioSpectrumLevels[32];
+float _TimelineTime;
 
 float3 _ShipPosition;
 

@@ -46,8 +46,8 @@ Material:
     - _BuildingRepeat: {r: 4, g: 20, b: 2.1, a: 1}
     - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 2.4307137, b: 5.2164755, a: 1}
-    - _EmissionColorEdge: {r: 0, g: 5.8565083, b: 8.47419, a: 1}
-    - _EmissionColorVoronoi: {r: 0, g: 4, b: 3.4352942, a: 1}
+    - _EmissionColorEdge: {r: 0, g: 1.1467096, b: 4.867145, a: 1}
+    - _EmissionColorVoronoi: {r: 0, g: 0.28667733, b: 1.216786, a: 1}
     - _EvilBoxSize: {r: 5, g: 0.5, b: 0.5, a: 1}
     - _EvilOffset: {r: 0, g: 0, b: 0, a: 1}
     - _EvilRepeat: {r: 20, g: 20, b: 20, a: 1}

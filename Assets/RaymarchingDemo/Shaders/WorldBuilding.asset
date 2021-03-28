@@ -93,12 +93,10 @@ MonoBehaviour:
       p4.z -= 0.4 * abs(p4.x);\n            p4.z = opRepRange(p4.z, _WingBSize.z
       * 3, _WingASize.z);\n            res = opU(res, float2(sdBox(p4, _WingBSize.xyz),
       MAT_WING_B));\n\n            return res;\n        }\n\n        float calcBlooming(float
-      z)\n        {\n            float pitch = _HexagonRadians * 2 + _HexagonPadding;\n           
-      float offset = pitch * 0.5;\n\n            float a = 4;\n            float
-      thresholdZ = _ShipPosition.z / offset +_BloomingThresholdZ;\n            return
-      smoothstep(z, thresholdZ, thresholdZ + 10);\n            // return saturate((z
-      - thresholdZ));\n        }\n\n        float3 dHexagons(float3 pos)\n       
-      {\n            float3 p = pos;\n\n            float pitch = _HexagonRadians
+      z)\n        {\n            float pitch = _HexagonRadians + _HexagonPadding
+      * 0.5;\n            float thresholdZ = _ShipPosition.z / pitch + _BloomingThresholdZ;\n           
+      return saturate((thresholdZ - z) / 40);\n        }\n\n        float3 dHexagons(float3
+      pos)\n        {\n            float3 p = pos;\n\n            float pitch = _HexagonRadians
       * 2 + _HexagonPadding;\n            float sqrt3_div_2 = 0.8660254037844386467637231707529361834714026269051903140279034897;\n           
       float3 offset = float3(pitch * sqrt3_div_2, 0, pitch * 0.5);\n            float3
       loop = float3(offset.x * 2, 10, offset.z * 2);\n            \n            float3
@@ -116,14 +114,23 @@ MonoBehaviour:
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
       o)\n        {\n            float3 p = ray.endPos;\n            float3 res =
-      dHexagons(p);\n\n            float edge = calcEdge(ray.endPos, 0.01);\n           
-      o.Emission += _EmissionColorEdge * edge * _AudioSpectrumLevels[0];\n\n           
-      float voro = voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0);\n           
-      o.Emission += _EmissionColorVoronoi * voro * saturate(cos(_Beat * TAU - Mod(0.1
-      * p.z, TAU)));\n\n            if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z))\n           
-      {\n                // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));\n               
-      o.Albedo = fixed3(1, 1, 1);\n            }\n\n            if (res.y == MAT_WING_B)\n           
-      {\n                o.Emission = float3(2, 0, 0);\n            }\n        }"
+      dHexagons(p);\n\n            float waveAxis = p.z;\n            float beat
+      = fmod(_Beat, 4);\n            \n            if (_TimelineTime < 84 || _TimelineTime
+      > 90 || beat < 1)\n            {\n                waveAxis = p.z;\n           
+      }\n            else if (beat < 2)\n            {\n                waveAxis
+      = p.x;\n            }\n            else if (beat < 3)\n            {\n               
+      waveAxis = -p.z;\n            }\n            else\n            {\n               
+      waveAxis = p.x + p.z;\n            }\n\n            float wave = saturate(cos(_Beat
+      * TAU - Mod(0.1 * waveAxis, TAU)));\n            wave += _AudioSpectrumLevels[0]
+      * 0.1;\n\n            float edge = calcEdge(ray.endPos, 0.03);\n           
+      o.Emission += _EmissionColorEdge * edge * wave;\n\n            float voro =
+      voronoi(ray.endPos.xz) + voronoi(ray.endPos.xz * 2.0);\n            o.Emission
+      += _EmissionColorVoronoi * voro * wave;\n\n            if (res.z < floor(_ChangeThresholdZ
+      + _ShipPosition.z))\n            {\n                // emissionColor = hsvToRgb(float3(res.y
+      * 0.1, 1, 1));\n                o.Albedo = fixed3(1, 1, 1) * 0.7;\n           
+      }\n\n            if (res.y == MAT_WING_B)\n            {\n                //
+      o.Emission = float3(3, 0, 0);\n                o.Albedo = fixed3(1, 0.2, 0.2);\n           
+      }\n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
   basicFolded: 1
