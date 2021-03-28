@@ -62,29 +62,37 @@ MonoBehaviour:
       = 0.1\n        [HDR] _EmissionColorEdge (\"Emission Color Edge\", Color) =
       (1, 1, 1, 1)\n        [HDR] _EmissionColorVoronoi (\"Emission Color Voronoi\",
       Color) = (1, 1, 1, 1)\n        _ChangeThresholdZ (\"Change Threshold Z\", Float)
-      = 0\n        _ChangeRate (\"Change Rate\", Range(0, 1)) = 0\n        _WingSize
-      (\"Wing Size\", Vector) = (0.1, 0.1, 0.1, 0.1)\n        _WingRot (\"Wing Rot\",
-      Range(-4, 4)) = 0.3"
+      = 0\n        _ChangeRate (\"Change Rate\", Range(0, 1)) = 0\n        _WingASize
+      (\"Wing A Size\", Vector) = (0.1, 0.1, 0.1, 0.1)\n        _WingARot (\"Wing
+      A Rot\", Range(-4, 4)) = 0.3\n        _WingBSize (\"Wing B Size\", Vector)
+      = (0.1, 0.1, 0.1, 0.1)"
     folded: 0
   - key: DistanceFunction
     value: "        #include \"Common.cginc\"\n\n        float _HexagonRadians;\n       
       float _HexagonPadding;\n        float4 _EmissionColorEdge;\n        float4
       _EmissionColorVoronoi;\n        float _ChangeThresholdZ;\n        float _ChangeRate;\n       
-      float4 _WingSize;\n        float _WingRot;\n\n        float dHexagon(float3
-      pos)\n        {\n            float3 p1 = pos;\n\n            p1.xz = foldRotate(p1.xz,
-      6);\n            float d = sdBox(p1, float3(_HexagonRadians, 1, _HexagonRadians));\n\n           
-      float3 p2 = p1;\n            p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);\n           
-      p2.y += p1.z * 0.2 * _ChangeRate;\n            d = min(d, sdBox(p2, float3(_HexagonRadians
-      * 0.2, 1, 0.02)));\n\n            float3 p3 = p1;\n            p3.y += _ChangeRate;\n           
-      d = min(d, sdBox(p3, float3(0.1, 1 * _ChangeRate, 0.1)));\n\n            float3
-      p4 = p1;\n\n            p4.y += _WingSize.w;\n            \n            /*for
-      (int i = 0; i < 3; i++)\n            {\n                p4.xy = abs(p4.xy);\n               
-      p4.xy = mul(rotate(0.3), p4.xy);\n                p4.xz = mul(rotate(-0.1),
-      p4.xz);\n            }*/\n\n            rot(p4.yz, _WingRot);\n\n           
-      d = min(d, sdBox(p4, _WingSize.xyz));\n\n            return d;\n        }\n\n       
-      float2 dHexagons(float3 pos)\n        {\n            float3 p = pos;\n\n           
-      float pitch = _HexagonRadians * 2 + _HexagonPadding;\n            float sqrt3_div_2
-      = 0.8660254037844386467637231707529361834714026269051903140279034897;\n           
+      float4 _WingASize;\n        float _WingARot;\n        float4 _WingBSize;\n\n       
+      #define MAT_BASE_A 0\n        #define MAT_BASE_B 1\n        #define MAT_BASE_C
+      2\n        #define MAT_WING_A 3\n        #define MAT_WING_B 4\n\n        float2
+      dHexagon(float3 pos)\n        {\n            float3 p1 = pos;\n\n           
+      // \u571F\u53F0\n            p1.xz = foldRotate(p1.xz, 6);\n            float2
+      res = float2(sdBox(p1, float3(_HexagonRadians, 1, _HexagonRadians)), MAT_BASE_A);\n\n           
+      // \u571F\u53F0\u306E\u30AE\u30B6\u30AE\u30B6\n            float3 p2 = p1;\n           
+      p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);\n            p2.z -= 0.1 * abs(p2.x);\n           
+      p2.y += p1.z * 0.2 * _ChangeRate;\n            res = opU(res, float2(sdBox(p2,
+      float3(_HexagonRadians * 0.2, 1, 0.02)), MAT_BASE_B));\n\n            // \u652F\u67F1\n           
+      float3 p3 = p1;\n            p3.y += _ChangeRate;\n            res = opU(res,
+      float2(sdBox(p3, float3(0.02, remapS(_ChangeRate, 0.0, 0.2, 0, 1), 0.1)), MAT_BASE_C));\n\n           
+      float3 p4 = p1;\n            \n            // \u7FBD\n            p4.y += _WingASize.w;\n           
+      rot(p4.yz, remapS(_ChangeRate, 0.5, 1, TAU / 4, _WingARot));\n            res
+      = opU(res, float2(sdBox(p4, _WingASize.xyz * remapS(_ChangeRate, 0.3, 0.6,
+      0, 1)), MAT_WING_A));\n\n            // \u7FBD\u306E\u30AE\u30B6\u30AE\u30B6\n           
+      p4.y += _WingBSize.w;\n            p4.z -= 0.4 * abs(p4.x);\n            p4.z
+      = opRepRange(p4.z, _WingBSize.z * 3, _WingASize.z);\n            res = opU(res,
+      float2(sdBox(p4, _WingBSize.xyz), MAT_WING_B));\n\n            return res;\n       
+      }\n\n        float3 dHexagons(float3 pos)\n        {\n            float3 p
+      = pos;\n\n            float pitch = _HexagonRadians * 2 + _HexagonPadding;\n           
+      float sqrt3_div_2 = 0.8660254037844386467637231707529361834714026269051903140279034897;\n           
       float3 offset = float3(pitch * sqrt3_div_2, 0, pitch * 0.5);\n            float3
       loop = float3(offset.x * 2, 10, offset.z * 2);\n            \n            float3
       p1 = p;\n            float3 p2 = p + offset;\n\n            // calculate indices\n           
@@ -92,21 +100,22 @@ MonoBehaviour:
       pi1.y = pi1.y * 2;\n            pi2.y = pi2.y * 2 + 1;\n\n            p1.y
       += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);\n            p2.y += 0.5
       * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);\n            p1 = Repeat(p1, loop);\n           
-      p2 = Repeat(p2, loop);\n\n            float2 res = float2(dHexagon(p1), pi1.y);\n           
-      res = opU(res, float2(dHexagon(p2), pi2.y));\n\n            return res;\n       
+      p2 = Repeat(p2, loop);\n\n            float3 res = float3(dHexagon(p1), pi1.y);\n           
+      res = opU(res, float3(dHexagon(p2), pi2.y));\n\n            return res;\n       
       }\n\n        inline float DistanceFunction(float3 pos)\n        {\n           
       float2 res = dHexagons(pos);\n            return res.x;\n        }"
     folded: 0
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
-      o)\n        {\n            float3 p = ray.endPos;\n            float2 res =
+      o)\n        {\n            float3 p = ray.endPos;\n            float3 res =
       dHexagons(p);\n\n            float edge = calcEdge(ray.endPos, 0.01);\n           
       o.Emission += _EmissionColorEdge * edge * _AudioSpectrumLevels[0];\n\n           
       float voro = voronoi(ray.endPos.xz) + 0.5 * voronoi(ray.endPos.xz * 2.0);\n           
       o.Emission += _EmissionColorVoronoi * voro * saturate(cos(_Beat * TAU - Mod(0.1
-      * p.z, TAU)));\n\n            if (res.y < floor(_ChangeThresholdZ + _ShipPosition.z))\n           
+      * p.z, TAU)));\n\n            if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z))\n           
       {\n                // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));\n               
-      o.Albedo = fixed3(1, 1, 1);\n            }\n        }"
+      o.Albedo = fixed3(1, 1, 1);\n            }\n\n            if (res.y == MAT_WING_B)\n           
+      {\n                o.Emission = float3(2, 0, 0);\n            }\n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
   basicFolded: 1

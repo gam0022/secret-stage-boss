@@ -37,6 +37,7 @@ Material:
     - _RotateXY1: 0.3
     - _RotateXZ1: -0.1
     - _RotateYZ1: -0.1
+    - _WingARot: 0.63
     - _WingRot: 0.63
     m_Colors:
     - _BuildingBoxSize: {r: 0.71, g: 0.67, b: 0.71, a: 1}
@@ -49,5 +50,7 @@ Material:
     - _EvilBoxSize: {r: 5, g: 0.5, b: 0.5, a: 1}
     - _EvilOffset: {r: 0, g: 0, b: 0, a: 1}
     - _EvilRepeat: {r: 20, g: 20, b: 20, a: 1}
+    - _WingASize: {r: 0.1, g: 0.03, b: 1.4, a: 1.25}
+    - _WingBSize: {r: 0.09, g: 0.03, b: 0.02, a: 0.05}
     - _WingSize: {r: 0.1, g: 0.02, b: 1, a: 1.42}
   m_BuildTextureStacks: []
