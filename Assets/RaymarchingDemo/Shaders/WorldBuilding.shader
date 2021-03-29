@@ -197,7 +197,8 @@ Shader "Raymarching/WorldBuilding"
             float voro = voronoi(ray.endPos.xz) + voronoi(ray.endPos.xz * 2.0);
             o.Emission += _EmissionColorVoronoi * voro * wave;
 
-            if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z))
+            float pitch = _HexagonRadians + _HexagonPadding * 0.5;
+            if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z / pitch))
             {
                 // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
                 o.Albedo = fixed3(1, 1, 1) * 0.7;
@@ -212,7 +213,7 @@ Shader "Raymarching/WorldBuilding"
         // @endblock
         
         ENDCG
-        
+
         Pass
         {
             Tags { "LightMode" = "Deferred" }
@@ -225,7 +226,7 @@ Shader "Raymarching/WorldBuilding"
             }
             
             CGPROGRAM
-            
+
             #include "Assets\uRaymarching\Shaders\Include\Legacy/DeferredStandard.cginc"
             #pragma target 3.0
             #pragma vertex Vert
@@ -234,7 +235,7 @@ Shader "Raymarching/WorldBuilding"
             #pragma multi_compile_prepassfinal
             #pragma multi_compile ___ UNITY_HDR_ON
             ENDCG
-            
+
         }
     }
 
