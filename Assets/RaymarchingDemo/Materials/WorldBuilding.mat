@@ -32,7 +32,7 @@ Material:
     - _HexagonRadians: 1
     - _IfsLoop: 5
     - _Loop: 100
-    - _Metallic: 0.5
+    - _Metallic: 0.495
     - _MinDistance: 0.001
     - _NormalDelta: 0.0001
     - _RotateXY1: 0.3
