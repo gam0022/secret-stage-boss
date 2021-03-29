@@ -87,10 +87,19 @@ Shader "Raymarching/WorldBuilding"
             // float rate = _ChangeRate;
             float rate = saturate(blooming);
 
+            float moveY = 1 * (1 - rate);
+
+            if (pos.y > 0)
+            {
+                moveY *= -1;
+            }
+
             // 土台
             p1.xz = foldRotate(p1.xz, 6);
-            float2 res = float2(sdBox(p1, float3(_HexagonRadians, 1, _HexagonRadians)), MAT_BASE_A);
+            float r = lerp(rate, 1, 0) * _HexagonRadians;
+            float2 res = float2(sdBox(p1, float3(_HexagonRadians, 1, r)), MAT_BASE_A);
 
+            /*
             // 土台のギザギザ
             float3 p2 = p1;
             p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);
@@ -115,6 +124,7 @@ Shader "Raymarching/WorldBuilding"
             p4.z -= 0.4 * abs(p4.x);
             p4.z = opRepRange(p4.z, _WingBSize.z * 3, _WingASize.z);
             res = opU(res, float2(sdBox(p4, _WingBSize.xyz), MAT_WING_B));
+            */
 
             return res;
         }
@@ -123,7 +133,7 @@ Shader "Raymarching/WorldBuilding"
         {
             float pitch = _HexagonRadians + _HexagonPadding * 0.5;
             float thresholdZ = _ShipPosition.z / pitch + _BloomingThresholdZ;
-            return saturate((thresholdZ - z) / 40);
+            return saturate((z - thresholdZ) / 5);
         }
 
         float3 dHexagons(float3 pos)
@@ -146,8 +156,10 @@ Shader "Raymarching/WorldBuilding"
 
             p1.y += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);
             p2.y += 0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);
-            p1 = Repeat(p1, loop);
-            p2 = Repeat(p2, loop);
+            p1.xz = Repeat(p1.xz, loop.xz);
+            p2.xz = Repeat(p2.xz, loop.xz);
+            p1.y = abs(p1.y) - 5;
+            p2.y = abs(p2.y) - 5;
 
             float3 res = float3(dHexagon(p1, calcBlooming(pi1.y)), pi1.y);
             res = opU(res, float3(dHexagon(p2, calcBlooming(pi2.y)), pi2.y));
