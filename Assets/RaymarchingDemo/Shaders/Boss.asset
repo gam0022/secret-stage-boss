@@ -30,7 +30,7 @@ MonoBehaviour:
   - key: WorldSpace
     value: 0
   - key: FollowObjectScale
-    value: 0
+    value: 1
   - key: CameraInsideObject
     value: 1
   - key: UseRaymarchingDepth

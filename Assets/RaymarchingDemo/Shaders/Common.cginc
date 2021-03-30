@@ -27,6 +27,11 @@ float3 opS(float3 d1, float3 d2)
     return - d1.x > d2.x ? float3(-d1.x, d1.yz): d2;
 }
 
+float sdSphere(float3 p, float s)
+{
+    return length(p) - s;
+}
+
 float sdBox(float3 p, float3 b)
 {
     float3 q = abs(p) - b;

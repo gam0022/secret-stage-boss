@@ -20,14 +20,14 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _Cull: 2
+    - _Cull: 0
     - _DistanceMultiplier: 1
     - _Gantz: 0
     - _Glossiness: 0.5
-    - _Loop: 30
+    - _Loop: 100
     - _Metallic: 0.5
     - _MinDistance: 0.001
-    - _NormalDelta: 0.0001
+    - _NormalDelta: 0.00001
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
     - _ShadowMinDistance: 0.005
