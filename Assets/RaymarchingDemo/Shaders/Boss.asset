@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3acd6fe57257048db802c1c4c2b75248, type: 3}
+  m_Name: Boss
+  m_EditorClassIdentifier: 
+  shaderName: Boss
+  shaderReference: {fileID: 4800000, guid: 1ed85400a331996499b601458fa2994e, type: 3}
+  shaderTemplate: uRaymarching/Deferred/Standard
+  variables:
+  - key: Name
+    value: Boss
+  - key: ObjectShape
+    value: CUBE
+  - key: RaymarchingShaderDirectory
+    value: Assets\uRaymarching\Shaders\Include\Legacy
+  conditions:
+  - key: ShadowCaster
+    value: 1
+  - key: FullScreen
+    value: 0
+  - key: WorldSpace
+    value: 0
+  - key: FollowObjectScale
+    value: 0
+  - key: CameraInsideObject
+    value: 1
+  - key: UseRaymarchingDepth
+    value: 1
+  - key: FallbackToDiffuse
+    value: 1
+  - key: SphericalHarmonicsPerPixel
+    value: 1
+  - key: FallbackToStandardShader
+    value: 1
+  blocks:
+  - key: Properties
+    value: "        [HDR] _EmissionColor (\"Emission Color\", Color) = (1, 1, 1,
+      1)\n        [HDR] _EmissionColorB (\"Emission Color B\", Color) = (1, 1, 1,
+      1)\n        _Gantz (\"Gantz\", Range(0, 1)) = 0"
+    folded: 0
+  - key: DistanceFunction
+    value: "        #include \"Common.cginc\"\n\n        float4 _EmissionColor;\n       
+      float4 _EmissionColorB;\n        float _Gantz;\n\n        #define MAT_ENGINE_BODY_A  
+      1\n        #define MAT_ENGINE_DETAIL_A 2\n        #define MAT_ENGINE_DETAIL_B
+      3\n        #define MAT_ENGINE_CORE     4\n        #define MAT_ENGINE_FAN     
+      5\n\n        #define MAT_BODY_A          6\n        #define MAT_JOINT_A        
+      7\n\n        float2 dEngine(float3 pos)\n        {\n            float3 p =
+      pos;\n            float r = cos((pos.y + 0.3) * 1.0) * 0.3;\n\n           
+      // \u7D30\u304B\u3044\u67A0\n            p.xz = foldRotate(pos.xz, 12);\n           
+      p.y -= 0.3 * abs(p.x);\n            p.y = opRepRange(p.y, 0.03, 0.7);\n           
+      p.z -= r + 0.1;\n            float2 res = float2(sdBox(p, float3(0.1, 0.01,
+      0.02)), MAT_ENGINE_BODY_A);\n\n            // \u592A\u3044\u67A0\u30FB\u7E26\n           
+      p = pos;\n            p.xz = foldRotate(pos.xz, 6);\n            p.z -= r +
+      0.1;\n            res = opU(res, float2(sdBox(p, float3(0.1 + 0.04 * (p.y -
+      1.0), 0.75, 0.05)), MAT_ENGINE_DETAIL_A));\n\n            // \u592A\u3044\u67A0\u30FB\u6A2A\n           
+      p = pos;\n            p.xz = foldRotate(pos.xz, 6);\n            p.y = opRepRange(p.y,
+      0.24, 0.7);\n            p.z -= r + 0.15;\n            res = opU(res, float2(sdBox(p,
+      float3(0.3, 0.03, 0.02)), MAT_ENGINE_DETAIL_B));\n\n            // \u82AF\u7DDA\n           
+      res = opU(res, float2(sdCappedCylinder(pos, cos(abs(1.9 * pos.y)) * 0.2, 0.9),
+      MAT_ENGINE_CORE));\n\n            // \u30B3\u30F3\u30D7\u30EC\u30C3\u30B5\u30FC\u30FB\u30BF\u30FC\u30D3\u30F3\n           
+      p = pos;\n            p.y = opRepRange(p.y, 0.15, 0.7);\n            p.xz =
+      mul(rotate(_Beat), p.xz);\n            p.xz = foldRotate(p.xz, 12 * 2);\n           
+      p.z -= 0.18;\n            p.xy = mul(rotate(0.3 + 2 * p.z), p.xy);\n           
+      float dFan = sdBox(p, float3(0.02, 0.002, 0.1)) * 0.7;\n            res = opU(res,
+      float2(dFan, MAT_ENGINE_FAN));\n\n            return res;\n        }\n\n       
+      float2 dBody(float3 pos)\n        {\n            float3 p = pos;\n\n           
+      float bodyLength = 1.7;\n            float bodyWidth = 0.3 * abs(cos((p.y +
+      bodyLength) * TAU / bodyLength / 8));\n            float dBody = sdBox(p, float3(bodyWidth
+      * 0.1, bodyLength, bodyWidth * 0.1));\n            float2 res = float2(dBody,
+      MAT_BODY_A);\n\n            p.y -= 0.5 * abs(p.x);\n            p.z -= bodyWidth
+      + 0.01;\n            p.y = opRepRange(p.y, 0.3, bodyLength);\n\n           
+      for (int i = 0; i < 5; i++)\n            {\n                p.xy = abs(p.xy);\n               
+      p.xy = mul(rotate(0.3), p.xy);\n                p.xz = mul(rotate(-0.1), p.xz);\n               
+      p *= 0.9;\n            }\n\n            res = opU(res, float2(sdBox(p, float3(bodyWidth
+      + 0.06, 0.006, 0.006)), MAT_ENGINE_DETAIL_A));\n\n            return res;\n       
+      }\n\n        float2 dShip(float3 pos)\n        {\n            float3 p = pos;\n\n           
+      p.xz = foldRotate(p.xz, 3);\n\n            // \u30A8\u30F3\u30B8\u30F3\n           
+      float3 p1 = p;\n            p1.z -= 0.9;\n            p1.y -= -1.1;\n           
+      float2 res = dEngine(p1);\n\n            // \u30B8\u30E7\u30A4\u30F3\u30C8\n           
+      float3 p2 = p;\n            p2.y -= -1.4;\n            float dJoint = sdBox(p2,
+      float3(0.1, 0.1, 0.6));\n            res = opU(res, float2(dJoint, MAT_JOINT_A));\n\n           
+      // Body\n            res = opU(res, dBody(p));\n\n            // Gantz\n           
+      float3 size = GetScale() * 0.5;\n            size.xz *= 1.1;\n            res
+      = opS(float2(sdBox(p - float3(0, 2 * size.y * _Gantz, 0), size), res.y), res);\n\n           
+      return res;\n        }\n\n        inline float DistanceFunction(float3 pos)\n       
+      {\n            float2 res = dShip(pos);\n            return res.x;\n       
+      }"
+    folded: 0
+  - key: PostEffect
+    value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
+      o)\n        {\n            float3 scale = GetScale();\n            float3 p
+      = ToLocal(ray.endPos) * scale;\n            float2 res = dShip(p);\n\n           
+      if (res.y >= MAT_ENGINE_BODY_A && res.y <= MAT_ENGINE_FAN)\n            {\n               
+      // \u4E2D\u8EAB\u3060\u3051\u5149\u3089\u305B\u308B\n                float3
+      p1 = p;\n                p1.xz = foldRotate(p.xz, 3);\n                p1.z
+      -= 0.9;\n                p1.y -= -1.1;\n                float l = length(p1.xz);\n               
+      float r = cos((p1.y + 0.3) * 1.0) * 0.3;\n\n                if (l < r + 0.1)\n               
+      {\n                    o.Emission = _EmissionColor * (0.2 + 30 * _AudioSpectrumLevels[1]);\n               
+      }\n\n                // \u4E00\u90E8\u3060\u3051\u5149\u3089\u305B\u308B\n               
+      if (res.y == MAT_ENGINE_DETAIL_A)\n                {\n                    o.Emission
+      = _EmissionColorB * 20 * _AudioSpectrumLevels[0];\n                }\n           
+      }\n            else\n            {\n                o.Smoothness = 0.95;\n               
+      o.Metallic = 1;\n                o.Occlusion = 0;\n                o.Albedo
+      = half3(1, 1, 1);\n            }\n\n            float gantzEmissiveY = (_Gantz
+      - 0.5) * scale.y;\n            float _GantzWidth = 0.01;\n            if (p.y
+      >= gantzEmissiveY - _GantzWidth && p.y <= gantzEmissiveY + _GantzWidth)\n           
+      {\n                o.Emission = _EmissionColorB;\n            }\n        }"
+    folded: 0
+  constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
+  basicFolded: 1
+  conditionsFolded: 1
+  variablesFolded: 1
+  materialsFolded: 0
+  constantsFolded: 1
