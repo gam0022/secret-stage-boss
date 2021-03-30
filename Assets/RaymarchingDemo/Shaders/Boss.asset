@@ -45,17 +45,23 @@ MonoBehaviour:
   - key: Properties
     value: "        [HDR] _EmissionColor (\"Emission Color\", Color) = (1, 1, 1,
       1)\n        [HDR] _EmissionColorB (\"Emission Color B\", Color) = (1, 1, 1,
-      1)\n        _Gantz (\"Gantz\", Range(0, 1)) = 0"
+      1)"
     folded: 0
   - key: DistanceFunction
     value: "        #include \"Common.cginc\"\n\n        float4 _EmissionColor;\n       
-      float4 _EmissionColorB;\n        float _Gantz;\n\n        #define MAT_BODY_A
-      1\n        #define MAT_WING_B 2\n\n        float dFeather(float3 pos)\n       
-      {\n            float3 p = pos;\n\n            return sdBox(p, float3(2 + p.y,
-      0.2, 0.01 * exp(-p.x)));\n        }\n\n        float2 dBoss(float3 pos)\n       
+      float4 _EmissionColorB;\n\n        #define MAT_BODY_A 1\n        #define MAT_WING_B
+      2\n\n        float2 foldRotateWing(float2 p, float s, inout float a)\n       
+      {\n            a = PI / s - atan2(p.x, p.y);\n            float n = TAU / s;\n           
+      a = floor(a / n) * n;\n            p = mul(rotate(a), p);\n            return
+      p;\n        }\n\n        float dFeather(float3 pos, float scale)\n        {\n           
+      float3 p = pos;\n\n            return sdBox(p, scale * float3(0.2, 4 - 4 *
+      p.x, 0.01 * exp(-p.x)));\n        }\n\n        float2 dBoss(float3 pos)\n       
       {\n            float3 p = pos;\n\n            p.x = abs(p.x);\n\n           
-      float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);\n\n            res = opU(res,
-      float2(dFeather(p - float3(3, 0, 0)), MAT_WING_B));\n\n            return res;\n       
+      float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);\n\n            float angle
+      = 0;\n            p.xy = foldRotateWing(p.xy, 16 * 2, angle);\n           
+      rot(p.yz, 0.3);\n\n            float s = angle;\n\n            s = saturate(cos(s
+      * 1.3 + TAU / 4));\n            s = s * s;\n\n            res = opU(res, float2(dFeather(p
+      - float3(0, 5 * s, 0), s), MAT_WING_B));\n\n            return res;\n       
       }\n\n        inline float DistanceFunction(float3 pos)\n        {\n           
       float2 res = dBoss(pos);\n            return res.x;\n        }"
     folded: 0

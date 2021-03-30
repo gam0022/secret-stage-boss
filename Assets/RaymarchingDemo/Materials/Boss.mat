@@ -25,7 +25,7 @@ Material:
     - _Gantz: 0
     - _Glossiness: 0.5
     - _Loop: 100
-    - _Metallic: 0.5
+    - _Metallic: 1
     - _MinDistance: 0.001
     - _NormalDelta: 0.0007
     - _ShadowExtraBias: 0.01
