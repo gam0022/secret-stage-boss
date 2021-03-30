@@ -23,7 +23,6 @@ Shader "Raymarching/Boss"
         // @block Properties
         [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorB ("Emission Color B", Color) = (1, 1, 1, 1)
-        _Gantz ("Gantz", Range(0, 1)) = 0
         // @endblock
     }
 
@@ -55,16 +54,24 @@ Shader "Raymarching/Boss"
 
         float4 _EmissionColor;
         float4 _EmissionColorB;
-        float _Gantz;
 
         #define MAT_BODY_A 1
         #define MAT_WING_B 2
+
+        float2 foldRotateWing(float2 p, float s)
+        {
+            float a = PI / s - atan2(p.x, p.y);
+            float n = TAU / s;
+            a = floor(a / n) * n;
+            p = mul(rotate(a), p);
+            return p;
+        }
 
         float dFeather(float3 pos)
         {
             float3 p = pos;
 
-            return sdBox(p, float3(2 + p.y, 0.2, 0.01 * exp(-p.x)));
+            return sdBox(p, float3(0.2, 2, 0.01 * exp(-p.x)));
         }
 
         float2 dBoss(float3 pos)
@@ -75,7 +82,10 @@ Shader "Raymarching/Boss"
 
             float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);
 
-            res = opU(res, float2(dFeather(p - float3(3, 0, 0)), MAT_WING_B));
+            // rot(p.xy, -TAU / 4);
+            p.xy = foldRotateWing(p.xy, 16);
+
+            res = opU(res, float2(dFeather(p - float3(0, 3, 0)), MAT_WING_B));
 
             return res;
         }
