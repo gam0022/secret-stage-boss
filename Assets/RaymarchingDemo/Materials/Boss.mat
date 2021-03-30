@@ -27,7 +27,7 @@ Material:
     - _Loop: 100
     - _Metallic: 0.5
     - _MinDistance: 0.001
-    - _NormalDelta: 0.00001
+    - _NormalDelta: 0.0007
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
     - _ShadowMinDistance: 0.005

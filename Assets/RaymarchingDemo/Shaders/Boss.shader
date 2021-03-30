@@ -58,12 +58,24 @@ Shader "Raymarching/Boss"
         float _Gantz;
 
         #define MAT_BODY_A 1
+        #define MAT_WING_B 2
+
+        float dFeather(float3 pos)
+        {
+            float3 p = pos;
+
+            return sdBox(p, float3(2 + p.y, 0.2, 0.01 * exp(-p.x)));
+        }
 
         float2 dBoss(float3 pos)
         {
             float3 p = pos;
 
+            p.x = abs(p.x);
+
             float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);
+
+            res = opU(res, float2(dFeather(p - float3(3, 0, 0)), MAT_WING_B));
 
             return res;
         }
