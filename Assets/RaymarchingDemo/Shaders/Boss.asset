@@ -60,10 +60,11 @@ MonoBehaviour:
       float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);\n\n            float angle
       = 0;\n            p.xy = foldRotateWing(p.xy, 16 * 2, angle);\n           
       rot(p.yz, 0.3);\n\n            float s = angle;\n\n            s = saturate(cos(s
-      * 1.3 + TAU / 4));\n            s = s * s;\n\n            res = opU(res, float2(dFeather(p
-      - float3(0, 5 * s, 0), s), MAT_WING_B));\n\n            return res;\n       
-      }\n\n        inline float DistanceFunction(float3 pos)\n        {\n           
-      float2 res = dBoss(pos);\n            return res.x;\n        }"
+      * 1.3 + TAU / 4));\n            s = s * s;\n\n            res = opU(res, 0.5
+      * float2(dFeather(p - float3(0, 5 * s, 0), s), MAT_WING_B));\n\n           
+      return res;\n        }\n\n        inline float DistanceFunction(float3 pos)\n       
+      {\n            float2 res = dBoss(pos);\n            return res.x;\n       
+      }"
     folded: 0
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput

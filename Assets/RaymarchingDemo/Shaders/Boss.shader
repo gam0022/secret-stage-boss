@@ -91,7 +91,7 @@ Shader "Raymarching/Boss"
             s = saturate(cos(s * 1.3 + TAU / 4));
             s = s * s;
 
-            res = opU(res, float2(dFeather(p - float3(0, 5 * s, 0), s), MAT_WING_B));
+            res = opU(res, 0.5 * float2(dFeather(p - float3(0, 5 * s, 0), s), MAT_WING_B));
 
             return res;
         }
