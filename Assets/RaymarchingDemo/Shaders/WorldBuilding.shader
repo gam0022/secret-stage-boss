@@ -22,6 +22,7 @@ Shader "Raymarching/WorldBuilding"
         [Header(World)]
         _HexagonRadians ("Hexagon Radians", Range(0, 5)) = 1
         _HexagonPadding ("Hexagon Padding", Range(0, 1)) = 0.1
+        _Height ("Height", Float) = 10
         [HDR] _EmissionColorEdge ("Emission Color Edge", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorVoronoi ("Emission Color Voronoi", Color) = (1, 1, 1, 1)
         _ChangeThresholdZ ("Change Threshold Z", Float) = 0
@@ -65,6 +66,7 @@ Shader "Raymarching/WorldBuilding"
 
         float _HexagonRadians;
         float _HexagonPadding;
+        float _Height;
         float4 _EmissionColorEdge;
         float4 _EmissionColorVoronoi;
         float _ChangeThresholdZ;
@@ -143,7 +145,7 @@ Shader "Raymarching/WorldBuilding"
             float pitch = _HexagonRadians * 2 + _HexagonPadding;
             float sqrt3_div_2 = 0.8660254037844386467637231707529361834714026269051903140279034897;
             float3 offset = float3(pitch * sqrt3_div_2, 0, pitch * 0.5);
-            float3 loop = float3(offset.x * 2, 14, offset.z * 2);
+            float3 loop = float3(offset.x * 2, _Height, offset.z * 2);
             
             float3 p1 = p;
             float3 p2 = p + offset;

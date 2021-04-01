@@ -28,6 +28,7 @@ Material:
     - _EvilScale: 1.21
     - _FoldRotate: 6
     - _Glossiness: 0.5
+    - _Height: 14
     - _HexagonPadding: 0.1
     - _HexagonRadians: 1
     - _IfsLoop: 5
