@@ -21,7 +21,7 @@ Material:
     m_TexEnvs: []
     m_Floats:
     - _BoxBRepeat: 0.2
-    - _Cull: 2
+    - _Cull: 0
     - _DistanceMultiplier: 1
     - _EmissionY: 0
     - _EvilScale: 0.974

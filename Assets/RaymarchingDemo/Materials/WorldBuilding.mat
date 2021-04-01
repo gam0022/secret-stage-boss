@@ -23,7 +23,7 @@ Material:
     - _BloomingThresholdZ: 5.02
     - _ChangeRate: 1
     - _ChangeThresholdZ: 0
-    - _Cull: 2
+    - _Cull: 0
     - _DistanceMultiplier: 0.7
     - _EvilScale: 1.21
     - _FoldRotate: 6
