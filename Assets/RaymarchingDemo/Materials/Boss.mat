@@ -23,16 +23,17 @@ Material:
     - _Cull: 0
     - _DistanceMultiplier: 1
     - _Gantz: 0
-    - _Glossiness: 0.265
+    - _Glossiness: 0.814
     - _Loop: 100
-    - _Metallic: 0
+    - _Metallic: 0.805
     - _MinDistance: 0.001
     - _NormalDelta: 0.0001
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
     - _ShadowMinDistance: 0.005
     m_Colors:
-    - _Color: {r: 0, g: 0, b: 0, a: 1}
-    - _EmissionColor: {r: 4, g: 0, b: 0, a: 1}
+    - _BodySizeA: {r: 0.61, g: 0.2, b: 0.1, a: 0.14}
+    - _Color: {r: 0.1509434, g: 0.1509434, b: 0.1509434, a: 1}
+    - _EmissionColor: {r: 7.0465865, g: 0.23267044, b: 0.23267044, a: 1}
     - _EmissionColorB: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

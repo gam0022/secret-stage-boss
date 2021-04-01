@@ -23,6 +23,7 @@ Shader "Raymarching/Boss"
         // @block Properties
         [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorB ("Emission Color B", Color) = (1, 1, 1, 1)
+        _BodySizeA ("Body Size A", Vector) = (1, 1, 1, 1)
         // @endblock
     }
 
@@ -54,10 +55,12 @@ Shader "Raymarching/Boss"
 
         float4 _EmissionColor;
         float4 _EmissionColorB;
+        float4 _BodySizeA;
 
         #define MAT_BODY_A 1
-        #define MAT_WING_A 2
-        #define MAT_WING_B 3
+        #define MAT_BODY_B 2
+        #define MAT_WING_A 3
+        #define MAT_WING_B 4
 
         float2 foldRotateWing(float2 p, float s, inout float a)
         {
@@ -80,7 +83,7 @@ Shader "Raymarching/Boss"
 
             size.x *= 0.1;
             size.z *= 1.5;
-            size.y *= 0.9;
+            // size.y *= 0.9;
             res = opU(res, float2(sdBox(p, size), MAT_WING_B));
 
             return res;
@@ -90,7 +93,32 @@ Shader "Raymarching/Boss"
         {
             float3 p = pos;
 
-            float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);
+            float r = 0.5 - 0.1 * abs(p.y);
+
+            // 上下の枠
+            p.xz = foldRotate(pos.xz, 6);
+            p.y = abs(p.y) - 0.7;
+            p.y -= 0.4 * abs(p.x);
+            p.z -= r + _BodySizeA.w;
+            float2 res = float2(sdBox(p, _BodySizeA.xyz), MAT_BODY_A);
+
+            // 太い枠・縦
+            p = pos;
+            p.xz = foldRotate(pos.xz, 6);
+            p.z -= r + 0.1;
+            res = opU(res, float2(sdBox(p, float3(0.2 + 0.04 * (p.y - 1.0), 0.75, 0.05)), MAT_BODY_A));
+
+            // 細かい線
+            p = pos;
+            p.xz = foldRotate(pos.xz, 6);
+            p.y = opRepRange(p.y, 0.12, 0.1);
+            p.z -= r - 0.05;
+            res = opU(res, float2(sdBox(p, float3(0.3, 0.03, 0.02)), MAT_BODY_B));
+
+            // 芯線
+            p = pos;
+            p.xz = foldRotate(pos.xz, 6);
+            res = opU(res, float2(sdBox(p, float3(0.4, 0.9, 0.2)), MAT_BODY_A));
 
             return res;
         }
@@ -138,9 +166,25 @@ Shader "Raymarching/Boss"
             float3 p = ToLocal(ray.endPos) * scale;
             float2 res = mBoss(p);
 
-            if (res.y == MAT_WING_B)
+            float edge = calcEdge(p, 0.02);
+
+            if (res.y == MAT_BODY_B)
             {
-                o.Emission = _EmissionColor * cos(_Beat * TAU);
+                float s = 5;
+                if (((0.5 - p.y / scale.y) - frac(_Beat)) > 0)
+                {
+                    // o.Emission = _EmissionColor;
+                }
+
+                o.Emission = _EmissionColor * _AudioSpectrumLevels[0] * 20;
+            }
+            else if (res.y == MAT_BODY_A)
+            {
+                // o.Emission += _EmissionColor * edge;
+            }
+            else if (res.y == MAT_WING_B)
+            {
+                o.Emission = _EmissionColor * saturate(sin(_Beat * TAU));
             }
         }
         // @endblock

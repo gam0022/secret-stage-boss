@@ -45,14 +45,15 @@ MonoBehaviour:
   - key: Properties
     value: "        [HDR] _EmissionColor (\"Emission Color\", Color) = (1, 1, 1,
       1)\n        [HDR] _EmissionColorB (\"Emission Color B\", Color) = (1, 1, 1,
-      1)"
+      1)\n        _BodySizeA (\"Body Size A\", Vector) = (1, 1, 1, 1)"
     folded: 0
   - key: DistanceFunction
     value: "        #include \"Common.cginc\"\n\n        float4 _EmissionColor;\n       
-      float4 _EmissionColorB;\n\n        #define MAT_BODY_A 1\n        #define MAT_WING_A
-      2\n        #define MAT_WING_B 3\n\n        float2 foldRotateWing(float2 p,
-      float s, inout float a)\n        {\n            a = PI / s - atan2(p.x, p.y);\n           
-      float n = TAU / s;\n            a = floor(a / n) * n;\n            p = mul(rotate(a),
+      float4 _EmissionColorB;\n        float4 _BodySizeA;\n\n        #define MAT_BODY_A
+      1\n        #define MAT_BODY_B 2\n        #define MAT_WING_A 3\n        #define
+      MAT_WING_B 4\n\n        float2 foldRotateWing(float2 p, float s, inout float
+      a)\n        {\n            a = PI / s - atan2(p.x, p.y);\n            float
+      n = TAU / s;\n            a = floor(a / n) * n;\n            p = mul(rotate(a),
       p);\n            return p;\n        }\n\n        float2 mFeather(float3 pos,
       float scale)\n        {\n            float3 p = pos;\n\n            float h
       = 4 * scale;\n            p.y -= h;\n            float3 size = scale * float3(0.4
@@ -60,15 +61,26 @@ MonoBehaviour:
       size.x *= 0.1;\n            size.z *= 1.5;\n            size.y *= 0.9;\n           
       res = opU(res, float2(sdBox(p, size), MAT_WING_B));\n\n            return res;\n       
       }\n\n        float2 mBody(float3 pos)\n        {\n            float3 p = pos;\n\n           
-      float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);\n\n            return res;\n       
-      }\n\n        float2 mBoss(float3 pos)\n        {\n            float3 p = pos;\n\n           
-      p.x = abs(p.x);\n            p.y -= -0.5 * sin(_Beat * TAU / 4);\n\n           
-      float2 res = mBody(p);\n\n            for (int i = 0; i < 5; i++)\n           
-      {\n                float3 p1 = p;\n\n                float s = TAU / 6 + TAU
-      / 16 * i;\n                \n                rot(p1.xy, -s + 0.3 * sin(_Beat
-      * TAU / 4));\n                rot(p1.xz, 0.3);\n                rot(p1.yz,
-      0.3 * sin(i * 0.5 + _Beat * TAU / 4));\n                p1 -= float3(0, 1,
-      0.3 - 0.2 * i);\n\n                s = saturate(cos(s * 0.2 + TAU / 24));\n               
+      float r = 0.5 - 0.1 * abs(p.y);\n\n            // \u4E0A\u4E0B\u306E\u67A0\n           
+      p.xz = foldRotate(pos.xz, 6);\n            p.y = abs(p.y) - 0.7;\n           
+      p.y -= 0.4 * abs(p.x);\n            p.z -= r + _BodySizeA.w;\n            float2
+      res = float2(sdBox(p, _BodySizeA.xyz), MAT_BODY_A);\n\n            // \u592A\u3044\u67A0\u30FB\u7E26\n           
+      p = pos;\n            p.xz = foldRotate(pos.xz, 6);\n            p.z -= r +
+      0.1;\n            res = opU(res, float2(sdBox(p, float3(0.2 + 0.04 * (p.y -
+      1.0), 0.75, 0.05)), MAT_BODY_A));\n\n            // \u592A\u3044\u67A0\u30FB\u6A2A\n           
+      p = pos;\n            p.xz = foldRotate(pos.xz, 6);\n            p.y = opRepRange(p.y,
+      0.12, 0.7);\n            p.z -= r - 0.05;\n            res = opU(res, float2(sdBox(p,
+      float3(0.3, 0.03, 0.02)), MAT_BODY_B));\n\n            // \u82AF\u7DDA\n           
+      p = pos;\n            p.xz = foldRotate(pos.xz, 6);\n            res = opU(res,
+      float2(sdBox(p, float3(0.4, 0.9, 0.2)), MAT_BODY_A));\n\n            return
+      res;\n        }\n\n        float2 mBoss(float3 pos)\n        {\n           
+      float3 p = pos;\n\n            p.x = abs(p.x);\n            p.y -= -0.5 * sin(_Beat
+      * TAU / 4);\n\n            float2 res = mBody(p);\n\n            for (int i
+      = 0; i < 5; i++)\n            {\n                float3 p1 = p;\n\n               
+      float s = TAU / 6 + TAU / 16 * i;\n                \n                rot(p1.xy,
+      -s + 0.3 * sin(_Beat * TAU / 4));\n                rot(p1.xz, 0.3);\n               
+      rot(p1.yz, 0.3 * sin(i * 0.5 + _Beat * TAU / 4));\n                p1 -= float3(0,
+      1, 0.3 - 0.2 * i);\n\n                s = saturate(cos(s * 0.2 + TAU / 24));\n               
       s = s * s ;\n\n                res = opU(res, mFeather(p1, s));\n           
       }\n\n            return res;\n        }\n\n        inline float DistanceFunction(float3
       pos)\n        {\n            float2 res = mBoss(pos);\n            return res.x;\n       
@@ -78,8 +90,15 @@ MonoBehaviour:
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
       o)\n        {\n            float3 scale = GetScale();\n            float3 p
       = ToLocal(ray.endPos) * scale;\n            float2 res = mBoss(p);\n\n           
-      if (res.y == MAT_WING_B)\n            {\n                o.Emission = _EmissionColor
-      * cos(_Beat * TAU);\n            }\n        }"
+      float edge = calcEdge(p, 0.02);\n\n            if (res.y == MAT_BODY_B)\n           
+      {\n                float s = 5;\n                if (((0.5 - p.y / scale.y)
+      - frac(_Beat)) > 0)\n                {\n                    // o.Emission =
+      _EmissionColor;\n                }\n\n                o.Emission = _EmissionColor
+      * _AudioSpectrumLevels[0] * 20;\n            }\n            else if (res.y
+      == MAT_BODY_A)\n            {\n                o.Emission += _EmissionColor
+      * edge;\n            }\n            else if (res.y == MAT_WING_B)\n           
+      {\n                o.Emission = _EmissionColor * saturate(sin(_Beat * TAU));\n           
+      }\n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
   basicFolded: 1
