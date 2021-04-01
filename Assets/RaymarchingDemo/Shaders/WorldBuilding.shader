@@ -208,7 +208,7 @@ Shader "Raymarching/WorldBuilding"
             float edge = calcEdge(ray.endPos, 0.03);
             o.Emission += _EmissionColorEdge * edge * wave;
 
-            float voro = voronoi(ray.endPos.xz) + voronoi(ray.endPos.xz * 2.0);
+            float voro = voronoi(ray.endPos.xz * 0.5) + voronoi(ray.endPos.xz);
             o.Emission += _EmissionColorVoronoi * voro * wave;
 
             float pitch = _HexagonRadians + _HexagonPadding * 0.5;

@@ -8,7 +8,6 @@ namespace Revision2021
         [SerializeField] Transform target;
         [SerializeField] Vector3 offset = new Vector3(0, 0, -20);
 
-
         public void SetTime(double time)
         {
             var p = target.position + offset;
