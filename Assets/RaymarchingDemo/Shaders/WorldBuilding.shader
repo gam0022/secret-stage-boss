@@ -143,7 +143,7 @@ Shader "Raymarching/WorldBuilding"
             float pitch = _HexagonRadians * 2 + _HexagonPadding;
             float sqrt3_div_2 = 0.8660254037844386467637231707529361834714026269051903140279034897;
             float3 offset = float3(pitch * sqrt3_div_2, 0, pitch * 0.5);
-            float3 loop = float3(offset.x * 2, 10, offset.z * 2);
+            float3 loop = float3(offset.x * 2, 14, offset.z * 2);
             
             float3 p1 = p;
             float3 p2 = p + offset;

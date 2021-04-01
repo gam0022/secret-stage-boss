@@ -56,7 +56,8 @@ Shader "Raymarching/Boss"
         float4 _EmissionColorB;
 
         #define MAT_BODY_A 1
-        #define MAT_WING_B 2
+        #define MAT_WING_A 2
+        #define MAT_WING_B 3
 
         float2 foldRotateWing(float2 p, float s, inout float a)
         {
@@ -67,7 +68,7 @@ Shader "Raymarching/Boss"
             return p;
         }
 
-        float dFeather(float3 pos, float scale)
+        float2 dFeather(float3 pos, float scale)
         {
             float3 p = pos;
 
@@ -75,7 +76,16 @@ Shader "Raymarching/Boss"
             p.y -= h;
             float3 size = scale * float3(0.4 - p.y * 0.2, 4, 0.1);
 
-            return sdBox(p, size);
+            float2 res = float2(sdBox(p, size), MAT_WING_A);
+
+            size.x *= 0.1;
+            size.z *= 1.5;
+            size.y *= 0.9;
+            // p.x -= 0.05 * abs(p.y - h * 2);
+
+            res = opU(res, float2(sdBox(p, size), MAT_WING_B));
+
+            return res;
         }
 
         float2 dBoss(float3 pos)
@@ -83,6 +93,8 @@ Shader "Raymarching/Boss"
             float3 p = pos;
 
             p.x = abs(p.x);
+
+            p.y -= -0.5 * sin(_Beat * TAU / 4);
 
             float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);
 
@@ -94,14 +106,13 @@ Shader "Raymarching/Boss"
                 
                 rot(p1.xy, -s + 0.3 * sin(_Beat * TAU / 4));
                 rot(p1.xz, 0.3);
-                p1 -= float3(0, 1, 0);
+                rot(p1.yz, 0.3 * sin(i * 0.5 + _Beat * TAU / 4));
+                p1 -= float3(0, 1, -0.1 * i);
 
                 s = saturate(cos(s * 0.2 + TAU / 24));
                 s = s * s ;
 
-                // s = 1;
-
-                res = opU(res, float2(dFeather(p1, s), MAT_WING_B));
+                res = opU(res, dFeather(p1, s));
             }
 
             return res;
@@ -120,6 +131,11 @@ Shader "Raymarching/Boss"
             float3 scale = GetScale();
             float3 p = ToLocal(ray.endPos) * scale;
             float2 res = dBoss(p);
+
+            if (res.y == MAT_WING_B)
+            {
+                o.Emission = _EmissionColor * cos(_Beat * TAU);
+            }
         }
         // @endblock
 
