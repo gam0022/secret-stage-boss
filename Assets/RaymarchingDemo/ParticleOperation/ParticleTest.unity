@@ -228,7 +228,7 @@ GameObject:
   - component: {fileID: 568324226}
   - component: {fileID: 568324225}
   m_Layer: 0
-  m_Name: Particle System
+  m_Name: BossMissile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
