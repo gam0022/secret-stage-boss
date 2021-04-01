@@ -158,8 +158,8 @@ Shader "Raymarching/WorldBuilding"
             p2.y += 0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);
             p1.xz = Repeat(p1.xz, loop.xz);
             p2.xz = Repeat(p2.xz, loop.xz);
-            p1.y = abs(p1.y) - 5;
-            p2.y = abs(p2.y) - 5;
+            p1.y = abs(p1.y) - 0.5 * loop.y;
+            p2.y = abs(p2.y) - 0.5 * loop.y;
 
             float3 res = float3(dHexagon(p1, calcBlooming(pi1.y)), pi1.y);
             res = opU(res, float3(dHexagon(p2, calcBlooming(pi2.y)), pi2.y));
