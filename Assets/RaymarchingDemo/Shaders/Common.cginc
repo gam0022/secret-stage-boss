@@ -63,7 +63,7 @@ void rot(inout float2 p, float a)
 // https://www.shadertoy.com/view/Mlf3Wj
 float2 foldRotate(float2 p, float s)
 {
-    float a = PI / s - atan2(p.x, p.y);
+    float a = TAU / 2 / s - atan2(p.x, p.y);
     float n = TAU / s;
     a = floor(a / n) * n;
     p = mul(rotate(a), p);
