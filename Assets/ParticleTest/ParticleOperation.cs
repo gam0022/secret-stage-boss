@@ -26,7 +26,7 @@ public class ParticleOperation : MonoBehaviour
             var position = m_Particles[i].position;
 
             // ターゲットへのベクトル
-            var direction = ps.transform.InverseTransformPoint(target.TransformPoint(target.position)) - position;
+            var direction = ps.transform.InverseTransformPoint(target.position) - position;
 
             // ターゲットまでの角度
             float angleDiff = Vector3.Angle(velocity, direction);
@@ -48,6 +48,7 @@ public class ParticleOperation : MonoBehaviour
                 m_Particles[i].velocity = Quaternion.Slerp(Quaternion.identity, rotTarget, t) * velocity;
             }
         }
+
         ps.SetParticles(m_Particles, numParticlesAlive);
     }
 }
