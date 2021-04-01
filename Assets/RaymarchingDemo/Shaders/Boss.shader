@@ -71,7 +71,11 @@ Shader "Raymarching/Boss"
         {
             float3 p = pos;
 
-            return sdBox(p, scale * float3(0.2, 4 - 4 * p.x, 0.01 * exp(-p.x)));
+            float h = 4 * scale;
+            p.y -= h;
+            float3 size = scale * float3(0.4 - p.y * 0.2, 4, 0.1);
+
+            return sdBox(p, size);
         }
 
         float2 dBoss(float3 pos)
@@ -82,16 +86,23 @@ Shader "Raymarching/Boss"
 
             float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);
 
-            float angle = 0;
-            p.xy = foldRotateWing(p.xy, 16 * 2, angle);
-            rot(p.yz, 0.3);
+            for (int i = 0; i < 5; i++)
+            {
+                float3 p1 = p;
 
-            float s = angle;
+                float s = TAU / 6 + TAU / 16 * i;
+                
+                rot(p1.xy, -s + 0.3 * sin(_Beat * TAU / 4));
+                rot(p1.xz, 0.3);
+                p1 -= float3(0, 1, 0);
 
-            s = saturate(cos(s * 1.3 + TAU / 4));
-            s = s * s;
+                s = saturate(cos(s * 0.2 + TAU / 24));
+                s = s * s ;
 
-            res = opU(res, 0.5 * float2(dFeather(p - float3(0, 5 * s, 0), s), MAT_WING_B));
+                // s = 1;
+
+                res = opU(res, float2(dFeather(p1, s), MAT_WING_B));
+            }
 
             return res;
         }

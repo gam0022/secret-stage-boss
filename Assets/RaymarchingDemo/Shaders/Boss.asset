@@ -54,14 +54,17 @@ MonoBehaviour:
       {\n            a = PI / s - atan2(p.x, p.y);\n            float n = TAU / s;\n           
       a = floor(a / n) * n;\n            p = mul(rotate(a), p);\n            return
       p;\n        }\n\n        float dFeather(float3 pos, float scale)\n        {\n           
-      float3 p = pos;\n\n            return sdBox(p, scale * float3(0.2, 4 - 4 *
-      p.x, 0.01 * exp(-p.x)));\n        }\n\n        float2 dBoss(float3 pos)\n       
-      {\n            float3 p = pos;\n\n            p.x = abs(p.x);\n\n           
-      float2 res = float2(sdSphere(p, 1.0), MAT_BODY_A);\n\n            float angle
-      = 0;\n            p.xy = foldRotateWing(p.xy, 16 * 2, angle);\n           
-      rot(p.yz, 0.3);\n\n            float s = angle;\n\n            s = saturate(cos(s
-      * 1.3 + TAU / 4));\n            s = s * s;\n\n            res = opU(res, 0.5
-      * float2(dFeather(p - float3(0, 5 * s, 0), s), MAT_WING_B));\n\n           
+      float3 p = pos;\n\n            float h = 4 * scale;\n            p.y -= h;\n           
+      float3 size = scale * float3(0.4 - p.y * 0.2, 4, 0.1);\n\n            return
+      sdBox(p, size);\n        }\n\n        float2 dBoss(float3 pos)\n        {\n           
+      float3 p = pos;\n\n            p.x = abs(p.x);\n\n            float2 res =
+      float2(sdSphere(p, 1.0), MAT_BODY_A);\n\n            for (int i = 0; i < 5;
+      i++)\n            {\n                float3 p1 = p;\n\n                float
+      s = TAU / 6 + TAU / 16 * i;\n                \n                rot(p1.xy, -s
+      + 0.3 * sin(_Beat * TAU / 4));\n                rot(p1.xz, 0.3);\n               
+      p1 -= float3(0, 1, 0);\n\n                s = saturate(cos(s * 0.2 + TAU /
+      24));\n                s = s * s ;\n\n                // s = 1;\n\n               
+      res = opU(res, float2(dFeather(p1, s), MAT_WING_B));\n            }\n\n           
       return res;\n        }\n\n        inline float DistanceFunction(float3 pos)\n       
       {\n            float2 res = dBoss(pos);\n            return res.x;\n       
       }"
