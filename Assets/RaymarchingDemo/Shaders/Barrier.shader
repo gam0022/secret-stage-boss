@@ -38,7 +38,7 @@
 
             struct v2f
             {
-                float2 uv: TEXCOORD0;
+                float2 uv: UV;
                 UNITY_FOG_COORDS(1)
                 float4 vertex: SV_POSITION;
                 float4 color: COLOR;
@@ -63,7 +63,7 @@
             float4 frag(v2f i): SV_Target
             {
                 // sample the texture
-                float4 col = float4(0, 0, 0, 0);//tex2D(_MainTex, i.uv);
+                float4 col = tex2D(_MainTex, i.uv) * 0;
 
                 float scale = 4;
                 float voro = voronoi(i.uv * scale) + voronoi(i.uv * scale * 2);
