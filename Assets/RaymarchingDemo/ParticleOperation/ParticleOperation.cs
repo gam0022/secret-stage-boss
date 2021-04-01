@@ -52,4 +52,9 @@ public class ParticleOperation : MonoBehaviour
 
         ps.SetParticles(m_Particles, numParticlesAlive);
     }
+
+    private void OnParticleCollision(GameObject other)
+    {
+        Debug.Log("OnParticleCollision : " + other);
+    }
 }
