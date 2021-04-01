@@ -26,7 +26,8 @@ public class ParticleOperation : MonoBehaviour
             var position = m_Particles[i].position;
 
             // ターゲットへのベクトル
-            var direction = ps.transform.InverseTransformPoint(target.position) - position;
+            var direction = target.position - position;
+            // var direction = ps.transform.InverseTransformPoint(target.TransformPoint(target.position)) - position;
 
             // ターゲットまでの角度
             float angleDiff = Vector3.Angle(velocity, direction);

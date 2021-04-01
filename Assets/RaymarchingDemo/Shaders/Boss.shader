@@ -128,7 +128,7 @@ Shader "Raymarching/Boss"
             float3 p = pos;
 
             p.x = abs(p.x);
-            p.y -= -0.5 * sin(_Beat * TAU / 4);
+            // p.y -= -0.5 * sin(_Beat * TAU / 4);
 
             float2 res = mBody(p);
 
