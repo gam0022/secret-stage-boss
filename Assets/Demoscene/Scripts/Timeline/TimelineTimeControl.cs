@@ -6,6 +6,10 @@ public class TimelineTimeControl : MonoBehaviour, ITimeControl
     [SerializeField] int bpm = 120;
     [SerializeField] AudioSpectrum audioSpectrum;
 
+    public static float TimelineTime;
+
+    public static float Beat;
+
     readonly int timelineTimeID = Shader.PropertyToID("_TimelineTime");
     readonly int beatID = Shader.PropertyToID("_Beat");
 
@@ -18,8 +22,11 @@ public class TimelineTimeControl : MonoBehaviour, ITimeControl
 
     public void SetTime(double time)
     {
-        Shader.SetGlobalFloat(timelineTimeID, (float)time);
-        Shader.SetGlobalFloat(beatID, (float)time * bpm / 60);
+        TimelineTime = (float)time;
+        Beat = (float)time * bpm / 60;
+
+        Shader.SetGlobalFloat(timelineTimeID, TimelineTime);
+        Shader.SetGlobalFloat(beatID, Beat);
         Shader.SetGlobalFloat(audioSpectrumLevelLengthID, audioSpectrum.Levels.Length);
 
         if (isInitialized)
