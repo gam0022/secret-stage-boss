@@ -25,7 +25,12 @@ Shader "Raymarching/WorldBuilding"
         _Height ("Height", Float) = 10
         [HDR] _EmissionColorEdge ("Emission Color Edge", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorVoronoi ("Emission Color Voronoi", Color) = (1, 1, 1, 1)
+
+        [Header(Change)]
         _ChangeThresholdZ ("Change Threshold Z", Float) = 0
+        _ChangeAlbedo ("Change Albedo", Color) = (0.6, 0.6, 0.6, 1)
+
+        [Header(Blooming)]
         _BloomingThresholdZ ("Blooming Threshold Z", Float) = 0
         _ChangeRate ("Change Rate", Range(0, 1)) = 0
         _WingASize ("Wing A Size", Vector) = (0.1, 0.1, 0.1, 0.1)
@@ -69,7 +74,10 @@ Shader "Raymarching/WorldBuilding"
         float _Height;
         float4 _EmissionColorEdge;
         float4 _EmissionColorVoronoi;
+
         float _ChangeThresholdZ;
+        float4 _ChangeAlbedo;
+
         float _BloomingThresholdZ;
         float _ChangeRate;
         float4 _WingASize;
@@ -215,14 +223,16 @@ Shader "Raymarching/WorldBuilding"
             if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z / pitch))
             {
                 // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
-                o.Albedo = fixed3(1, 1, 1) * 0.7;
+                o.Albedo = _ChangeAlbedo;
             }
 
+            /*
             if (res.y == MAT_WING_B)
             {
                 o.Emission = float3(3, 0.2, 0.2);
                 // o.Albedo = fixed3(1, 0.2, 0.2);
             }
+            */
         }
         // @endblock
         

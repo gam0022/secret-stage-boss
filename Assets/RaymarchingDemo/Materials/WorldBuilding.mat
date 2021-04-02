@@ -27,13 +27,13 @@ Material:
     - _DistanceMultiplier: 0.7
     - _EvilScale: 1.21
     - _FoldRotate: 6
-    - _Glossiness: 0.5
+    - _Glossiness: 0.173
     - _Height: 18
     - _HexagonPadding: 0.2
     - _HexagonRadians: 2
     - _IfsLoop: 5
     - _Loop: 100
-    - _Metallic: 0.495
+    - _Metallic: 1
     - _MinDistance: 0.001
     - _NormalDelta: 0.0001
     - _RotateXY1: 0.3
@@ -45,6 +45,7 @@ Material:
     - _BuildingBoxSize: {r: 0.71, g: 0.67, b: 0.71, a: 1}
     - _BuildingOffset: {r: 0, g: 0, b: 0, a: 1}
     - _BuildingRepeat: {r: 4, g: 20, b: 2.1, a: 1}
+    - _ChangeAlbedo: {r: 0.90400004, g: 0.90400004, b: 0.90400004, a: 1}
     - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 2.4307137, b: 5.2164755, a: 1}
     - _EmissionColorEdge: {r: 0, g: 1.1467096, b: 4.867145, a: 1}
