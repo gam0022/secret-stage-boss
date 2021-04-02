@@ -71,9 +71,16 @@ namespace Revision2021
         {
         }
 
-        public void OnDamage()
+        public void OnDamage(string name)
         {
-            lastDamageBeat = TimelineTimeControl.Beat;
+            if (name == "ShipMesh")
+            {
+                lastDamageBeat = TimelineTimeControl.Beat;
+            }
+            else
+            {
+
+            }
         }
     }
 }

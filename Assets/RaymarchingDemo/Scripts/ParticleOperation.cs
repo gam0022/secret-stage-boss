@@ -59,7 +59,7 @@ namespace Revision2021
         private void OnParticleCollision(GameObject other)
         {
             Debug.Log("OnParticleCollision : " + other);
-            shipControl.OnDamage();
+            shipControl.OnDamage(other.name);
         }
     }
 }
