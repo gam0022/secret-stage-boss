@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Motorblock SDF Material
   m_Shader: {fileID: 4800000, guid: eeb3e5908dab9fe41af1ffc4669dc374, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: OUTLINE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -94,7 +94,7 @@ Material:
     m_Colors:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
     - _EnvMatrixRotation: {r: 0, g: 0, b: 0, a: 0}
-    - _FaceColor: {r: 1, g: 1, b: 1, a: 1}
+    - _FaceColor: {r: 0, g: 0, b: 0, a: 1}
     - _GlowColor: {r: 0, g: 1, b: 0, a: 0.5}
     - _MaskCoord: {r: 0, g: 0, b: 32767, a: 32767}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
@@ -158,11 +158,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: Motorblock SDF
+  m_Name: Motorblock SDF Scan
   m_EditorClassIdentifier: 
-  hashCode: -1860470061
+  hashCode: -115852180
   material: {fileID: -6526972609874008606}
-  materialHashCode: 548749843
+  materialHashCode: 1935545932
   m_Version: 1.1.0
   m_SourceFontFileGUID: 92f9bd56845082040bee16c7159a44ee
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 92f9bd56845082040bee16c7159a44ee, type: 3}
