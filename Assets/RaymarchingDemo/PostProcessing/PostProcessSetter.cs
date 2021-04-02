@@ -13,6 +13,7 @@ public class PostProcessSetter : MonoBehaviour
     [SerializeField] float rgbShiftIntensity;
 
     [SerializeField] float noiseIntensity;
+    [SerializeField] float lensDistortionIntensity;
 
     [SerializeField] Color flashColor = Color.white;
     [SerializeField] float flashIntensity = 0;
@@ -42,6 +43,7 @@ public class PostProcessSetter : MonoBehaviour
         glitch.distortionIntensity.Override(distortionIntensity);
         glitch.rgbShiftIntensity.Override(rgbShiftIntensity);
         glitch.noiseIntensity.Override(noiseIntensity);
+        glitch.lensDistortionIntensity.Override(lensDistortionIntensity);
 
         glitch.flashColor.Override(flashColor);
         glitch.flashIntensity.Override(flashIntensity);
@@ -60,6 +62,7 @@ public class PostProcessSetter : MonoBehaviour
         glitch.distortionIntensity.value = distortionIntensity;
         glitch.rgbShiftIntensity.value = rgbShiftIntensity;
         glitch.noiseIntensity.value = noiseIntensity;
+        glitch.lensDistortionIntensity.value = lensDistortionIntensity;
 
         glitch.flashColor.value = flashColor;
         glitch.flashIntensity.value = flashIntensity;

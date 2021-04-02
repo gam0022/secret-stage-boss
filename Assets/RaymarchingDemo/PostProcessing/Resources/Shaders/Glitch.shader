@@ -10,6 +10,7 @@
     // シェーダーのプロパティ
     float _GlitchUvIntensity;
     float _DistortionIntensity;
+    float _LensDistortionIntensity;
     float _RgbShiftIntensity;
     float _NoiseIntensity;
     
@@ -22,6 +23,7 @@
         float4 color = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.texcoord);
 
         float2 uv = i.texcoord;
+        float2 uvN = _ScreenParams.xy * (uv * 2 - 1) / min(_ScreenParams.x, _ScreenParams.y);
 
         // grid hash
         float2 hash = hash23(float3(floor(float2(uv.x * 32.0, uv.y * 32.0)), _Beat));
@@ -29,8 +31,12 @@
         // uv shift
         uv += _GlitchUvIntensity * _AudioSpectrumLevels[0] * (1.0 - 2.0 * hash);
 
-        // distortion
+        // x distortion
         uv.x += _DistortionIntensity * sin(uv.y * 4.0 + _Beat);
+
+        // lens distortion
+        float l = length(uvN);
+        uv += -_LensDistortionIntensity * uvN * cos(l * 0.5);
 
         // rgb shift
         float angle = hash.x * TAU;
