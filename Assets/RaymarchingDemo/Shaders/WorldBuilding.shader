@@ -155,6 +155,11 @@ Shader "Raymarching/WorldBuilding"
         }
         // @endblock
 
+        float calcWave(float z, float s)
+        {
+            return saturate(cos(_WaveSpeed * _Beat * TAU - Mod(_WaveFrequency * z * s + 0.04 * s, TAU)));
+        }
+
         // @block PostEffect
         inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
         {
@@ -184,11 +189,10 @@ Shader "Raymarching/WorldBuilding"
             float edge = calcEdge(ray.endPos, 0.03);
             o.Emission += emissionColor * edge;
 
-            float wave = saturate(cos(_WaveSpeed * _Beat * TAU - Mod(_WaveFrequency * p.z, TAU)));
-            wave += _AudioSpectrumLevels[0] * 0.1;
+            float voro = voronoi(ray.endPos.xz) * calcWave(p.z, 1);
+            voro += voronoi(ray.endPos.xz * 0.5) * calcWave(p.z, 0.5);
 
-            float voro = voronoi(ray.endPos.xz * 0.5) + voronoi(ray.endPos.xz);
-            o.Emission += emissionColor * voro * wave;
+            o.Emission += emissionColor * voro;
         }
         // @endblock
         
