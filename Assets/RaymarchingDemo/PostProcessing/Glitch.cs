@@ -22,6 +22,16 @@ public sealed class Glitch : PostProcessEffectSettings
 }
 public sealed class GlitchRenderer : PostProcessEffectRenderer<Glitch>
 {
+    readonly int glitchUvIntensityID = Shader.PropertyToID("_GlitchUvIntensity");
+    readonly int distortionIntensityID = Shader.PropertyToID("_DistortionIntensity");
+    readonly int rgbShiftIntensityID = Shader.PropertyToID("_RgbShiftIntensity");
+    readonly int noiseIntensityID = Shader.PropertyToID("_NoiseIntensity");
+
+    readonly int flashColorID = Shader.PropertyToID("_FlashColor");
+    readonly int flashIntensityID = Shader.PropertyToID("_FlashIntensity");
+    readonly int blendColorID = Shader.PropertyToID("_BlendColor");
+
+
     public override void Render(PostProcessRenderContext context)
     {
         var sheet = context.propertySheets.Get(Shader.Find("Hidden/Custom/Glitch"));
@@ -30,14 +40,14 @@ public sealed class GlitchRenderer : PostProcessEffectRenderer<Glitch>
         sheet.properties.SetFloat("_IntensityBeat", settings.intensityBeat);
         sheet.properties.SetFloat("_IntensityAudioSpectrum", settings.intensityAudioSpectrum);
 
-        sheet.properties.SetFloat("_GlitchUvIntensity", settings.glitchUvIntensity);
-        sheet.properties.SetFloat("_DistortionIntensity", settings.distortionIntensity);
-        sheet.properties.SetFloat("_RgbShiftIntensity", settings.rgbShiftIntensity);
-        sheet.properties.SetFloat("_NoiseIntensity", settings.noiseIntensity);
+        sheet.properties.SetFloat(glitchUvIntensityID, settings.glitchUvIntensity);
+        sheet.properties.SetFloat(distortionIntensityID, settings.distortionIntensity);
+        sheet.properties.SetFloat(rgbShiftIntensityID, settings.rgbShiftIntensity);
+        sheet.properties.SetFloat(noiseIntensityID, settings.noiseIntensity);
 
-        sheet.properties.SetColor("_FlashColor", settings.flashColor);
-        sheet.properties.SetFloat("_FlashIntensity", settings.flashIntensity);
-        sheet.properties.SetColor("_BlendColor", settings.blendColor);
+        sheet.properties.SetColor(flashColorID, settings.flashColor);
+        sheet.properties.SetFloat(flashIntensityID, settings.flashIntensity);
+        sheet.properties.SetColor(blendColorID, settings.blendColor);
 
         context.command.BlitFullscreenTriangle(context.source, context.destination, sheet, 0);
     }
