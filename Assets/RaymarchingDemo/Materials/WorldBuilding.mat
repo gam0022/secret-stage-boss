@@ -20,10 +20,10 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _BloomingThresholdZ: 5.02
-    - _ChangeEmissionThresholdZ: 0
+    - _Wave3ThresholdZ: 5.02
+    - _Wave1ThresholdZ: 0
     - _ChangeRate: 1
-    - _ChangeThresholdZ: 0
+    - _Wave2ThresholdZ: 0
     - _Cull: 0
     - _DistanceMultiplier: 0.7
     - _EvilScale: 1.21

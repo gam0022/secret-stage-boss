@@ -26,17 +26,17 @@ Shader "Raymarching/WorldBuilding"
         [HDR] _EmissionColorEdge ("Emission Color Edge", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorVoronoi ("Emission Color Voronoi", Color) = (1, 1, 1, 1)
 
-        [Header(ChangeEmission)]
+        [Header(Wava1)]
         [HDR] _EmissionColorA ("Emission Color A", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorB ("Emission Color B", Color) = (1, 1, 1, 1)
-        _ChangeEmissionThresholdZ ("Change Emission Threshold Z", Float) = 0
+        _Wave1ThresholdZ ("Wave 1 Threshold Z", Float) = 0
 
-        [Header(ChangeAlbedo)]
-        _ChangeThresholdZ ("Change Threshold Z", Float) = 0
+        [Header(Wave2)]
+        _Wave2ThresholdZ ("Change Threshold Z", Float) = 0
         _ChangeAlbedo ("Change Albedo", Color) = (0.6, 0.6, 0.6, 1)
 
-        [Header(Blooming)]
-        _BloomingThresholdZ ("Blooming Threshold Z", Float) = 0
+        [Header(Wave3)]
+        _Wave3ThresholdZ ("Blooming Threshold Z", Float) = 0
         _ChangeRate ("Change Rate", Range(0, 1)) = 0
         _WingASize ("Wing A Size", Vector) = (0.1, 0.1, 0.1, 0.1)
         _WingARot ("Wing A Rot", Range(-4, 4)) = 0.3
@@ -82,12 +82,12 @@ Shader "Raymarching/WorldBuilding"
 
         float4 _EmissionColorA;
         float4 _EmissionColorB;
-        float _ChangeEmissionThresholdZ;
+        float _Wave1ThresholdZ;
 
-        float _ChangeThresholdZ;
+        float _Wave2ThresholdZ;
         float4 _ChangeAlbedo;
 
-        float _BloomingThresholdZ;
+        float _Wave3ThresholdZ;
         float _ChangeRate;
         float4 _WingASize;
         float _WingARot;
@@ -151,7 +151,7 @@ Shader "Raymarching/WorldBuilding"
         float calcBlooming(float z)
         {
             float pitch = _HexagonRadians + _HexagonPadding * 0.5;
-            float thresholdZ = _ShipPosition.z / pitch + _BloomingThresholdZ;
+            float thresholdZ = _ShipPosition.z / pitch + _Wave3ThresholdZ;
             return saturate((z - thresholdZ) / 5);
         }
 
@@ -223,12 +223,12 @@ Shader "Raymarching/WorldBuilding"
 
             float pitch = _HexagonRadians + _HexagonPadding * 0.5;
 
-            if (res.z < floor(_ChangeEmissionThresholdZ + _ShipPosition.z / pitch))
+            if (res.z < floor(_Wave1ThresholdZ + _ShipPosition.z / pitch))
             {
                 emissionColor = _EmissionColorB;
             }
 
-            if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z / pitch))
+            if (res.z < floor(_Wave2ThresholdZ + _ShipPosition.z / pitch))
             {
                 // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
                 o.Albedo = _ChangeAlbedo;
