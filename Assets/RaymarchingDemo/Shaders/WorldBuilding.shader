@@ -26,7 +26,12 @@ Shader "Raymarching/WorldBuilding"
         [HDR] _EmissionColorEdge ("Emission Color Edge", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorVoronoi ("Emission Color Voronoi", Color) = (1, 1, 1, 1)
 
-        [Header(Change)]
+        [Header(ChangeEmission)]
+        [HDR] _EmissionColorA ("Emission Color A", Color) = (1, 1, 1, 1)
+        [HDR] _EmissionColorB ("Emission Color B", Color) = (1, 1, 1, 1)
+        _ChangeEmissionThresholdZ ("Change Emission Threshold Z", Float) = 0
+
+        [Header(ChangeAlbedo)]
         _ChangeThresholdZ ("Change Threshold Z", Float) = 0
         _ChangeAlbedo ("Change Albedo", Color) = (0.6, 0.6, 0.6, 1)
 
@@ -74,6 +79,10 @@ Shader "Raymarching/WorldBuilding"
         float _Height;
         float4 _EmissionColorEdge;
         float4 _EmissionColorVoronoi;
+
+        float4 _EmissionColorA;
+        float4 _EmissionColorB;
+        float _ChangeEmissionThresholdZ;
 
         float _ChangeThresholdZ;
         float4 _ChangeAlbedo;
@@ -210,21 +219,29 @@ Shader "Raymarching/WorldBuilding"
                 waveAxis = p.x + p.z;
             }
 
-            float wave = saturate(cos(_Beat * TAU - Mod(0.1 * waveAxis, TAU)));
-            wave += _AudioSpectrumLevels[0] * 0.1;
-
-            float edge = calcEdge(ray.endPos, 0.03);
-            o.Emission += _EmissionColorEdge * edge * wave;
-
-            float voro = voronoi(ray.endPos.xz * 0.5) + voronoi(ray.endPos.xz);
-            o.Emission += _EmissionColorVoronoi * voro * wave;
+            float4 emissionColor = _EmissionColorA;
 
             float pitch = _HexagonRadians + _HexagonPadding * 0.5;
+
+            if (res.z < floor(_ChangeEmissionThresholdZ + _ShipPosition.z / pitch))
+            {
+                emissionColor = _EmissionColorB;
+            }
+
             if (res.z < floor(_ChangeThresholdZ + _ShipPosition.z / pitch))
             {
                 // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
                 o.Albedo = _ChangeAlbedo;
             }
+
+            float wave = saturate(cos(_Beat * TAU - Mod(0.1 * waveAxis, TAU)));
+            wave += _AudioSpectrumLevels[0] * 0.1;
+
+            float edge = calcEdge(ray.endPos, 0.03);
+            o.Emission += emissionColor * edge;
+
+            float voro = voronoi(ray.endPos.xz * 0.5) + voronoi(ray.endPos.xz);
+            o.Emission += emissionColor * voro * wave;
 
             /*
             if (res.y == MAT_WING_B)

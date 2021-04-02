@@ -21,19 +21,20 @@ Material:
     m_TexEnvs: []
     m_Floats:
     - _BloomingThresholdZ: 5.02
+    - _ChangeEmissionThresholdZ: 0
     - _ChangeRate: 1
     - _ChangeThresholdZ: 0
     - _Cull: 0
     - _DistanceMultiplier: 0.7
     - _EvilScale: 1.21
     - _FoldRotate: 6
-    - _Glossiness: 0.173
+    - _Glossiness: 0.753
     - _Height: 18
     - _HexagonPadding: 0.2
     - _HexagonRadians: 2
     - _IfsLoop: 5
     - _Loop: 100
-    - _Metallic: 1
+    - _Metallic: 0.807
     - _MinDistance: 0.001
     - _NormalDelta: 0.0001
     - _RotateXY1: 0.3
@@ -46,8 +47,10 @@ Material:
     - _BuildingOffset: {r: 0, g: 0, b: 0, a: 1}
     - _BuildingRepeat: {r: 4, g: 20, b: 2.1, a: 1}
     - _ChangeAlbedo: {r: 0.90400004, g: 0.90400004, b: 0.90400004, a: 1}
-    - _Color: {r: 0, g: 0, b: 0, a: 1}
+    - _Color: {r: 0.01886791, g: 0.01886791, b: 0.01886791, a: 1}
     - _EmissionColor: {r: 0, g: 2.4307137, b: 5.2164755, a: 1}
+    - _EmissionColorA: {r: 5.616377, g: 0.68277526, b: 0.68277526, a: 1}
+    - _EmissionColorB: {r: 0, g: 1.1467093, b: 4.867144, a: 1}
     - _EmissionColorEdge: {r: 0, g: 1.1467096, b: 4.867145, a: 1}
     - _EmissionColorVoronoi: {r: 0, g: 0.28667733, b: 1.216786, a: 1}
     - _EvilBoxSize: {r: 5, g: 0.5, b: 0.5, a: 1}
