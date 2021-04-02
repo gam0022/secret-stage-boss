@@ -1,8 +1,8 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using TMPro;
 
 public class TextMeshProMixerBehaviour : PlayableBehaviour
 {
@@ -14,11 +14,11 @@ public class TextMeshProMixerBehaviour : PlayableBehaviour
     Color m_AssignedColor;
     float m_AssignedFontSize;
 
-    TextMeshPro m_TrackBinding;
+    TMP_Text m_TrackBinding;
 
     public override void ProcessFrame(Playable playable, FrameData info, object playerData)
     {
-        m_TrackBinding = playerData as TextMeshPro;
+        m_TrackBinding = playerData as TMP_Text;
 
         if (m_TrackBinding == null)
             return;
@@ -30,7 +30,7 @@ public class TextMeshProMixerBehaviour : PlayableBehaviour
         if (!Mathf.Approximately(m_TrackBinding.fontSize, m_AssignedFontSize))
             m_DefaultFontSize = m_TrackBinding.fontSize;
 
-        int inputCount = playable.GetInputCount ();
+        int inputCount = playable.GetInputCount();
 
         Color blendedColor = Color.clear;
         float blendedFontSize = 0f;
@@ -42,8 +42,8 @@ public class TextMeshProMixerBehaviour : PlayableBehaviour
         {
             float inputWeight = playable.GetInputWeight(i);
             ScriptPlayable<TextMeshProBehaviour> inputPlayable = (ScriptPlayable<TextMeshProBehaviour>)playable.GetInput(i);
-            TextMeshProBehaviour input = inputPlayable.GetBehaviour ();
-            
+            TextMeshProBehaviour input = inputPlayable.GetBehaviour();
+
             blendedColor += input.color * inputWeight;
             blendedFontSize += input.fontSize * inputWeight;
             totalWeight += inputWeight;
@@ -55,7 +55,7 @@ public class TextMeshProMixerBehaviour : PlayableBehaviour
                 greatestWeight = inputWeight;
             }
 
-            if (!Mathf.Approximately (inputWeight, 0f))
+            if (!Mathf.Approximately(inputWeight, 0f))
                 currentInputs++;
         }
 

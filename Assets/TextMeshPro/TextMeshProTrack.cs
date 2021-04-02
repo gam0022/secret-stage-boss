@@ -1,12 +1,12 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.Timeline;
-using System.Collections.Generic;
-using TMPro;
 
 [TrackColor(0.855f, 0.8623f, 0.87f)]
 [TrackClipType(typeof(TextMeshProClip))]
-[TrackBindingType(typeof(TextMeshPro))]
+[TrackBindingType(typeof(TMP_Text))]
 public class TextMeshProTrack : TrackAsset
 {
     public override Playable CreateTrackMixer(PlayableGraph graph, GameObject go, int inputCount)
@@ -14,11 +14,11 @@ public class TextMeshProTrack : TrackAsset
         return ScriptPlayable<TextMeshProMixerBehaviour>.Create(graph, inputCount);
     }
 
-    // Please note this assumes only one component of type TextMeshPro on the same gameobject.
+    // Please note this assumes only one component of type TMP_Text on the same gameobject.
     public override void GatherProperties(PlayableDirector director, IPropertyCollector driver)
     {
 #if UNITY_EDITOR
-        TextMeshPro trackBinding = director.GetGenericBinding(this) as TextMeshPro;
+        TMP_Text trackBinding = director.GetGenericBinding(this) as TMP_Text;
         if (trackBinding == null)
             return;
 
@@ -29,9 +29,9 @@ public class TextMeshProTrack : TrackAsset
         // 1. Make sure your scene is serialized to text.
         // 2. Search the text for the track binding component type.
         // 3. Look through the field names until you see one that looks correct.
-        driver.AddFromName<TextMeshPro>(trackBinding.gameObject, "m_text");
-        driver.AddFromName<TextMeshPro>(trackBinding.gameObject, "m_Color");
-        driver.AddFromName<TextMeshPro>(trackBinding.gameObject, "m_fontSize");
+        driver.AddFromName<TMP_Text>(trackBinding.gameObject, "m_text");
+        driver.AddFromName<TMP_Text>(trackBinding.gameObject, "m_Color");
+        driver.AddFromName<TMP_Text>(trackBinding.gameObject, "m_fontSize");
 #endif
         base.GatherProperties(director, driver);
     }
