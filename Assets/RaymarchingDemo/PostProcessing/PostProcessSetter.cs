@@ -38,10 +38,6 @@ public class PostProcessSetter : MonoBehaviour
         glitch = ScriptableObject.CreateInstance<Glitch>();
         glitch.enabled.Override(true);
 
-        glitch.intensityBase.Override(intensityBase);
-        glitch.intensityBeat.Override(intensityBeat);
-        glitch.intensityAudioSpectrum.Override(intensityAudioSpectrum);
-
         glitch.glitchUvIntensity.Override(glitchUvIntensity);
         glitch.distortionIntensity.Override(distortionIntensity);
         glitch.rgbShiftIntensity.Override(rgbShiftIntensity);
@@ -59,10 +55,6 @@ public class PostProcessSetter : MonoBehaviour
     void Update()
     {
         Initialize();
-
-        glitch.intensityBase.value = intensityBase;
-        glitch.intensityBeat.value = intensityBeat;
-        glitch.intensityAudioSpectrum.value = intensityAudioSpectrum;
 
         glitch.glitchUvIntensity.value = glitchUvIntensity;
         glitch.distortionIntensity.value = distortionIntensity;
