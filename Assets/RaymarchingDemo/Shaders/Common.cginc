@@ -6,6 +6,7 @@ float _AudioSpectrumLevels[32];
 float _TimelineTime;
 
 float3 _ShipPosition;
+float _ShipDamageBeat;
 
 float2 opU(float2 d1, float2 d2)
 {

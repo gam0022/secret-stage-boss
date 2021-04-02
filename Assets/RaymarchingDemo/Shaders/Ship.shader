@@ -24,6 +24,12 @@ Shader "Raymarching/Ship"
         [HDR] _EmissionColor ("Emission Color", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorB ("Emission Color B", Color) = (1, 1, 1, 1)
         _Gantz ("Gantz", Range(0, 1)) = 0
+
+        [Header(Damage)]
+        _DamageAnimationSpeed ("Damage Animation Speed", Float) = 1
+        _DamageBlinkSpeed ("Damage Blink Speed", Float) = 1
+        [HDR] _EmissionColorDamageA ("Emission Color Damage A", Color) = (1, 1, 1, 1)
+        [HDR] _EmissionColorDamageB ("Emission Color Damage B", Color) = (1, 1, 1, 1)
         // @endblock
     }
 
@@ -56,6 +62,11 @@ Shader "Raymarching/Ship"
         float4 _EmissionColor;
         float4 _EmissionColorB;
         float _Gantz;
+
+        float _DamageAnimationSpeed;
+        float _DamageBlinkSpeed;
+        float4 _EmissionColorDamageA;
+        float4 _EmissionColorDamageB;
 
         #define MAT_ENGINE_BODY_A   1
         #define MAT_ENGINE_DETAIL_A 2
@@ -211,11 +222,16 @@ Shader "Raymarching/Ship"
             {
                 o.Emission = _EmissionColorB;
             }
+
+            if (_ShipDamageBeat > 0)
+            {
+                o.Emission += exp(-_ShipDamageBeat * _DamageAnimationSpeed) * lerp(_EmissionColorDamageA, _EmissionColorDamageB, 0.5 + 0.5 * cos(_ShipDamageBeat * _DamageBlinkSpeed * TAU));
+            }
         }
         // @endblock
         
         ENDCG
-        
+
         Pass
         {
             Tags { "LightMode" = "Deferred" }
@@ -228,7 +244,7 @@ Shader "Raymarching/Ship"
             }
             
             CGPROGRAM
-            
+
             #include "Assets\uRaymarching\Shaders\Include\Legacy/DeferredStandard.cginc"
             #pragma target 3.0
             #pragma vertex Vert
@@ -237,7 +253,7 @@ Shader "Raymarching/Ship"
             #pragma multi_compile_prepassfinal
             #pragma multi_compile ___ UNITY_HDR_ON
             ENDCG
-            
+
         }
 
         Pass
@@ -245,7 +261,7 @@ Shader "Raymarching/Ship"
             Tags { "LightMode" = "ShadowCaster" }
             
             CGPROGRAM
-            
+
             #include "Assets\uRaymarching\Shaders\Include\Legacy/ShadowCaster.cginc"
             #pragma target 3.0
             #pragma vertex Vert
@@ -253,7 +269,7 @@ Shader "Raymarching/Ship"
             #pragma fragmentoption ARB_precision_hint_fastest
             #pragma multi_compile_shadowcaster
             ENDCG
-            
+
         }
     }
 

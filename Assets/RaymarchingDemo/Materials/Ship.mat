@@ -21,6 +21,8 @@ Material:
     m_TexEnvs: []
     m_Floats:
     - _Cull: 0
+    - _DamageAnimationSpeed: 2.11
+    - _DamageBlinkSpeed: 128
     - _DistanceMultiplier: 1
     - _Gantz: 1
     - _Glossiness: 0.262
@@ -37,5 +39,7 @@ Material:
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0.2973102, g: 1.7207954, b: 0, a: 1}
     - _EmissionColorB: {r: 0, g: 1.1721917, b: 6.498019, a: 1}
+    - _EmissionColorDamageA: {r: 32, g: 1.3803922, b: 0, a: 1}
+    - _EmissionColorDamageB: {r: 0.14117648, g: 0.20723066, b: 0.7490196, a: 1}
     - _Specular: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
