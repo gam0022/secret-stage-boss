@@ -56,6 +56,11 @@ namespace Revision2021
                 shipMeshTransform.localPosition = Vector3.Scale(new Vector3(1, 2, 1), fbm);
                 shipMeshTransform.localEulerAngles = new Vector3(90, 0, 0) + DamageRotation * fbm;
             }
+            else
+            {
+                shipMeshTransform.localPosition = Vector3.zero;
+                shipMeshTransform.localEulerAngles = new Vector3(90, 0, 0);
+            }
         }
 
         public void OnControlTimeStart()
