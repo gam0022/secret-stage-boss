@@ -4,9 +4,6 @@ using UnityEngine.Rendering.PostProcessing;
 [ExecuteAlways]
 public class PostProcessSetter : MonoBehaviour
 {
-    [SerializeField] float intensityBase;
-    [SerializeField] float intensityBeat;
-    [SerializeField] float intensityAudioSpectrum;
 
     [SerializeField] float glitchUvIntensity;
     [SerializeField] float distortionIntensity;
