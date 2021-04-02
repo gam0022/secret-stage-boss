@@ -38,6 +38,16 @@
         float l = length(uvN);
         uv += -_LensDistortionIntensity * uvN * cos(l * 0.5);
 
+        // lens blur
+        // 他のエフェクトとの併用が面倒なので没に
+        /*
+        int sample = 10;
+        for (int j = 0; j < sample; j++)
+        {
+            color.rgb += SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv + normalize(uvN) * 0.001 * l * j) / sample;
+        }
+        */
+
         // rgb shift
         float angle = hash.x * TAU;
         float2 offset = _RgbShiftIntensity * _AudioSpectrumLevels[0] * float2(cos(angle), sin(angle));
