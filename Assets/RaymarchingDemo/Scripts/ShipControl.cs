@@ -12,6 +12,7 @@ namespace Revision2021
         [SerializeField] float DamegeAnimationSpeed = 2f;
         [SerializeField] float DamageAnimationIntensity = 4f;
         [SerializeField] float DamageAnimationFrequently = 10f;
+        [SerializeField] float DamageRotation = 10f;
 
         readonly int shipPositionID = Shader.PropertyToID("_ShipPosition");
         readonly int shipDamageBeatID = Shader.PropertyToID("_ShipDamageBeat");
@@ -29,6 +30,19 @@ namespace Revision2021
             );
         }
 
+        float Fbm(float t)
+        {
+            float o = 8700304f;
+            float sum = Mathf.Sin(t) + 0.5f * Mathf.Sin((t + o) * 2) + 0.25f * Mathf.Sin((t + o) * 4);
+            return sum / (1 + 0.5f + 0.25f);
+        }
+
+        Vector3 FbmVector3(float t)
+        {
+            float o = 8700304f;
+            return new Vector3(Fbm(t), Fbm(t + o), Fbm(t + o * 2));
+        }
+
         public void SetTime(double time)
         {
             Shader.SetGlobalVector(shipPositionID, shipTransform.position);
@@ -38,7 +52,9 @@ namespace Revision2021
 
             if (shipDamageBeat > 0)
             {
-                shipMeshTransform.localPosition = DamageAnimationIntensity * Mathf.Exp(-shipDamageBeat * DamegeAnimationSpeed) * PerlinNoise((float)time * DamageAnimationFrequently);
+                var fbm = DamageAnimationIntensity * Mathf.Exp(-shipDamageBeat * DamegeAnimationSpeed) * FbmVector3((float)time * DamageAnimationFrequently);
+                shipMeshTransform.localPosition = Vector3.Scale(new Vector3(1, 2, 1), fbm);
+                shipMeshTransform.localEulerAngles = new Vector3(90, 0, 0) + DamageRotation * fbm;
             }
         }
 
