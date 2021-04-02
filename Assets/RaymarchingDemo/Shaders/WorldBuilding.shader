@@ -25,6 +25,10 @@ Shader "Raymarching/WorldBuilding"
         _Height ("Height", Float) = 10
         _EmissionIntensity ("Emission Intensity", Range(0, 1)) = 1
 
+        [Header(BeatWave)]
+        _WaveSpeed ("Wave Speed", Float) = 1
+        _WaveFrequency ("Wave Frequency", Float) = 0.1
+
         [Header(Wava1)]
         _Wave1ThresholdZ ("Wave 1 Threshold Z", Float) = 0
         [HDR] _EmissionColorA ("Emission Color A", Color) = (1, 1, 1, 1)
@@ -36,10 +40,6 @@ Shader "Raymarching/WorldBuilding"
 
         [Header(Wave3)]
         _Wave3ThresholdZ ("Blooming Threshold Z", Float) = 0
-        _ChangeRate ("Change Rate", Range(0, 1)) = 0
-        _WingASize ("Wing A Size", Vector) = (0.1, 0.1, 0.1, 0.1)
-        _WingARot ("Wing A Rot", Range(-4, 4)) = 0.3
-        _WingBSize ("Wing B Size", Vector) = (0.1, 0.1, 0.1, 0.1)
         // @endblock
     }
 
@@ -78,6 +78,9 @@ Shader "Raymarching/WorldBuilding"
         float _Height;
         float _EmissionIntensity;
 
+        float _WaveSpeed;
+        float _WaveFrequency;
+
         float4 _EmissionColorA;
         float4 _EmissionColorB;
         float _Wave1ThresholdZ;
@@ -86,16 +89,8 @@ Shader "Raymarching/WorldBuilding"
         float4 _ChangeAlbedo;
 
         float _Wave3ThresholdZ;
-        float _ChangeRate;
-        float4 _WingASize;
-        float _WingARot;
-        float4 _WingBSize;
 
         #define MAT_BASE_A 0
-        #define MAT_BASE_B 1
-        #define MAT_BASE_C 2
-        #define MAT_WING_A 3
-        #define MAT_WING_B 4
 
         float2 dHexagon(float3 pos, float h)
         {
@@ -166,26 +161,6 @@ Shader "Raymarching/WorldBuilding"
             float3 p = ray.endPos;
             float3 res = dHexagons(p);
 
-            float waveAxis = p.z;
-            float beat = fmod(_Beat, 4);
-            
-            if (_TimelineTime < 84 || _TimelineTime > 90 || beat < 1)
-            {
-                waveAxis = p.z;
-            }
-            else if (beat < 2)
-            {
-                waveAxis = p.x;
-            }
-            else if (beat < 3)
-            {
-                waveAxis = -p.z;
-            }
-            else
-            {
-                waveAxis = p.x + p.z;
-            }
-
             float4 emissionColor = _EmissionColorA;
             float pitch = _HexagonRadians + _HexagonPadding * 0.5;
 
@@ -194,6 +169,7 @@ Shader "Raymarching/WorldBuilding"
                 emissionColor = _EmissionColorB;
             }
 
+            // 全体のエミッション調整用（シーンのコントラスト調整用やnagative spaceを考慮）
             emissionColor.rgb *= _EmissionIntensity;
 
             if (res.z < floor(_Wave2ThresholdZ + _ShipPosition.z / pitch))
@@ -205,11 +181,11 @@ Shader "Raymarching/WorldBuilding"
             float z = floor(_Wave3ThresholdZ + s + _ShipPosition.z / pitch) - res.z;
             o.Emission += saturate(z / s) * float3(0.3, 0.1, 1) * 20;
 
-            float wave = saturate(cos(_Beat * TAU - Mod(0.1 * waveAxis, TAU)));
-            wave += _AudioSpectrumLevels[0] * 0.1;
-
             float edge = calcEdge(ray.endPos, 0.03);
             o.Emission += emissionColor * edge;
+
+            float wave = saturate(cos(_WaveSpeed * _Beat * TAU - Mod(_WaveFrequency * p.z, TAU)));
+            wave += _AudioSpectrumLevels[0] * 0.1;
 
             float voro = voronoi(ray.endPos.xz * 0.5) + voronoi(ray.endPos.xz);
             o.Emission += emissionColor * voro * wave;

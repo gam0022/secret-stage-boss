@@ -60,26 +60,23 @@ MonoBehaviour:
     value: "        [Header(World)]\n        _HexagonRadians (\"Hexagon Radians\",
       Range(0, 5)) = 1\n        _HexagonPadding (\"Hexagon Padding\", Range(0, 1))
       = 0.1\n        _Height (\"Height\", Float) = 10\n        _EmissionIntensity
-      (\"Emission Intensity\", Range(0, 1)) = 1\n\n        [Header(Wava1)]\n       
-      _Wave1ThresholdZ (\"Wave 1 Threshold Z\", Float) = 0\n        [HDR] _EmissionColorA
-      (\"Emission Color A\", Color) = (1, 1, 1, 1)\n        [HDR] _EmissionColorB
-      (\"Emission Color B\", Color) = (1, 1, 1, 1)\n\n        [Header(Wave2)]\n       
-      _Wave2ThresholdZ (\"Change Threshold Z\", Float) = 0\n        _ChangeAlbedo
-      (\"Change Albedo\", Color) = (0.6, 0.6, 0.6, 1)\n\n        [Header(Wave3)]\n       
-      _Wave3ThresholdZ (\"Blooming Threshold Z\", Float) = 0\n        _ChangeRate
-      (\"Change Rate\", Range(0, 1)) = 0\n        _WingASize (\"Wing A Size\", Vector)
-      = (0.1, 0.1, 0.1, 0.1)\n        _WingARot (\"Wing A Rot\", Range(-4, 4)) =
-      0.3\n        _WingBSize (\"Wing B Size\", Vector) = (0.1, 0.1, 0.1, 0.1)"
+      (\"Emission Intensity\", Range(0, 1)) = 1\n\n        [Header(BeatWave)]\n       
+      _WaveSpeed (\"Wave Speed\", Float) = 1\n        _WaveFrequency (\"Wave Frequency\",
+      Float) = 0.1\n\n        [Header(Wava1)]\n        _Wave1ThresholdZ (\"Wave 1
+      Threshold Z\", Float) = 0\n        [HDR] _EmissionColorA (\"Emission Color
+      A\", Color) = (1, 1, 1, 1)\n        [HDR] _EmissionColorB (\"Emission Color
+      B\", Color) = (1, 1, 1, 1)\n\n        [Header(Wave2)]\n        _Wave2ThresholdZ
+      (\"Change Threshold Z\", Float) = 0\n        _ChangeAlbedo (\"Change Albedo\",
+      Color) = (0.6, 0.6, 0.6, 1)\n\n        [Header(Wave3)]\n        _Wave3ThresholdZ
+      (\"Blooming Threshold Z\", Float) = 0"
     folded: 0
   - key: DistanceFunction
     value: "        #include \"Common.cginc\"\n\n        float _HexagonRadians;\n       
       float _HexagonPadding;\n        float _Height;\n        float _EmissionIntensity;\n\n       
-      float4 _EmissionColorA;\n        float4 _EmissionColorB;\n        float _Wave1ThresholdZ;\n\n       
-      float _Wave2ThresholdZ;\n        float4 _ChangeAlbedo;\n\n        float _Wave3ThresholdZ;\n       
-      float _ChangeRate;\n        float4 _WingASize;\n        float _WingARot;\n       
-      float4 _WingBSize;\n\n        #define MAT_BASE_A 0\n        #define MAT_BASE_B
-      1\n        #define MAT_BASE_C 2\n        #define MAT_WING_A 3\n        #define
-      MAT_WING_B 4\n\n        float2 dHexagon(float3 pos, float h)\n        {\n           
+      float _WaveSpeed;\n        float _WaveFrequency;\n\n        float4 _EmissionColorA;\n       
+      float4 _EmissionColorB;\n        float _Wave1ThresholdZ;\n\n        float _Wave2ThresholdZ;\n       
+      float4 _ChangeAlbedo;\n\n        float _Wave3ThresholdZ;\n\n        #define
+      MAT_BASE_A 0\n\n        float2 dHexagon(float3 pos, float h)\n        {\n           
       float3 p1 = pos;\n\n            // \u571F\u53F0\n            p1.xz = foldRotate(p1.xz,
       6);\n            float2 res = float2(sdBox(p1, float3(_HexagonRadians, h, _HexagonRadians)),
       MAT_BASE_A);\n\n            return res;\n        }\n\n        float3 dHexagons(float3
@@ -91,14 +88,14 @@ MonoBehaviour:
       indices\n            float2 pi1 = floor(p1 / loop).xz;\n            float2
       pi2 = floor(p2 / loop).xz;\n            pi1.y = pi1.y * 2;\n            pi2.y
       = pi2.y * 2 + 1;\n\n            float h1 = 1;\n            float h2 = 1;\n           
-      pitch *= 0.5;\n\n            float diff = floor(_Wave3ThresholdZ + _ShipPosition.z
-      / pitch) - pi1.y;\n            if (diff > 0)\n            {\n               
-      h1 += 10 * saturate(diff);\n            }\n\n            if (pi2.y < floor(_Wave3ThresholdZ
-      + _ShipPosition.z / pitch))\n            {\n                // h2 = 4;\n           
-      }\n\n            p1.y += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);\n           
-      p2.y += 0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);\n            p1.xz =
-      Repeat(p1.xz, loop.xz);\n            p2.xz = Repeat(p2.xz, loop.xz);\n           
-      p1.y = abs(p1.y) - 0.5 * loop.y;\n            p2.y = abs(p2.y) - 0.5 * loop.y;\n\n           
+      pitch *= 0.5;\n\n            float s = 5;\n            float hmax = 8;\n           
+      float z = floor(s + _Wave3ThresholdZ + _ShipPosition.z / pitch);\n\n           
+      float diff1 = z - pi1.y;\n            h1 += hmax * saturate(diff1 / s);\n\n           
+      float diff2 = z - pi2.y;\n            h2 += hmax * saturate(diff2 / s);\n\n           
+      p1.y += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);\n            p2.y +=
+      0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);\n            p1.xz = Repeat(p1.xz,
+      loop.xz);\n            p2.xz = Repeat(p2.xz, loop.xz);\n            p1.y =
+      abs(p1.y) - 0.5 * loop.y;\n            p2.y = abs(p2.y) - 0.5 * loop.y;\n\n           
       float3 res = float3(dHexagon(p1, h1), pi1.y);\n            res = opU(res, float3(dHexagon(p2,
       h2), pi2.y));\n\n            return res;\n        }\n\n        inline float
       DistanceFunction(float3 pos)\n        {\n            float2 res = dHexagons(pos);\n           
@@ -107,25 +104,20 @@ MonoBehaviour:
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
       o)\n        {\n            float3 p = ray.endPos;\n            float3 res =
-      dHexagons(p);\n\n            float waveAxis = p.z;\n            float beat
-      = fmod(_Beat, 4);\n            \n            if (_TimelineTime < 84 || _TimelineTime
-      > 90 || beat < 1)\n            {\n                waveAxis = p.z;\n           
-      }\n            else if (beat < 2)\n            {\n                waveAxis
-      = p.x;\n            }\n            else if (beat < 3)\n            {\n               
-      waveAxis = -p.z;\n            }\n            else\n            {\n               
-      waveAxis = p.x + p.z;\n            }\n\n            float4 emissionColor =
-      _EmissionColorA;\n            float pitch = _HexagonRadians + _HexagonPadding
-      * 0.5;\n\n            if (res.z < floor(_Wave1ThresholdZ + _ShipPosition.z
-      / pitch))\n            {\n                emissionColor = _EmissionColorB;\n           
-      }\n\n            emissionColor.rgb *= _EmissionIntensity;\n\n            if
-      (res.z < floor(_Wave2ThresholdZ + _ShipPosition.z / pitch))\n            {\n               
-      // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));\n                o.Albedo
-      = _ChangeAlbedo;\n            }\n\n            float wave = saturate(cos(_Beat
-      * TAU - Mod(0.1 * waveAxis, TAU)));\n            wave += _AudioSpectrumLevels[0]
-      * 0.1;\n\n            float edge = calcEdge(ray.endPos, 0.03);\n           
-      o.Emission += emissionColor * edge;\n\n            float voro = voronoi(ray.endPos.xz
-      * 0.5) + voronoi(ray.endPos.xz);\n            o.Emission += emissionColor *
-      voro * wave;\n        }"
+      dHexagons(p);\n\n            float4 emissionColor = _EmissionColorA;\n           
+      float pitch = _HexagonRadians + _HexagonPadding * 0.5;\n\n            if (res.z
+      < floor(_Wave1ThresholdZ + _ShipPosition.z / pitch))\n            {\n               
+      emissionColor = _EmissionColorB;\n            }\n\n            // \u5168\u4F53\u306E\u30A8\u30DF\u30C3\u30B7\u30E7\u30F3\u8ABF\u6574\u7528\uFF08\u30B7\u30FC\u30F3\u306E\u30B3\u30F3\u30C8\u30E9\u30B9\u30C8\u8ABF\u6574\u7528\u3084nagative
+      space\u3092\u8003\u616E\uFF09\n            emissionColor.rgb *= _EmissionIntensity;\n\n           
+      if (res.z < floor(_Wave2ThresholdZ + _ShipPosition.z / pitch))\n           
+      {\n                o.Albedo = _ChangeAlbedo;\n            }\n\n           
+      float s = 5;\n            float z = floor(_Wave3ThresholdZ + s + _ShipPosition.z
+      / pitch) - res.z;\n            o.Emission += saturate(z / s) * float3(0.3,
+      0.1, 1) * 20;\n\n            float edge = calcEdge(ray.endPos, 0.03);\n           
+      o.Emission += emissionColor * edge;\n\n            float wave = saturate(cos(_Beat
+      * TAU - Mod(0.1 * p.z, TAU)));\n            wave += _AudioSpectrumLevels[0]
+      * 0.1;\n\n            float voro = voronoi(ray.endPos.xz * 0.5) + voronoi(ray.endPos.xz);\n           
+      o.Emission += emissionColor * voro * wave;\n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
   basicFolded: 1
