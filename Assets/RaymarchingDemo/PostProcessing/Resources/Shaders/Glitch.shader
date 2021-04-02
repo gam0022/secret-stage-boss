@@ -13,6 +13,7 @@
     float _LensDistortionIntensity;
     float _RgbShiftIntensity;
     float _NoiseIntensity;
+    float _Belt;
     
     float4 _FlashColor;
     float _FlashIntensity;
@@ -64,6 +65,9 @@
         
         // アルファブレンド
         color.rgb = lerp(color.rgb, _BlendColor.rgb, _BlendColor.a);
+
+        // 上下の黒帯
+        color.rgb = lerp(color.rgb, float3(0, 0, 0), 1 - abs(uvN.y) < _Belt);
         
         return color;
     }

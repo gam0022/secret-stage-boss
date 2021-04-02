@@ -12,6 +12,7 @@ public sealed class Glitch : PostProcessEffectSettings
     [Range(0f, 1f), Tooltip("Noise Intensity")] public FloatParameter noiseIntensity = new FloatParameter { value = 0f };
     [Range(0f, 1f), Tooltip("Lens Distortion Intensity")] public FloatParameter lensDistortionIntensity = new FloatParameter { value = 0f };
 
+    [Range(0f, 1f), Tooltip("Belt")] public FloatParameter belt = new FloatParameter { value = 0f };
 
     [Tooltip("Flash Color")] public ColorParameter flashColor = new ColorParameter { value = Color.white };
     [Range(0f, 20f), Tooltip("Flash Intensity")] public FloatParameter flashIntensity = new FloatParameter { value = 0f };
@@ -25,6 +26,7 @@ public sealed class GlitchRenderer : PostProcessEffectRenderer<Glitch>
     readonly int noiseIntensityID = Shader.PropertyToID("_NoiseIntensity");
 
     readonly int lensDistortionIntensittID = Shader.PropertyToID("_LensDistortionIntensity");
+    readonly int beltID = Shader.PropertyToID("_Belt");
 
     readonly int flashColorID = Shader.PropertyToID("_FlashColor");
     readonly int flashIntensityID = Shader.PropertyToID("_FlashIntensity");
@@ -40,6 +42,7 @@ public sealed class GlitchRenderer : PostProcessEffectRenderer<Glitch>
         sheet.properties.SetFloat(rgbShiftIntensityID, settings.rgbShiftIntensity);
         sheet.properties.SetFloat(noiseIntensityID, settings.noiseIntensity);
         sheet.properties.SetFloat(lensDistortionIntensittID, settings.lensDistortionIntensity);
+        sheet.properties.SetFloat(beltID, settings.belt);
 
         sheet.properties.SetColor(flashColorID, settings.flashColor);
         sheet.properties.SetFloat(flashIntensityID, settings.flashIntensity);
