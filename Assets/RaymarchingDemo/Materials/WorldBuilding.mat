@@ -20,12 +20,10 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
-    - _Wave3ThresholdZ: 5.02
-    - _Wave1ThresholdZ: 0
     - _ChangeRate: 1
-    - _Wave2ThresholdZ: 0
     - _Cull: 0
-    - _DistanceMultiplier: 0.7
+    - _DistanceMultiplier: 0.4
+    - _EmissionIntensity: 1
     - _EvilScale: 1.21
     - _FoldRotate: 6
     - _Glossiness: 0.753
@@ -40,6 +38,9 @@ Material:
     - _RotateXY1: 0.3
     - _RotateXZ1: -0.1
     - _RotateYZ1: -0.1
+    - _Wave1ThresholdZ: 0
+    - _Wave2ThresholdZ: 0
+    - _Wave3ThresholdZ: 5.02
     - _WingARot: 0.63
     - _WingRot: 0.63
     m_Colors:

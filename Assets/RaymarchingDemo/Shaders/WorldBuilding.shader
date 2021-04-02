@@ -97,60 +97,15 @@ Shader "Raymarching/WorldBuilding"
         #define MAT_WING_A 3
         #define MAT_WING_B 4
 
-        float2 dHexagon(float3 pos, float blooming)
+        float2 dHexagon(float3 pos, float h)
         {
             float3 p1 = pos;
 
-            // float rate = _ChangeRate;
-            float rate = saturate(blooming);
-
-            float moveY = 1 * (1 - rate);
-
-            if (pos.y > 0)
-            {
-                moveY *= -1;
-            }
-
             // 土台
             p1.xz = foldRotate(p1.xz, 6);
-            float r = lerp(rate, 1, 0) * _HexagonRadians;
-            float2 res = float2(sdBox(p1, float3(_HexagonRadians, 1, r)), MAT_BASE_A);
-
-            /*
-            // 土台のギザギザ
-            float3 p2 = p1;
-            p2.z = opRepRange(p2.z, 0.1, _HexagonRadians);
-            p2.z -= 0.2 * abs(p2.x);
-            p2.y += p1.z * 0.1 * rate;
-            res = opU(res, float2(sdBox(p2, float3(_HexagonRadians * 0.2, 1, 0.02)), MAT_BASE_B));
-
-            // 支柱
-            float3 p3 = p1;
-            p3.y += rate;
-            res = opU(res, float2(sdBox(p3, float3(0.02, remapS(rate, 0.0, 0.2, 0, 1), 0.1)), MAT_BASE_C));
-
-            float3 p4 = p1;
-            
-            // 羽
-            p4.y += _WingASize.w;
-            rot(p4.yz, remapS(rate, 0.5, 1, TAU / 4, _WingARot));
-            res = opU(res, float2(sdBox(p4, _WingASize.xyz * remapS(rate, 0.3, 0.6, 0, 1)), MAT_WING_A));
-
-            // 羽のギザギザ
-            p4.y += _WingBSize.w;
-            p4.z -= 0.4 * abs(p4.x);
-            p4.z = opRepRange(p4.z, _WingBSize.z * 3, _WingASize.z);
-            res = opU(res, float2(sdBox(p4, _WingBSize.xyz), MAT_WING_B));
-            */
+            float2 res = float2(sdBox(p1, float3(_HexagonRadians, h, _HexagonRadians)), MAT_BASE_A);
 
             return res;
-        }
-
-        float calcBlooming(float z)
-        {
-            float pitch = _HexagonRadians + _HexagonPadding * 0.5;
-            float thresholdZ = _ShipPosition.z / pitch + _Wave3ThresholdZ;
-            return saturate((z - thresholdZ) / 5);
         }
 
         float3 dHexagons(float3 pos)
@@ -171,6 +126,20 @@ Shader "Raymarching/WorldBuilding"
             pi1.y = pi1.y * 2;
             pi2.y = pi2.y * 2 + 1;
 
+            float h1 = 1;
+            float h2 = 1;
+            pitch *= 0.5;
+
+            float s = 5;
+            float hmax = 8;
+            float z = floor(s + _Wave3ThresholdZ + _ShipPosition.z / pitch);
+
+            float diff1 = z - pi1.y;
+            h1 += hmax * saturate(diff1 / s);
+
+            float diff2 = z - pi2.y;
+            h2 += hmax * saturate(diff2 / s);
+
             p1.y += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);
             p2.y += 0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);
             p1.xz = Repeat(p1.xz, loop.xz);
@@ -178,8 +147,8 @@ Shader "Raymarching/WorldBuilding"
             p1.y = abs(p1.y) - 0.5 * loop.y;
             p2.y = abs(p2.y) - 0.5 * loop.y;
 
-            float3 res = float3(dHexagon(p1, calcBlooming(pi1.y)), pi1.y);
-            res = opU(res, float3(dHexagon(p2, calcBlooming(pi2.y)), pi2.y));
+            float3 res = float3(dHexagon(p1, h1), pi1.y);
+            res = opU(res, float3(dHexagon(p2, h2), pi2.y));
 
             return res;
         }
@@ -218,7 +187,6 @@ Shader "Raymarching/WorldBuilding"
             }
 
             float4 emissionColor = _EmissionColorA;
-
             float pitch = _HexagonRadians + _HexagonPadding * 0.5;
 
             if (res.z < floor(_Wave1ThresholdZ + _ShipPosition.z / pitch))
@@ -230,9 +198,12 @@ Shader "Raymarching/WorldBuilding"
 
             if (res.z < floor(_Wave2ThresholdZ + _ShipPosition.z / pitch))
             {
-                // emissionColor = hsvToRgb(float3(res.y * 0.1, 1, 1));
                 o.Albedo = _ChangeAlbedo;
             }
+
+            float s = 5;
+            float z = floor(_Wave3ThresholdZ + s + _ShipPosition.z / pitch) - res.z;
+            o.Emission += saturate(z / s) * float3(0.3, 0.1, 1) * 20;
 
             float wave = saturate(cos(_Beat * TAU - Mod(0.1 * waveAxis, TAU)));
             wave += _AudioSpectrumLevels[0] * 0.1;
@@ -242,14 +213,6 @@ Shader "Raymarching/WorldBuilding"
 
             float voro = voronoi(ray.endPos.xz * 0.5) + voronoi(ray.endPos.xz);
             o.Emission += emissionColor * voro * wave;
-
-            /*
-            if (res.y == MAT_WING_B)
-            {
-                o.Emission = float3(3, 0.2, 0.2);
-                // o.Albedo = fixed3(1, 0.2, 0.2);
-            }
-            */
         }
         // @endblock
         
