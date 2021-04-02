@@ -23,13 +23,12 @@ Shader "Raymarching/WorldBuilding"
         _HexagonRadians ("Hexagon Radians", Range(0, 5)) = 1
         _HexagonPadding ("Hexagon Padding", Range(0, 1)) = 0.1
         _Height ("Height", Float) = 10
-        [HDR] _EmissionColorEdge ("Emission Color Edge", Color) = (1, 1, 1, 1)
-        [HDR] _EmissionColorVoronoi ("Emission Color Voronoi", Color) = (1, 1, 1, 1)
+        _EmissionIntensity ("Emission Intensity", Range(0, 1)) = 1
 
         [Header(Wava1)]
+        _Wave1ThresholdZ ("Wave 1 Threshold Z", Float) = 0
         [HDR] _EmissionColorA ("Emission Color A", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorB ("Emission Color B", Color) = (1, 1, 1, 1)
-        _Wave1ThresholdZ ("Wave 1 Threshold Z", Float) = 0
 
         [Header(Wave2)]
         _Wave2ThresholdZ ("Change Threshold Z", Float) = 0
@@ -77,8 +76,7 @@ Shader "Raymarching/WorldBuilding"
         float _HexagonRadians;
         float _HexagonPadding;
         float _Height;
-        float4 _EmissionColorEdge;
-        float4 _EmissionColorVoronoi;
+        float _EmissionIntensity;
 
         float4 _EmissionColorA;
         float4 _EmissionColorB;
@@ -227,6 +225,8 @@ Shader "Raymarching/WorldBuilding"
             {
                 emissionColor = _EmissionColorB;
             }
+
+            emissionColor.rgb *= _EmissionIntensity;
 
             if (res.z < floor(_Wave2ThresholdZ + _ShipPosition.z / pitch))
             {
