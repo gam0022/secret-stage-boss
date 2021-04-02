@@ -220,21 +220,21 @@ AnimationClip:
     genericBindings:
     - serializedVersion: 2
       path: 0
-      attribute: 2333704795
+      attribute: 2286443386
       script: {fileID: 0}
       typeID: 23
       customType: 22
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 0
-      attribute: 2303042319
+      attribute: 2311488698
       script: {fileID: 0}
       typeID: 23
       customType: 22
       isPPtrCurve: 0
     - serializedVersion: 2
       path: 0
-      attribute: 2289338019
+      attribute: 2175417723
       script: {fileID: 0}
       typeID: 23
       customType: 22
