@@ -11,6 +11,8 @@ public class PostProcessSetter : MonoBehaviour
 
     [SerializeField] Color fogColor = Color.black;
 
+    [SerializeField] GameObject postProcessGameObject;
+
     bool isInitialized = false;
 
     PostProcessVolume volume;
@@ -29,7 +31,7 @@ public class PostProcessSetter : MonoBehaviour
         glitch.flashColor.Override(flashColor);
         glitch.flashIntensity.Override(flashIntensity);
         glitch.blendColor.Override(blendColor);
-        volume = PostProcessManager.instance.QuickVolume(gameObject.layer, 100f, glitch);
+        volume = PostProcessManager.instance.QuickVolume(postProcessGameObject.layer, 100f, glitch);
 
         isInitialized = true;
     }
