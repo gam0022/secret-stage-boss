@@ -1775,25 +1775,7 @@ MonoBehaviour:
     m_BlendOutDuration: -1
     m_MixInCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -1868,25 +1850,7 @@ MonoBehaviour:
       m_RotationOrder: 4
     m_MixOutCurve:
       serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 1
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 1
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
@@ -4646,6 +4610,22 @@ MonoBehaviour:
     m_DisplayName: Boss
   m_Markers:
     m_Objects: []
+--- !u!114 &-4395416019545690638
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 571b6f5c47303f449b8c3ceff877d560, type: 3}
+  m_Name: TextMeshProClip
+  m_EditorClassIdentifier: 
+  template:
+    text: 
+    color: {r: 1, g: 1, b: 1, a: 1}
+    fontSize: 36
 --- !u!114 &-4368857398474891774
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5178,6 +5158,22 @@ MonoBehaviour:
     m_DisplayName: RecorderClip
   m_Markers:
     m_Objects: []
+--- !u!114 &-2412650562333198832
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 571b6f5c47303f449b8c3ceff877d560, type: 3}
+  m_Name: TextMeshProClip
+  m_EditorClassIdentifier: 
+  template:
+    text: 
+    color: {r: 1, g: 1, b: 1, a: 1}
+    fontSize: 36
 --- !u!114 &-1997004436873377269
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6914,7 +6910,7 @@ MonoBehaviour:
     m_Start: 24
     m_ClipIn: 0
     m_Asset: {fileID: -5633713051965136241}
-    m_Duration: 6
+    m_Duration: 4.5
     m_TimeScale: 1
     m_ParentTrack: {fileID: 2373517947068002542}
     m_EaseInDuration: 0
@@ -6980,10 +6976,10 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: TextMeshProClip
   - m_Version: 1
-    m_Start: 30
+    m_Start: 28.5
     m_ClipIn: 0
     m_Asset: {fileID: 496501735701832104}
-    m_Duration: 6
+    m_Duration: 4.5
     m_TimeScale: 1
     m_ParentTrack: {fileID: 2373517947068002542}
     m_EaseInDuration: 0
@@ -7049,10 +7045,10 @@ MonoBehaviour:
     m_PreExtrapolationTime: 0
     m_DisplayName: TextMeshProClip
   - m_Version: 1
-    m_Start: 42
+    m_Start: 40.5
     m_ClipIn: 0
     m_Asset: {fileID: -5252913143392243238}
-    m_Duration: 6
+    m_Duration: 4.5
     m_TimeScale: 1
     m_ParentTrack: {fileID: 2373517947068002542}
     m_EaseInDuration: 0
@@ -7085,7 +7081,7 @@ MonoBehaviour:
     m_Start: 36
     m_ClipIn: 0
     m_Asset: {fileID: 7863031486384024743}
-    m_Duration: 6
+    m_Duration: 4.5
     m_TimeScale: 1
     m_ParentTrack: {fileID: 2373517947068002542}
     m_EaseInDuration: 0
@@ -7308,6 +7304,108 @@ MonoBehaviour:
         weightedMode: 0
         inWeight: 0
         outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: TextMeshProClip
+  - m_Version: 1
+    m_Start: 33
+    m_ClipIn: 0
+    m_Asset: {fileID: -2412650562333198832}
+    m_Duration: 3
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 2373517947068002542}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_BlendInCurveMode: 0
+    m_BlendOutCurveMode: 0
+    m_ExposedParameterNames: []
+    m_AnimationCurves: {fileID: 0}
+    m_Recordable: 0
+    m_PostExtrapolationMode: 0
+    m_PreExtrapolationMode: 0
+    m_PostExtrapolationTime: 0
+    m_PreExtrapolationTime: 0
+    m_DisplayName: TextMeshProClip
+  - m_Version: 1
+    m_Start: 45
+    m_ClipIn: 0
+    m_Asset: {fileID: -4395416019545690638}
+    m_Duration: 3
+    m_TimeScale: 1
+    m_ParentTrack: {fileID: 2373517947068002542}
+    m_EaseInDuration: 0
+    m_EaseOutDuration: 0
+    m_BlendInDuration: -1
+    m_BlendOutDuration: -1
+    m_MixInCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_MixOutCurve:
+      serializedVersion: 2
+      m_Curve: []
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4

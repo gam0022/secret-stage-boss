@@ -96,6 +96,10 @@ Shader "TextMeshPro/Mobile/Distance Field Scan"
             #include "UnityCG.cginc"
             #include "UnityUI.cginc"
             #include "Assets/TextMesh Pro/Shaders/TMPro_Properties.cginc"
+            #include "Common.cginc"
+
+            float _LocalTime;
+            float _LocalDuration;
 
             struct vertex_t
             {
@@ -203,7 +207,12 @@ Shader "TextMeshPro/Mobile/Distance Field Scan"
             {
                 UNITY_SETUP_INSTANCE_ID(input);
 
-                half d = tex2D(_MainTex, input.texcoord0.xy).a * input.param.x;
+                // half d = tex2D(_MainTex, input.texcoord0.xy).a * input.param.x;
+                half2 uv = input.texcoord0.xy;
+                float rate = _LocalTime / _LocalDuration;
+                uv.y = clamp(uv.y, 0.0 + max(0.0, rate - 0.7) * 2.0, rate * 2.0);
+                half d = tex2D(_MainTex, uv).a * input.param.x;
+
                 half4 c = input.faceColor * saturate(d - input.param.w);
 
                 #ifdef OUTLINE_ON

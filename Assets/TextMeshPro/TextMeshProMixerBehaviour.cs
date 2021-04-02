@@ -6,6 +6,9 @@ using UnityEngine.Timeline;
 
 public class TextMeshProMixerBehaviour : PlayableBehaviour
 {
+    readonly int localTimeId = Shader.PropertyToID("_LocalTime");
+    readonly int localDurationId = Shader.PropertyToID("_LocalDuration");
+
     string m_DefaultText;
     Color m_DefaultColor;
     float m_DefaultFontSize;
@@ -37,6 +40,8 @@ public class TextMeshProMixerBehaviour : PlayableBehaviour
         float totalWeight = 0f;
         float greatestWeight = 0f;
         int currentInputs = 0;
+        var time = 0f;
+        var duration = 0f;
 
         for (int i = 0; i < inputCount; i++)
         {
@@ -52,6 +57,8 @@ public class TextMeshProMixerBehaviour : PlayableBehaviour
             {
                 m_AssignedText = input.text;
                 m_TrackBinding.text = m_AssignedText;
+                time = (float)inputPlayable.GetTime();
+                duration = (float)inputPlayable.GetDuration();
                 greatestWeight = inputWeight;
             }
 
@@ -63,6 +70,8 @@ public class TextMeshProMixerBehaviour : PlayableBehaviour
         m_TrackBinding.color = m_AssignedColor;
         m_AssignedFontSize = blendedFontSize + m_DefaultFontSize * (1f - totalWeight);
         m_TrackBinding.fontSize = m_AssignedFontSize;
+        m_TrackBinding.fontSharedMaterial.SetFloat(localTimeId, (float)time);
+        m_TrackBinding.fontSharedMaterial.SetFloat(localDurationId, (float)duration);
 
         if (currentInputs != 1 && 1f - totalWeight > greatestWeight)
         {
