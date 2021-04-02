@@ -7,6 +7,7 @@ float _TimelineTime;
 
 float3 _ShipPosition;
 float _ShipDamageBeat;
+float _ShipBarrierBeat;
 
 float2 opU(float2 d1, float2 d2)
 {

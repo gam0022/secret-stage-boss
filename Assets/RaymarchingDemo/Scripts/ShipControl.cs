@@ -16,8 +16,10 @@ namespace Revision2021
 
         readonly int shipPositionID = Shader.PropertyToID("_ShipPosition");
         readonly int shipDamageBeatID = Shader.PropertyToID("_ShipDamageBeat");
+        readonly int shipBarrierBeatID = Shader.PropertyToID("_ShipBarrierBeat");
 
         float lastDamageBeat = -999;
+        float lastBarrierBeat = -999;
 
         Vector3 PerlinNoise(float t)
         {
@@ -50,6 +52,9 @@ namespace Revision2021
             float shipDamageBeat = TimelineTimeControl.Beat - lastDamageBeat;
             Shader.SetGlobalFloat(shipDamageBeatID, shipDamageBeat);
 
+            float shipBarrierBeat = TimelineTimeControl.Beat - lastBarrierBeat;
+            Shader.SetGlobalFloat(shipBarrierBeatID, shipBarrierBeat);
+
             if (shipDamageBeat > 0)
             {
                 var fbm = DamageAnimationIntensity * Mathf.Exp(-shipDamageBeat * DamegeAnimationSpeed) * FbmVector3((float)time * DamageAnimationFrequently);
@@ -79,7 +84,7 @@ namespace Revision2021
             }
             else
             {
-
+                lastBarrierBeat = TimelineTimeControl.Beat;
             }
         }
     }

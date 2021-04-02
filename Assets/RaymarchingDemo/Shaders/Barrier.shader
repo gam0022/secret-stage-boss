@@ -56,6 +56,11 @@
             {
                 v2f o;
 
+                if (_ShipBarrierBeat > 0)
+                {
+                    v.vertex.xyz += 0.2 * exp(-_ShipBarrierBeat * 2) * v.normal.xyz;
+                }
+
                 rot(v.vertex.xz, _Beat * TAU / 16);
 
                 o.vertex = UnityObjectToClipPos(v.vertex);
@@ -86,9 +91,15 @@
                 float voro = voronoi(i.uv * scale) + voronoi(i.uv * scale * 2);
                 col.rgb += _EmissionColor.rgb * voro;
 
+                float intensity = 0.1;
+                if (_ShipBarrierBeat > 0)
+                {
+                    intensity += 2 * exp(-_ShipBarrierBeat * 2) * (0.5 + 0.5 * sin(_Beat * 20));
+                }
+
                 if (i.color.b > 0.8)
                 {
-                    col.rgb += _EmissionColor.rgb * 0.5 * (1 + cos(_Beat * TAU + TAU * 4 * (i.local.y + 0.5)));
+                    col.rgb += _EmissionColor.rgb * intensity * (1 + cos(_Beat * TAU + TAU * 4 * (i.local.y + 0.5)));
                 }
 
                 // col.rgb *= _AudioSpectrumLevels[0] * 20;
