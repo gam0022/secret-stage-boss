@@ -4,7 +4,16 @@ using UnityEngine.Rendering.PostProcessing;
 [ExecuteAlways]
 public class PostProcessSetter : MonoBehaviour
 {
-    [SerializeField] float grayscaleBlend;
+    [SerializeField] float intensityBase;
+    [SerializeField] float intensityBeat;
+    [SerializeField] float intensityAudioSpectrum;
+
+    [SerializeField] float glitchUvIntensity;
+    [SerializeField] float distortionIntensity;
+    [SerializeField] float rgbShiftIntensity;
+
+    [SerializeField] float noiseIntensity;
+
     [SerializeField] Color flashColor = Color.white;
     [SerializeField] float flashIntensity = 0;
     [SerializeField] Color blendColor = Color.clear;
@@ -28,9 +37,20 @@ public class PostProcessSetter : MonoBehaviour
 
         glitch = ScriptableObject.CreateInstance<Glitch>();
         glitch.enabled.Override(true);
+
+        glitch.intensityBase.Override(intensityBase);
+        glitch.intensityBeat.Override(intensityBeat);
+        glitch.intensityAudioSpectrum.Override(intensityAudioSpectrum);
+
+        glitch.glitchUvIntensity.Override(glitchUvIntensity);
+        glitch.distortionIntensity.Override(distortionIntensity);
+        glitch.rgbShiftIntensity.Override(rgbShiftIntensity);
+        glitch.noiseIntensity.Override(noiseIntensity);
+
         glitch.flashColor.Override(flashColor);
         glitch.flashIntensity.Override(flashIntensity);
         glitch.blendColor.Override(blendColor);
+
         volume = PostProcessManager.instance.QuickVolume(postProcessGameObject.layer, 100f, glitch);
 
         isInitialized = true;
@@ -39,6 +59,15 @@ public class PostProcessSetter : MonoBehaviour
     void Update()
     {
         Initialize();
+
+        glitch.intensityBase.value = intensityBase;
+        glitch.intensityBeat.value = intensityBeat;
+        glitch.intensityAudioSpectrum.value = intensityAudioSpectrum;
+
+        glitch.glitchUvIntensity.value = glitchUvIntensity;
+        glitch.distortionIntensity.value = distortionIntensity;
+        glitch.rgbShiftIntensity.value = rgbShiftIntensity;
+        glitch.noiseIntensity.value = noiseIntensity;
 
         glitch.flashColor.value = flashColor;
         glitch.flashIntensity.value = flashIntensity;
