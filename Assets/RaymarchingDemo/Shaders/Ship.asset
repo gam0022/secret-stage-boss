@@ -94,14 +94,14 @@ MonoBehaviour:
       3);\n\n            // \u30A8\u30F3\u30B8\u30F3\n            float3 p1 = p;\n           
       p1.z -= 0.9;\n            p1.y -= -1.1;\n            float2 res = mEngine(p1);\n\n           
       // \u30B8\u30E7\u30A4\u30F3\u30C8\n            float3 p2 = p;\n           
-      p2.y -= -1.4;\n            float dJoint = sdBox(p2, float3(0.1, 0.1, 0.6));\n           
-      res = opU(res, float2(dJoint, MAT_JOINT_A));\n\n            // Body\n           
-      res = opU(res, mBody(p));\n\n            // Gantz\n            float3 size
-      = GetScale() * 0.5;\n            size.xz *= 1.1;\n            res = opS(float2(sdBox(p
-      - float3(0, 2 * size.y * _Gantz, 0), size), res.y), res);\n\n            return
-      res;\n        }\n\n        inline float DistanceFunction(float3 pos)\n       
-      {\n            float2 res = mShip(pos);\n            return res.x;\n       
-      }"
+      p2.y -= -1.4;\n            p2.xz = abs(p2.xz) - 0.1;\n            float dJoint
+      = sdBox(p2, float3(0.03, 0.03, 0.6));\n            res = opU(res, float2(dJoint,
+      MAT_JOINT_A));\n\n            // Body\n            res = opU(res, mBody(p));\n\n           
+      // Gantz\n            float3 size = GetScale() * 0.5;\n            size.xz
+      *= 1.1;\n            res = opS(float2(sdBox(p - float3(0, 2 * size.y * _Gantz,
+      0), size), res.y), res);\n\n            return res;\n        }\n\n        inline
+      float DistanceFunction(float3 pos)\n        {\n            float2 res = mShip(pos);\n           
+      return res.x;\n        }"
     folded: 0
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput

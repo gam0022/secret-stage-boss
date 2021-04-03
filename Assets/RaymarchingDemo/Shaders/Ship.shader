@@ -164,7 +164,8 @@ Shader "Raymarching/Ship"
             // ジョイント
             float3 p2 = p;
             p2.y -= -1.4;
-            float dJoint = sdBox(p2, float3(0.1, 0.1, 0.6));
+            p2.xz = abs(p2.xz) - 0.1;
+            float dJoint = sdBox(p2, float3(0.03, 0.03, 0.6));
             res = opU(res, float2(dJoint, MAT_JOINT_A));
 
             // Body
