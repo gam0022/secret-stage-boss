@@ -181,10 +181,14 @@ Shader "Raymarching/WorldBuilding"
             {
                 o.Albedo = _ChangeAlbedo;
             }
-
+            
             float s = 5;
-            float z = floor(_Wave3ThresholdZ + s + _ShipPosition.z / pitch) - res.z;
-            o.Emission += saturate(z / s) * float3(0.3, 0.1, 1) * 20;
+            if (res.z < floor(_Wave3ThresholdZ + s + _ShipPosition.z / pitch))
+            {
+                o.Albedo = hsvToRgb(float3(p.y * frac(_Beat) + _Beat, 1, 1));
+                o.Smoothness = 0.95;
+                o.Metallic = 0.8;
+            }
 
             float edge = calcEdge(ray.endPos, 0.03);
             o.Emission += emissionColor * edge;
