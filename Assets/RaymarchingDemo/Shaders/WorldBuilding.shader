@@ -123,18 +123,12 @@ Shader "Raymarching/WorldBuilding"
             pi1.y = pi1.y * 2;
             pi2.y = pi2.y * 2 + 1;
 
-            float h1 = 1;
-            float h2 = 1;
             pitch *= 0.5;
 
+            float2 h12 = float2(1, 1);
             float hmax = 8;
             float z = floor(_Wave3Slope + _Wave3ThresholdZ + _ShipPosition.z / pitch);
-
-            float diff1 = z - pi1.y;
-            h1 += hmax * saturate(diff1 / _Wave3Slope);
-
-            float diff2 = z - pi2.y;
-            h2 += hmax * saturate(diff2 / _Wave3Slope);
+            h12 += hmax * saturate((float2(z, z) - float2(pi1.y, pi2.y)) / _Wave3Slope);
 
             p1.y += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);
             p2.y += 0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);
@@ -143,8 +137,8 @@ Shader "Raymarching/WorldBuilding"
             p1.y = abs(p1.y) - 0.5 * loop.y;
             p2.y = abs(p2.y) - 0.5 * loop.y;
 
-            float3 res = float3(dHexagon(p1, h1), pi1.y);
-            res = opU(res, float3(dHexagon(p2, h2), pi2.y));
+            float3 res = float3(dHexagon(p1, h12.x), pi1.y);
+            res = opU(res, float3(dHexagon(p2, h12.y), pi2.y));
 
             return res;
         }
