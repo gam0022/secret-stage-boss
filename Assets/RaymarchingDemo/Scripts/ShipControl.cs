@@ -5,9 +5,9 @@ namespace Revision2021
 {
     public class ShipControl : MonoBehaviour, ITimeControl
     {
-        [SerializeField] Transform shipTransform;
+        [SerializeField] Transform shipRoot;
 
-        [SerializeField] Transform shipMeshTransform;
+        [SerializeField] Transform shipLocal;
 
         [SerializeField] float DamegeAnimationSpeed = 2f;
         [SerializeField] float DamageAnimationIntensity = 4f;
@@ -47,7 +47,7 @@ namespace Revision2021
 
         public void SetTime(double time)
         {
-            Shader.SetGlobalVector(shipPositionID, shipTransform.position);
+            Shader.SetGlobalVector(shipPositionID, shipRoot.position);
 
             float shipDamageBeat = TimelineTimeControl.Beat - lastDamageBeat;
             Shader.SetGlobalFloat(shipDamageBeatID, shipDamageBeat);
@@ -58,13 +58,13 @@ namespace Revision2021
             if (shipDamageBeat > 0)
             {
                 var fbm = DamageAnimationIntensity * Mathf.Exp(-shipDamageBeat * DamegeAnimationSpeed) * FbmVector3((float)time * DamageAnimationFrequently);
-                shipMeshTransform.localPosition = Vector3.Scale(new Vector3(1, 2, 1), fbm);
-                shipMeshTransform.localEulerAngles = new Vector3(90, 0, 0) + DamageRotation * fbm;
+                shipLocal.localPosition = Vector3.Scale(new Vector3(1, 2, 1), fbm);
+                shipLocal.localEulerAngles = new Vector3(90, 0, 0) + DamageRotation * fbm;
             }
             else
             {
-                shipMeshTransform.localPosition = Vector3.zero;
-                shipMeshTransform.localEulerAngles = new Vector3(90, 0, 0);
+                shipLocal.localPosition = Vector3.zero;
+                shipLocal.localEulerAngles = new Vector3(90, 0, 0);
             }
         }
 
