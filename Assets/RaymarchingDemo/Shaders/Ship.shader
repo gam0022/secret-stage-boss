@@ -30,6 +30,9 @@ Shader "Raymarching/Ship"
         _DamageBlinkSpeed ("Damage Blink Speed", Float) = 1
         [HDR] _EmissionColorDamageA ("Emission Color Damage A", Color) = (1, 1, 1, 1)
         [HDR] _EmissionColorDamageB ("Emission Color Damage B", Color) = (1, 1, 1, 1)
+
+        [Header(BarrierPrepare)]
+        _BarrierPrepare ("Barrier Prepare", Range(0, 4)) = 0
         // @endblock
     }
 
@@ -68,6 +71,8 @@ Shader "Raymarching/Ship"
         float4 _EmissionColorDamageA;
         float4 _EmissionColorDamageB;
 
+        float _BarrierPrepare;
+
         #define MAT_ENGINE_BODY_A   1
         #define MAT_ENGINE_DETAIL_A 2
         #define MAT_ENGINE_DETAIL_B 3
@@ -77,7 +82,7 @@ Shader "Raymarching/Ship"
         #define MAT_BODY_A          6
         #define MAT_JOINT_A         7
 
-        float2 dEngine(float3 pos)
+        float2 mEngine(float3 pos)
         {
             float3 p = pos;
             float r = cos((pos.y + 0.3) * 1.0) * 0.3;
@@ -118,14 +123,16 @@ Shader "Raymarching/Ship"
             return res;
         }
 
-        float2 dBody(float3 pos)
+        float2 mBody(float3 pos)
         {
             float3 p = pos;
 
             float bodyLength = 1.7;
             float bodyWidth = 0.3 * abs(cos((p.y + bodyLength) * TAU / bodyLength / 8));
-            float dBody = sdBox(p, float3(bodyWidth * 0.1, bodyLength, bodyWidth * 0.1));
-            float2 res = float2(dBody, MAT_BODY_A);
+            bodyWidth += saturate(sin(p.y * TAU / bodyLength / 4)) * _BarrierPrepare;
+
+            float mBody = sdBox(p, float3(bodyWidth * 0.1, bodyLength, bodyWidth * 0.1));
+            float2 res = float2(mBody, MAT_BODY_A);
 
             p.y -= 0.5 * abs(p.x);
             p.z -= bodyWidth + 0.01;
@@ -144,7 +151,7 @@ Shader "Raymarching/Ship"
             return res;
         }
 
-        float2 dShip(float3 pos)
+        float2 mShip(float3 pos)
         {
             float3 p = pos;
 
@@ -154,7 +161,7 @@ Shader "Raymarching/Ship"
             float3 p1 = p;
             p1.z -= 0.9;
             p1.y -= -1.1;
-            float2 res = dEngine(p1);
+            float2 res = mEngine(p1);
 
             // ジョイント
             float3 p2 = p;
@@ -163,7 +170,7 @@ Shader "Raymarching/Ship"
             res = opU(res, float2(dJoint, MAT_JOINT_A));
 
             // Body
-            res = opU(res, dBody(p));
+            res = opU(res, mBody(p));
 
             // Gantz
             float3 size = GetScale() * 0.5;
@@ -175,7 +182,7 @@ Shader "Raymarching/Ship"
 
         inline float DistanceFunction(float3 pos)
         {
-            float2 res = dShip(pos);
+            float2 res = mShip(pos);
             return res.x;
         }
         // @endblock
@@ -185,7 +192,7 @@ Shader "Raymarching/Ship"
         {
             float3 scale = GetScale();
             float3 p = ToLocal(ray.endPos) * scale;
-            float2 res = dShip(p);
+            float2 res = mShip(p);
 
             if (res.y >= MAT_ENGINE_BODY_A && res.y <= MAT_ENGINE_FAN)
             {

@@ -20,6 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
+    - _BarrierPrepare: 1.3
     - _Cull: 0
     - _DamageAnimationSpeed: 2.11
     - _DamageBlinkSpeed: 128
