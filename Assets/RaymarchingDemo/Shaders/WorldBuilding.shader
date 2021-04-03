@@ -123,12 +123,11 @@ Shader "Raymarching/WorldBuilding"
             pi1.y = pi1.y * 2;
             pi2.y = pi2.y * 2 + 1;
 
-            pitch *= 0.5;
-
+            // Wave3: 天井と床が落ちて潰される攻撃
             float2 h12 = float2(1, 1);
-            float hmax = 8;
+            pitch *= 0.5;
             float z = floor(_Wave3Slope + _Wave3ThresholdZ + _ShipPosition.z / pitch);
-            h12 += hmax * saturate((float2(z, z) - float2(pi1.y, pi2.y)) / _Wave3Slope);
+            h12 += 8 * saturate((float2(z, z) - float2(pi1.y, pi2.y)) / _Wave3Slope);
 
             p1.y += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);
             p2.y += 0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);
