@@ -39,7 +39,8 @@ Shader "Raymarching/WorldBuilding"
         _ChangeAlbedo ("Change Albedo", Color) = (0.6, 0.6, 0.6, 1)
 
         [Header(Wave3)]
-        _Wave3ThresholdZ ("Blooming Threshold Z", Float) = 0
+        _Wave3ThresholdZ ("Wave 3 Threshold Z", Float) = 0
+        _Wave3Slope ("Wave 3 Slope", Float) = 5
         // @endblock
     }
 
@@ -89,6 +90,7 @@ Shader "Raymarching/WorldBuilding"
         float4 _ChangeAlbedo;
 
         float _Wave3ThresholdZ;
+        float _Wave3Slope;
 
         #define MAT_BASE_A 0
 
@@ -125,15 +127,14 @@ Shader "Raymarching/WorldBuilding"
             float h2 = 1;
             pitch *= 0.5;
 
-            float s = 5;
             float hmax = 8;
-            float z = floor(s + _Wave3ThresholdZ + _ShipPosition.z / pitch);
+            float z = floor(_Wave3Slope + _Wave3ThresholdZ + _ShipPosition.z / pitch);
 
             float diff1 = z - pi1.y;
-            h1 += hmax * saturate(diff1 / s);
+            h1 += hmax * saturate(diff1 / _Wave3Slope);
 
             float diff2 = z - pi2.y;
-            h2 += hmax * saturate(diff2 / s);
+            h2 += hmax * saturate(diff2 / _Wave3Slope);
 
             p1.y += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);
             p2.y += 0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);
@@ -169,6 +170,7 @@ Shader "Raymarching/WorldBuilding"
             float4 emissionColor = _EmissionColorA;
             float pitch = _HexagonRadians + _HexagonPadding * 0.5;
 
+            // Wave1: エミッションが赤から青に変化
             if (res.z < floor(_Wave1ThresholdZ + _ShipPosition.z / pitch))
             {
                 emissionColor = _EmissionColorB;
@@ -177,13 +179,14 @@ Shader "Raymarching/WorldBuilding"
             // 全体のエミッション調整用（シーンのコントラスト調整用やnagative spaceを考慮）
             emissionColor.rgb *= _EmissionIntensity;
 
+            // Wave2: 色が黒から白に変化
             if (res.z < floor(_Wave2ThresholdZ + _ShipPosition.z / pitch))
             {
                 o.Albedo = _ChangeAlbedo;
             }
-            
-            float s = 5;
-            if (res.z < floor(_Wave3ThresholdZ + s + _ShipPosition.z / pitch))
+
+            // Wave3: 天井と床が落ちて潰される攻撃
+            if (res.z < floor(_Wave3ThresholdZ + _Wave3Slope + _ShipPosition.z / pitch))
             {
                 o.Albedo = hsvToRgb(float3(p.y * frac(_Beat) + _Beat, 1, 1));
                 o.Smoothness = 0.95;
@@ -193,8 +196,7 @@ Shader "Raymarching/WorldBuilding"
             float edge = calcEdge(ray.endPos, 0.03);
             o.Emission += emissionColor * edge;
 
-            float voro = voronoi(ray.endPos.xz) * calcWave(p.z, 1);
-            voro += voronoi(ray.endPos.xz * 0.5) * calcWave(p.z, 0.5);
+            float voro = voronoi(ray.endPos.xz) * calcWave(p.z, 1) + voronoi(ray.endPos.xz * 0.5) * calcWave(p.z, 0.5);
 
             o.Emission += emissionColor * voro;
         }
