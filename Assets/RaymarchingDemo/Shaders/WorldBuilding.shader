@@ -41,6 +41,9 @@ Shader "Raymarching/WorldBuilding"
         [Header(Wave3)]
         _Wave3ThresholdZ ("Wave 3 Threshold Z", Float) = 0
         _Wave3Slope ("Wave 3 Slope", Float) = 5
+
+        [Header(Wave4)]
+        _Wave4ThresholdTime ("Wave 4 Threshold Time", Float) = 120
         // @endblock
     }
 
@@ -91,6 +94,8 @@ Shader "Raymarching/WorldBuilding"
 
         float _Wave3ThresholdZ;
         float _Wave3Slope;
+
+        float _Wave4ThresholdTime;
 
         #define MAT_BASE_A 0
 
@@ -186,10 +191,16 @@ Shader "Raymarching/WorldBuilding"
                 o.Metallic = 0.8;
             }
 
-            float edge = calcEdge(ray.endPos, 0.03);
+            float edge = calcEdge(p, 0.03);
             o.Emission += emissionColor * edge;
 
-            float voro = voronoi(ray.endPos.xz) * calcWave(p.z, 1) + voronoi(ray.endPos.xz * 0.5) * calcWave(p.z, 0.5);
+            // Wave4: 虹色のエッジ
+            if (_TimelineTime > _Wave4ThresholdTime)
+            {
+                o.Emission += 10 * hsvToRgb(float3(0.1 * (p.x + p.z), 1, 1)) * edge * saturate(sin(_Beat * TAU / 4));
+            }
+
+            float voro = voronoi(p.xz) * calcWave(p.z, 1) + voronoi(p.xz * 0.5) * calcWave(p.z, 0.5);
 
             o.Emission += emissionColor * voro;
         }

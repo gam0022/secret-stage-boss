@@ -68,56 +68,65 @@ MonoBehaviour:
       B\", Color) = (1, 1, 1, 1)\n\n        [Header(Wave2)]\n        _Wave2ThresholdZ
       (\"Change Threshold Z\", Float) = 0\n        _ChangeAlbedo (\"Change Albedo\",
       Color) = (0.6, 0.6, 0.6, 1)\n\n        [Header(Wave3)]\n        _Wave3ThresholdZ
-      (\"Blooming Threshold Z\", Float) = 0"
+      (\"Wave 3 Threshold Z\", Float) = 0\n        _Wave3Slope (\"Wave 3 Slope\",
+      Float) = 5\n\n        [Header(Wave4)]\n        _Wave4ThresholdTime (\"Wave
+      4 Threshold Time\", Float) = 120"
     folded: 0
   - key: DistanceFunction
     value: "        #include \"Common.cginc\"\n\n        float _HexagonRadians;\n       
       float _HexagonPadding;\n        float _Height;\n        float _EmissionIntensity;\n\n       
       float _WaveSpeed;\n        float _WaveFrequency;\n\n        float4 _EmissionColorA;\n       
       float4 _EmissionColorB;\n        float _Wave1ThresholdZ;\n\n        float _Wave2ThresholdZ;\n       
-      float4 _ChangeAlbedo;\n\n        float _Wave3ThresholdZ;\n\n        #define
-      MAT_BASE_A 0\n\n        float2 dHexagon(float3 pos, float h)\n        {\n           
-      float3 p1 = pos;\n\n            // \u571F\u53F0\n            p1.xz = foldRotate(p1.xz,
-      6);\n            float2 res = float2(sdBox(p1, float3(_HexagonRadians, h, _HexagonRadians)),
-      MAT_BASE_A);\n\n            return res;\n        }\n\n        float3 dHexagons(float3
-      pos)\n        {\n            float3 p = pos;\n\n            float pitch = _HexagonRadians
-      * 2 + _HexagonPadding;\n            float sqrt3_div_2 = 0.8660254037844386467637231707529361834714026269051903140279034897;\n           
+      float4 _ChangeAlbedo;\n\n        float _Wave3ThresholdZ;\n        float _Wave3Slope;\n\n       
+      float _Wave4ThresholdTime;\n\n        #define MAT_BASE_A 0\n\n        float2
+      dHexagon(float3 pos, float h)\n        {\n            float3 p1 = pos;\n\n           
+      // \u571F\u53F0\n            p1.xz = foldRotate(p1.xz, 6);\n            float2
+      res = float2(sdBox(p1, float3(_HexagonRadians, h, _HexagonRadians)), MAT_BASE_A);\n\n           
+      return res;\n        }\n\n        float3 dHexagons(float3 pos)\n        {\n           
+      float3 p = pos;\n\n            float pitch = _HexagonRadians * 2 + _HexagonPadding;\n           
+      float sqrt3_div_2 = 0.8660254037844386467637231707529361834714026269051903140279034897;\n           
       float3 offset = float3(pitch * sqrt3_div_2, 0, pitch * 0.5);\n            float3
       loop = float3(offset.x * 2, _Height, offset.z * 2);\n            \n           
       float3 p1 = p;\n            float3 p2 = p + offset;\n\n            // calculate
       indices\n            float2 pi1 = floor(p1 / loop).xz;\n            float2
       pi2 = floor(p2 / loop).xz;\n            pi1.y = pi1.y * 2;\n            pi2.y
-      = pi2.y * 2 + 1;\n\n            float h1 = 1;\n            float h2 = 1;\n           
-      pitch *= 0.5;\n\n            float s = 5;\n            float hmax = 8;\n           
-      float z = floor(s + _Wave3ThresholdZ + _ShipPosition.z / pitch);\n\n           
-      float diff1 = z - pi1.y;\n            h1 += hmax * saturate(diff1 / s);\n\n           
-      float diff2 = z - pi2.y;\n            h2 += hmax * saturate(diff2 / s);\n\n           
+      = pi2.y * 2 + 1;\n\n            // Wave3: \u5929\u4E95\u3068\u5E8A\u304C\u843D\u3061\u3066\u6F70\u3055\u308C\u308B\u653B\u6483\n           
+      float2 h12 = float2(1, 1);\n            pitch *= 0.5;\n            float z
+      = floor(_Wave3Slope + _Wave3ThresholdZ + _ShipPosition.z / pitch);\n           
+      h12 += 8 * saturate((float2(z, z) - float2(pi1.y, pi2.y)) / _Wave3Slope);\n\n           
       p1.y += 0.5 * sin(10 * Rand(pi1) + 0.1 * TAU * _Beat);\n            p2.y +=
       0.5 * sin(10 * Rand(pi2) + 0.1 * TAU * _Beat);\n            p1.xz = Repeat(p1.xz,
       loop.xz);\n            p2.xz = Repeat(p2.xz, loop.xz);\n            p1.y =
       abs(p1.y) - 0.5 * loop.y;\n            p2.y = abs(p2.y) - 0.5 * loop.y;\n\n           
-      float3 res = float3(dHexagon(p1, h1), pi1.y);\n            res = opU(res, float3(dHexagon(p2,
-      h2), pi2.y));\n\n            return res;\n        }\n\n        inline float
-      DistanceFunction(float3 pos)\n        {\n            float2 res = dHexagons(pos);\n           
-      return res.x;\n        }"
+      float3 res = float3(dHexagon(p1, h12.x), pi1.y);\n            res = opU(res,
+      float3(dHexagon(p2, h12.y), pi2.y));\n\n            return res;\n        }\n\n       
+      inline float DistanceFunction(float3 pos)\n        {\n            float2 res
+      = dHexagons(pos);\n            return res.x;\n        }"
     folded: 0
   - key: PostEffect
     value: "        inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput
       o)\n        {\n            float3 p = ray.endPos;\n            float3 res =
       dHexagons(p);\n\n            float4 emissionColor = _EmissionColorA;\n           
-      float pitch = _HexagonRadians + _HexagonPadding * 0.5;\n\n            if (res.z
-      < floor(_Wave1ThresholdZ + _ShipPosition.z / pitch))\n            {\n               
-      emissionColor = _EmissionColorB;\n            }\n\n            // \u5168\u4F53\u306E\u30A8\u30DF\u30C3\u30B7\u30E7\u30F3\u8ABF\u6574\u7528\uFF08\u30B7\u30FC\u30F3\u306E\u30B3\u30F3\u30C8\u30E9\u30B9\u30C8\u8ABF\u6574\u7528\u3084nagative
+      float pitch = _HexagonRadians + _HexagonPadding * 0.5;\n\n            // Wave1:
+      \u30A8\u30DF\u30C3\u30B7\u30E7\u30F3\u304C\u8D64\u304B\u3089\u9752\u306B\u5909\u5316\n           
+      if (res.z < floor(_Wave1ThresholdZ + _ShipPosition.z / pitch))\n           
+      {\n                emissionColor = _EmissionColorB;\n            }\n\n           
+      // \u5168\u4F53\u306E\u30A8\u30DF\u30C3\u30B7\u30E7\u30F3\u8ABF\u6574\u7528\uFF08\u30B7\u30FC\u30F3\u306E\u30B3\u30F3\u30C8\u30E9\u30B9\u30C8\u8ABF\u6574\u7528\u3084nagative
       space\u3092\u8003\u616E\uFF09\n            emissionColor.rgb *= _EmissionIntensity;\n\n           
+      // Wave2: \u8272\u304C\u9ED2\u304B\u3089\u767D\u306B\u5909\u5316\n           
       if (res.z < floor(_Wave2ThresholdZ + _ShipPosition.z / pitch))\n           
       {\n                o.Albedo = _ChangeAlbedo;\n            }\n\n           
-      float s = 5;\n            float z = floor(_Wave3ThresholdZ + s + _ShipPosition.z
-      / pitch) - res.z;\n            o.Emission += saturate(z / s) * float3(0.3,
-      0.1, 1) * 20;\n\n            float edge = calcEdge(ray.endPos, 0.03);\n           
-      o.Emission += emissionColor * edge;\n\n            float wave = saturate(cos(_Beat
-      * TAU - Mod(0.1 * p.z, TAU)));\n            wave += _AudioSpectrumLevels[0]
-      * 0.1;\n\n            float voro = voronoi(ray.endPos.xz * 0.5) + voronoi(ray.endPos.xz);\n           
-      o.Emission += emissionColor * voro * wave;\n        }"
+      // Wave3: \u5929\u4E95\u3068\u5E8A\u304C\u843D\u3061\u3066\u6F70\u3055\u308C\u308B\u653B\u6483\n           
+      if (res.z < floor(_Wave3ThresholdZ + _Wave3Slope + _ShipPosition.z / pitch))\n           
+      {\n                o.Albedo = hsvToRgb(float3(p.y * frac(_Beat) + _Beat, 1,
+      1));\n                o.Smoothness = 0.95;\n                o.Metallic = 0.8;\n           
+      }\n\n            float edge = calcEdge(p, 0.03);\n            o.Emission +=
+      emissionColor * edge;\n\n            // Wave4: \u8679\u8272\u306E\u30A8\u30C3\u30B8\n           
+      if (_TimelineTime > _Wave4ThresholdTime)\n            {\n                o.Emission
+      += 10 * hsvToRgb(float3(0.1 * (p.x + p.z), 1, 1)) * edge * saturate(sin(_Beat
+      * TAU / 4));\n            }\n\n            float voro = voronoi(p.xz) * calcWave(p.z,
+      1) + voronoi(p.xz * 0.5) * calcWave(p.z, 0.5);\n\n            o.Emission +=
+      emissionColor * voro;\n        }"
     folded: 0
   constants: {fileID: 11400000, guid: b54b57bcc672e49638fe9b2da609c4df, type: 2}
   basicFolded: 1
