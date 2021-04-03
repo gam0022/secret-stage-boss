@@ -125,14 +125,11 @@ Shader "Raymarching/Ship"
 
         float2 mBody(float3 pos)
         {
-            float3 p = pos;
+            float4 p = float4(pos, 1);
 
             float bodyLength = 1.7;
             float bodyWidth = 0.3 * abs(cos((p.y + bodyLength) * TAU / bodyLength / 8));
             bodyWidth += saturate(sin(p.y * TAU / bodyLength / 4)) * _BarrierPrepare;
-
-            float mBody = sdBox(p, float3(bodyWidth * 0.1, bodyLength, bodyWidth * 0.1));
-            float2 res = float2(mBody, MAT_BODY_A);
 
             p.y -= 0.5 * abs(p.x);
             p.z -= bodyWidth + 0.01;
@@ -146,7 +143,8 @@ Shader "Raymarching/Ship"
                 p *= 0.9;
             }
 
-            res = opU(res, float2(sdBox(p, float3(bodyWidth + 0.06, 0.006, 0.006)), MAT_ENGINE_DETAIL_A));
+            float2 res = float2(sdBox(p, float3(bodyWidth * 0.3, bodyLength * 0.3, bodyWidth * 0.1)), MAT_BODY_A) / p.w;
+            res = opU(res, float2(sdBox(p, float3(bodyWidth + 0.06, 0.006, 0.006)), MAT_ENGINE_DETAIL_A)) / p.w;
 
             return res;
         }
