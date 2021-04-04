@@ -16,6 +16,19 @@ You can download a zip containing the executable by clicking Releases.
 
 - [releases](https://github.com/gam0022/secret-stage-boss/releases)
 
+## Made with
+
+Unity 2020.1.17f1
+
+- Unity Technology
+    - Post-processing Stack（v2）3.0.3
+    - Timeline 1.3.7
+    - Cinemachine 2.6.3
+    - TextMeshPro 3.0.1
+    - Unity Recorder 2.5.4
+- [@hecomi](https://twitter.com/hecomi)
+    - [uRaymarching](https://github.com/hecomi/uRaymarching): v2.1.1
+
 ## Links
 
 - [:tv: YouTube](https://youtu.be/lihF5mZUZEM)
