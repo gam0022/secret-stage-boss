@@ -32,7 +32,7 @@ namespace UnityEngine.Rendering.PostProcessing
     /// A volume parameter holding a <see cref="KernelSize"/> value.
     /// </summary>
     [Serializable]
-    public sealed class KernelSizeParameter : ParameterOverride<KernelSize> {}
+    public sealed class KernelSizeParameter : ParameterOverride<KernelSize> { }
 
     /// <summary>
     /// This class holds settings for the Depth of Field effect.
@@ -213,12 +213,16 @@ namespace UnityEngine.Rendering.PostProcessing
                 cmd.SetGlobalTexture(ShaderIDs.CoCTex, historyWrite);
             }
 
+            // 4K解像度だとボケが少く見える現象への対応
+            var targetHeight = 1080 / 2;
+            var targetWidth = (int)Math.Round(aspect * targetHeight);
+
             // Downsampling and prefiltering pass
-            context.GetScreenSpaceTemporaryRT(cmd, ShaderIDs.DepthOfFieldTex, 0, colorFormat, RenderTextureReadWrite.Default, FilterMode.Bilinear, context.width / 2, context.height / 2);
+            context.GetScreenSpaceTemporaryRT(cmd, ShaderIDs.DepthOfFieldTex, 0, colorFormat, RenderTextureReadWrite.Default, FilterMode.Bilinear, targetWidth, targetHeight);
             cmd.BlitFullscreenTriangle(context.source, ShaderIDs.DepthOfFieldTex, sheet, (int)Pass.DownsampleAndPrefilter);
 
             // Bokeh simulation pass
-            context.GetScreenSpaceTemporaryRT(cmd, ShaderIDs.DepthOfFieldTemp, 0, colorFormat, RenderTextureReadWrite.Default, FilterMode.Bilinear, context.width / 2, context.height / 2);
+            context.GetScreenSpaceTemporaryRT(cmd, ShaderIDs.DepthOfFieldTemp, 0, colorFormat, RenderTextureReadWrite.Default, FilterMode.Bilinear, targetWidth, targetHeight);
             cmd.BlitFullscreenTriangle(ShaderIDs.DepthOfFieldTex, ShaderIDs.DepthOfFieldTemp, sheet, (int)Pass.BokehSmallKernel + (int)settings.kernelSize.value);
 
             // Postfilter pass
