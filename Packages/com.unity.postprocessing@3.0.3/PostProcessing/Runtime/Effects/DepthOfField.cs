@@ -177,7 +177,10 @@ namespace UnityEngine.Rendering.PostProcessing
             var s1 = Mathf.Max(settings.focusDistance.value, f);
             var aspect = (float)context.screenWidth / (float)context.screenHeight;
             var coeff = f * f / (settings.aperture.value * (s1 - f) * scaledFilmHeight * 2f);
-            var maxCoC = CalculateMaxCoCRadius(context.screenHeight);
+
+            // 4K解像度だとボケが少く見える現象への対応
+            // var maxCoC = CalculateMaxCoCRadius(context.screenHeight);
+            var maxCoC = CalculateMaxCoCRadius(1080 / 2);
 
             var sheet = context.propertySheets.Get(context.resources.shaders.depthOfField);
             sheet.properties.Clear();
@@ -214,7 +217,7 @@ namespace UnityEngine.Rendering.PostProcessing
             }
 
             // 4K解像度だとボケが少く見える現象への対応
-            var targetHeight = 1080 / 2;
+            var targetHeight = 1080 / 4;
             var targetWidth = (int)Math.Round(aspect * targetHeight);
 
             // Downsampling and prefiltering pass
