@@ -12,22 +12,22 @@ XXX Place [PC Demo](https://2020.revision-party.net/competitions/pc-competitions
 
 Runs on a Windows PC with a high-performance GPU (only tested GeForce RTX 2070).
 
-You can download a zip containing the executable by clicking Releases.
+You can download a zip containing the .exe file by clicking Releases.
 
-- [releases](https://github.com/gam0022/secret-stage-boss/releases)
+- [Releases](https://github.com/gam0022/secret-stage-boss/releases)
 
 ## Made with
 
 Unity 2020.1.17f1
 
-- Unity Technology
+- Unity Technologies (Official)
     - Post-processing Stack（v2）3.0.3
     - Timeline 1.3.7
     - Cinemachine 2.6.3
     - TextMeshPro 3.0.1
     - Unity Recorder 2.5.4
 - [@hecomi](https://twitter.com/hecomi)
-    - [uRaymarching](https://github.com/hecomi/uRaymarching): v2.1.1
+    - [uRaymarching](https://github.com/hecomi/uRaymarching) v2.1.1
 
 ## Links
 
