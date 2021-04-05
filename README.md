@@ -1,6 +1,6 @@
-# Secret Stage Boss by gam0022 & sadakkey
+# "Secret stage BOSS" by gam0022 & sadakkey
 
-Secret Stage Boss by [@gam0022](https://twitter.com/gam0022) (Graphics) & [@sadakkey](https://twitter.com/sadakkey) (Music)
+"Secret stage BOSS" by [@gam0022](https://twitter.com/gam0022) (Graphics) & [@sadakkey](https://twitter.com/sadakkey) (Music)
 
 A PC Demo
 
