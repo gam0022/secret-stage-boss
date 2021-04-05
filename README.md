@@ -29,13 +29,11 @@ Unity 2020.1.17f1
 - [@hecomi](https://twitter.com/hecomi)
     - [uRaymarching](https://github.com/hecomi/uRaymarching) v2.1.1
 
-<!--
 ## Links
 
-- [:tv: YouTube](https://youtu.be/lihF5mZUZEM)
-- [:speech_balloon: Pouet](https://www.pouet.net/prod.php?which=85260)
-- [:bird: Twitter](https://twitter.com/gam0022/status/1249658268319768576)
--->
+- [:tv: YouTube (NOT RIP Encoder!)](https://youtu.be/srO7IxNckZ8)
+- [:speech_balloon: Pouet](https://www.pouet.net/prod.php?which=88635)
+- [:bird: Twitter](https://twitter.com/gam0022/status/1378967812463501313)
 
 ## License
 
