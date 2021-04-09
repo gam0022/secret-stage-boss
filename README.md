@@ -2,9 +2,7 @@
 
 "Secret stage BOSS" by [@gam0022](https://twitter.com/gam0022) (Graphics) & [@sadakkey](https://twitter.com/sadakkey) (Music)
 
-A PC Demo
-
-XXX Place [PC Demo](https://2020.revision-party.net/competitions/pc-competitions) at [Revision 2021](https://2021.revision-party.net/start)
+A [PC Demo](https://2020.revision-party.net/competitions/pc-competitions) for [Revision 2021](https://2021.revision-party.net/start)
 
 ![secret_stage_boss.jpg](secret_stage_boss.jpg)
 
@@ -28,6 +26,8 @@ Unity 2020.1.17f1
     - Unity Recorder 2.5.4
 - [@hecomi](https://twitter.com/hecomi)
     - [uRaymarching](https://github.com/hecomi/uRaymarching) v2.1.1
+- [@_kzr](https://twitter.com/_kzr)
+    - [unity-audio-spectrum](https://github.com/keijiro/unity-audio-spectrum)
 
 ## Links
 
